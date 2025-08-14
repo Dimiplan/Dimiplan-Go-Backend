@@ -7,6 +7,7 @@ import (
 	"dimiplan-backend/config"
 	"dimiplan-backend/ent"
 	"dimiplan-backend/routes"
+	"dimiplan-backend/server"
 
 	_ "github.com/lib/pq"
 )
@@ -23,7 +24,8 @@ func main() {
 		log.Fatalf("failed creating schema resources: %v", err)
 	}
 
-	app := routes.Setup(cfg, client)
+	app := server.Setup()
+	routes.Setup(app, cfg, client)
 
 	log.Printf("Server starting on port %s", cfg.Port)
 	log.Fatal(app.Listen(":" + cfg.Port))

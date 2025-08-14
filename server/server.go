@@ -1,38 +1,43 @@
 package server
 
 import (
+	"dimiplan-backend/config"
+
 	"github.com/bytedance/sonic"
-	"github.com/gofiber/fiber/v2"
-	"github.com/gofiber/fiber/v2/middleware/compress"
-	"github.com/gofiber/fiber/v2/middleware/cors"
-	"github.com/gofiber/fiber/v2/middleware/logger"
+	"github.com/gofiber/fiber/v3"
+	"github.com/gofiber/fiber/v3/middleware/compress"
+	"github.com/gofiber/fiber/v3/middleware/cors"
+	"github.com/gofiber/fiber/v3/middleware/helmet"
+	"github.com/gofiber/fiber/v3/middleware/logger"
+	"github.com/gofiber/fiber/v3/middleware/session"
+	"github.com/gofiber/fiber/v3/middleware/static"
+	"github.com/gofiber/storage/redis/v3"
 )
 
-func Setup() *fiber.App {
+func Setup(cfg *config.Config) *fiber.App {
 	app := fiber.New(fiber.Config{
-		ErrorHandler: func(c *fiber.Ctx, err error) error {
-			code := fiber.StatusInternalServerError
-			if e, ok := err.(*fiber.Error); ok {
-				code = e.Code
-			}
-			return c.Status(code).JSON(fiber.Map{
-				"error": err.Error(),
-			})
-		},
 		JSONEncoder: sonic.Marshal,
 		JSONDecoder: sonic.Unmarshal,
-		Prefork:     true,
 	})
 
+	app.Use(helmet.New())
+
 	app.Use(cors.New(cors.Config{
-		AllowOrigins:     "http://localhost:3000,http://localhost:8080",
+		AllowOrigins:     []string{"http://localhost:3000", "http://localhost:8080"},
 		AllowCredentials: true,
 	}))
 
 	app.Use(logger.New())
 	app.Use(compress.New())
 
-	app.Static("/", "dist")
+	storage := redis.New(*cfg.RedisConfig)
+
+	app.Use(session.New(session.Config{
+		Storage:   storage,
+		KeyLookup: "cookie:dimiplan.sid",
+	}))
+
+	app.Use(static.New("./dist"))
 
 	return app
 }

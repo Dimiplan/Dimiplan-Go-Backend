@@ -602,12 +602,12 @@ func scanWithInterceptors[Q1 ent.Query, Q2 interface {
 	if err != nil {
 		return err
 	}
-	switch rv2 := reflect.ValueOf(vv); {
-	case rv.IsNil(), rv2.IsNil(), rv.Kind() != reflect.Pointer:
-	case rv.Type() == rv2.Type():
-		rv.Elem().Set(rv2.Elem())
-	case rv.Elem().Type() == rv2.Type():
-		rv.Elem().Set(rv2)
+	switch rv3 := reflect.ValueOf(vv); {
+	case rv.IsNil(), rv3.IsNil(), rv.Kind() != reflect.Pointer:
+	case rv.Type() == rv3.Type():
+		rv.Elem().Set(rv3.Elem())
+	case rv.Elem().Type() == rv3.Type():
+		rv.Elem().Set(rv3)
 	}
 	return nil
 }

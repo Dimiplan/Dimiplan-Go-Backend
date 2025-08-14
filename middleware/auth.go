@@ -1,23 +1,23 @@
 package middleware
 
 import (
-	"dimiplan-backend/auth"
 	"dimiplan-backend/ent"
 	"dimiplan-backend/ent/user"
 	"fmt"
 
-	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v3"
+	"github.com/gofiber/fiber/v3/middleware/session"
 )
 
-func AuthMiddleware(sessionService *auth.SessionService, db *ent.Client) fiber.Handler {
-	return func(c *fiber.Ctx) error {
-		userID := sessionService.GetIDFromSession(c)
+func AuthMiddleware(db *ent.Client) fiber.Handler {
+	return func(c fiber.Ctx) error {
+		userID := session.FromContext(c).Get("id").(string)
 		if userID == "" {
 			return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
 				"error": "Unauthorized",
 			})
 		}
-		user, err := db.User.Query().Where(user.ID(userID)).First(c.Context())
+		user, err := db.User.Query().Where(user.ID(userID)).First(c)
 		if err != nil || user == nil {
 			return c.Status(fiber.StatusForbidden).JSON(fiber.Map{
 				"error": "No User",

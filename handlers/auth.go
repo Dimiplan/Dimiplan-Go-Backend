@@ -7,45 +7,44 @@ import (
 
 	"golang.org/x/oauth2"
 
-	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v3"
+	"github.com/gofiber/fiber/v3/middleware/session"
 )
 
 type AuthHandler struct {
-	oauth      *oauth2.Config
-	sessionSvc *auth.SessionService
-	db         *ent.Client
+	oauth *oauth2.Config
+	db    *ent.Client
 }
 
-func NewAuthHandler(oauth *oauth2.Config, sessionSvc *auth.SessionService, db *ent.Client) *AuthHandler {
+func NewAuthHandler(oauth *oauth2.Config, db *ent.Client) *AuthHandler {
 	return &AuthHandler{
-		oauth:      oauth,
-		sessionSvc: sessionSvc,
-		db:         db,
+		oauth: oauth,
+		db:    db,
 	}
 }
 
-func (h *AuthHandler) GoogleLogin(c *fiber.Ctx) error {
+func (h *AuthHandler) GoogleLogin(c fiber.Ctx) error {
 	url := h.oauth.AuthCodeURL("state")
-	return c.Redirect(url)
+	return c.Redirect().To(url)
 }
 
-func (h *AuthHandler) GoogleCallback(c *fiber.Ctx) error {
-	token, error := h.oauth.Exchange(c.Context(), c.FormValue("code"))
+func (h *AuthHandler) GoogleCallback(c fiber.Ctx) error {
+	token, error := h.oauth.Exchange(c, c.FormValue("code"))
 	if error != nil {
 		panic(error)
 	}
 	data := auth.GetUser(token.AccessToken)
-	h.sessionSvc.SetIDInSession(c, data.ID)
-	user, err := h.db.User.Query().Where(user.ID(data.ID)).First(c.Context())
+	session.FromContext(c).Set("id", data.ID)
+	user, err := h.db.User.Query().Where(user.ID(data.ID)).First(c)
 	if user == nil {
-		h.db.User.Create().SetID(data.ID).SetEmail(data.Email).SetName(data.Name).SetProfileURL(data.ProfileURL).SaveX(c.Context())
+		h.db.User.Create().SetID(data.ID).SetEmail(data.Email).SetName(data.Name).SetProfileURL(data.ProfileURL).SaveX(c)
 	} else if err != nil {
 		panic(err)
 	}
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{"message": "Logged in successfully"})
 }
 
-func (h *AuthHandler) Logout(c *fiber.Ctx) error {
-	h.sessionSvc.ClearSession(c)
+func (h *AuthHandler) Logout(c fiber.Ctx) error {
+	session.FromContext(c).Destroy()
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{"message": "Logged out successfully"})
 }

@@ -9,6 +9,7 @@ import (
 	"dimiplan-backend/routes"
 	"dimiplan-backend/server"
 
+	"github.com/gofiber/fiber/v3"
 	_ "github.com/lib/pq"
 )
 
@@ -24,9 +25,11 @@ func main() {
 		log.Fatalf("failed creating schema resources: %v", err)
 	}
 
-	app := server.Setup()
+	app := server.Setup(cfg)
 	routes.Setup(app, cfg, client)
 
 	log.Printf("Server starting on port %s", cfg.Port)
-	log.Fatal(app.Listen(":" + cfg.Port))
+	log.Fatal(app.Listen(":"+cfg.Port, fiber.ListenConfig{
+		EnablePrefork: true,
+	}))
 }

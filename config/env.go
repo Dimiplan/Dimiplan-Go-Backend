@@ -5,7 +5,7 @@ import (
 	"os"
 	"strconv"
 
-	"github.com/gofiber/storage/redis"
+	"github.com/gofiber/storage/redis/v3"
 	"github.com/joho/godotenv"
 	"golang.org/x/oauth2"
 	"golang.org/x/oauth2/google"

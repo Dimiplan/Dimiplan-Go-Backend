@@ -2,11 +2,12 @@ package main
 
 import (
 	"context"
-	"dimiplan-backend/config"
-	"dimiplan-backend/routes"
 	"log"
 
-	"entgo.io/ent"
+	"dimiplan-backend/config"
+	"dimiplan-backend/ent"
+	"dimiplan-backend/routes"
+
 	_ "github.com/lib/pq"
 )
 

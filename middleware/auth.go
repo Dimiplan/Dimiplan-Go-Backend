@@ -24,7 +24,7 @@ func AuthMiddleware(sessionService *auth.SessionService, db *ent.Client) fiber.H
 			})
 		}
 		fmt.Println(user)
-		c.Locals("user", user.ID)
+		c.Locals("uid", user.ID)
 		return c.Next()
 	}
 }

@@ -11,6 +11,8 @@ coverage.*
 *.coverprofile
 profile.cov
 
+dimiplan-backend
+
 vendor/
 
 go.work

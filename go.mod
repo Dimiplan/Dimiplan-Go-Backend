@@ -5,6 +5,7 @@ go 1.23.0
 toolchain go1.24.6
 
 require (
+	entgo.io/ent v0.14.5
 	github.com/bytedance/sonic v1.14.0
 	github.com/go-redis/redis/v8 v8.11.5
 	github.com/gofiber/fiber/v2 v2.52.9

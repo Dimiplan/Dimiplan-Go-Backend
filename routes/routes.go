@@ -9,6 +9,8 @@ import (
 	"dimiplan-backend/storage"
 	"log"
 
+	"github.com/bytedance/sonic"
+
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/compress"
 	"github.com/gofiber/fiber/v2/middleware/cors"
@@ -26,6 +28,8 @@ func Setup(cfg *config.Config) *fiber.App {
 				"error": err.Error(),
 			})
 		},
+		JSONEncoder: sonic.Marshal,
+		JSONDecoder: sonic.Unmarshal,
 	})
 
 	app.Use(cors.New(cors.Config{

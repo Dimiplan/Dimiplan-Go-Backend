@@ -9,7 +9,6 @@ import (
 	"net/url"
 )
 
-// GetEmail of user
 func GetUser(token string) models.GoogleResponse {
 	reqURL, err := url.Parse("https://www.googleapis.com/oauth2/v1/userinfo")
 	if err != nil {

@@ -3,6 +3,7 @@ package handlers
 import (
 	"dimiplan-backend/auth"
 	"dimiplan-backend/ent"
+	"dimiplan-backend/ent/user"
 
 	"golang.org/x/oauth2"
 
@@ -35,7 +36,13 @@ func (h *AuthHandler) GoogleCallback(c *fiber.Ctx) error {
 	}
 	data := auth.GetUser(token.AccessToken)
 	h.sessionSvc.SetIDInSession(c, data.ID)
-	return c.Status(fiber.StatusOK).JSON(fiber.Map{"data": data, "login": true})
+	user, err := h.db.User.Query().Where(user.ID(data.ID)).First(c.Context())
+	if user == nil {
+		h.db.User.Create().SetID(data.ID).SetEmail(data.Email).SetName(data.Name).SetProfileURL(data.ProfileURL).SaveX(c.Context())
+	} else if err != nil {
+		panic(err)
+	}
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{"message": "Logged in successfully"})
 }
 
 func (h *AuthHandler) Logout(c *fiber.Ctx) error {

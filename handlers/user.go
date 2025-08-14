@@ -2,23 +2,28 @@ package handlers
 
 import (
 	"dimiplan-backend/auth"
+	"dimiplan-backend/ent"
+	"dimiplan-backend/ent/user"
+
+	"github.com/gofiber/fiber/v2"
 )
 
 type UserHandler struct {
 	sessionSvc *auth.SessionService
+	db         *ent.Client
 }
 
-func NewUserHandler(sessionSvc *auth.SessionService) *UserHandler {
+func NewUserHandler(sessionSvc *auth.SessionService, db *ent.Client) *UserHandler {
 	return &UserHandler{
 		sessionSvc: sessionSvc,
+		db:         db,
 	}
 }
 
-/*
 func (h *UserHandler) GetProfile(c *fiber.Ctx) error {
 	userID := h.sessionSvc.GetIDFromSession(c)
 
-	user, err := h.storage.GetUser(userID)
+	user, err := h.db.User.Query().Where(user.ID(userID)).Only(c.Context())
 	if err != nil {
 		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
 			"error": "User not found",
@@ -32,7 +37,7 @@ func (h *UserHandler) GetProfile(c *fiber.Ctx) error {
 
 func (h *UserHandler) Logout(c *fiber.Ctx) error {
 	userID := c.Locals("user_id").(string)
-	h.storage.DeleteUser(userID)
+	h.db.User.Delete().Where(user.ID(userID)).Exec(c.Context())
 
 	return c.JSON(fiber.Map{
 		"message": "Logged out successfully",
@@ -46,4 +51,3 @@ func (h *UserHandler) Protected(c *fiber.Ctx) error {
 		"email":   email,
 	})
 }
-*/

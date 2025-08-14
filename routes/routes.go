@@ -3,6 +3,7 @@ package routes
 import (
 	"dimiplan-backend/auth"
 	"dimiplan-backend/config"
+	"dimiplan-backend/ent"
 	"dimiplan-backend/handlers"
 	"dimiplan-backend/middleware"
 
@@ -39,9 +40,10 @@ func Setup(cfg *config.Config) *fiber.App {
 	app.Use(compress.New())
 
 	sessionService := auth.NewSessionService(cfg.RedisConfig)
+	db := ent.NewClient()
 
-	authHandler := handlers.NewAuthHandler(cfg.OAuthConfig, sessionService)
-	//	userHandler := handlers.NewUserHandler(sessionService)
+	authHandler := handlers.NewAuthHandler(cfg.OAuthConfig, sessionService, db)
+	userHandler := handlers.NewUserHandler(sessionService, db)
 
 	app.Static("/", "dist")
 
@@ -54,10 +56,8 @@ func Setup(cfg *config.Config) *fiber.App {
 
 	api := app.Group("/api")
 	api.Use(middleware.AuthMiddleware(sessionService))
-	/*
-		api.Get("/profile", userHandler.GetProfile)
-		api.Post("/logout", userHandler.Logout)
-		api.Get("/protected", userHandler.Protected)
-	*/
+	api.Get("/profile", userHandler.GetProfile)
+	api.Post("/logout", userHandler.Logout)
+	api.Get("/protected", userHandler.Protected)
 	return app
 }

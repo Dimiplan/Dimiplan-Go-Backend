@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"dimiplan-backend/auth"
+	"dimiplan-backend/ent"
 
 	"golang.org/x/oauth2"
 
@@ -11,12 +12,14 @@ import (
 type AuthHandler struct {
 	oauth      *oauth2.Config
 	sessionSvc *auth.SessionService
+	db         *ent.Client
 }
 
-func NewAuthHandler(oauth *oauth2.Config, sessionSvc *auth.SessionService) *AuthHandler {
+func NewAuthHandler(oauth *oauth2.Config, sessionSvc *auth.SessionService, db *ent.Client) *AuthHandler {
 	return &AuthHandler{
 		oauth:      oauth,
 		sessionSvc: sessionSvc,
+		db:         db,
 	}
 }
 
@@ -32,6 +35,7 @@ func (h *AuthHandler) GoogleCallback(c *fiber.Ctx) error {
 	if error != nil {
 		panic(error)
 	}
-	email := auth.GetEmail(token.AccessToken)
-	return c.Status(200).JSON(fiber.Map{"email": email, "login": true})
+	data := auth.GetUser(token.AccessToken)
+	h.sessionSvc.SetIDInSession(c, data.ID)
+	return c.Status(200).JSON(fiber.Map{"data": data, "login": true})
 }

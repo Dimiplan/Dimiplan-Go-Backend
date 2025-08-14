@@ -10,7 +10,7 @@ import (
 )
 
 // GetEmail of user
-func GetEmail(token string) string {
+func GetUser(token string) models.GoogleResponse {
 	reqURL, err := url.Parse("https://www.googleapis.com/oauth2/v1/userinfo")
 	if err != nil {
 		panic(err)
@@ -38,5 +38,5 @@ func GetEmail(token string) string {
 	if err != nil {
 		panic(err)
 	}
-	return data.Email
+	return data
 }

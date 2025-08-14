@@ -1,13 +1,10 @@
 package routes
 
 import (
-	"context"
 	"dimiplan-backend/auth"
 	"dimiplan-backend/config"
 	"dimiplan-backend/handlers"
 	"dimiplan-backend/middleware"
-	"dimiplan-backend/storage"
-	"log"
 
 	"github.com/bytedance/sonic"
 
@@ -41,39 +38,26 @@ func Setup(cfg *config.Config) *fiber.App {
 	app.Use(logger.New())
 	app.Use(compress.New())
 
-	ctx := context.Background()
-	if err := cfg.RedisClient.Ping(ctx).Err(); err != nil {
-		log.Fatalf("Redis connection failed: %v", err)
-	}
+	sessionService := auth.NewSessionService(cfg.RedisConfig)
 
-	jwtService := auth.NewJWTService(cfg.JWTSecret)
-	oauthService := auth.NewOAuthService(cfg.OAuthConfig, cfg.RedisClient)
-	storageService := storage.NewRedisService(cfg.RedisClient)
+	authHandler := handlers.NewAuthHandler(cfg.OAuthConfig, sessionService)
+	//	userHandler := handlers.NewUserHandler(sessionService)
 
-	authHandler := handlers.NewAuthHandler(oauthService, jwtService, storageService)
-	userHandler := handlers.NewUserHandler(storageService)
+	app.Static("/", "dist")
 
-	app.Get("/", func(c *fiber.Ctx) error {
-		return c.JSON(fiber.Map{
-			"message": "Fiber Google OAuth JWT Redis System",
-			"endpoints": fiber.Map{
-				"login":    "/auth/google",
-				"callback": "/auth/google/callback",
-				"profile":  "/api/profile",
-				"logout":   "/api/logout",
-			},
-		})
-	})
+	auth := app.Group("/auth")
+	auth.Get("/google", authHandler.GoogleLogin)
+	auth.Get("/google/callback", authHandler.GoogleCallback)
 
-	app.Get("/auth/google", authHandler.GoogleLogin)
-	app.Get("/auth/google/callback", authHandler.GoogleCallback)
+	admin := app.Group("/admin")
+	admin.Use(middleware.AuthMiddleware(sessionService))
 
 	api := app.Group("/api")
-	api.Use(middleware.JWT(jwtService))
-
-	api.Get("/profile", userHandler.GetProfile)
-	api.Post("/logout", userHandler.Logout)
-	api.Get("/protected", userHandler.Protected)
-
+	api.Use(middleware.AuthMiddleware(sessionService))
+	/*
+		api.Get("/profile", userHandler.GetProfile)
+		api.Post("/logout", userHandler.Logout)
+		api.Get("/protected", userHandler.Protected)
+	*/
 	return app
 }

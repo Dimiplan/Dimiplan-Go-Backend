@@ -1,21 +1,22 @@
 package handlers
 
 import (
-	"dimiplan-backend/storage"
-
-	"github.com/gofiber/fiber/v2"
+	"dimiplan-backend/auth"
 )
 
 type UserHandler struct {
-	storage *storage.RedisService
+	sessionSvc *auth.SessionService
 }
 
-func NewUserHandler(storage *storage.RedisService) *UserHandler {
-	return &UserHandler{storage: storage}
+func NewUserHandler(sessionSvc *auth.SessionService) *UserHandler {
+	return &UserHandler{
+		sessionSvc: sessionSvc,
+	}
 }
 
+/*
 func (h *UserHandler) GetProfile(c *fiber.Ctx) error {
-	userID := c.Locals("user_id").(string)
+	userID := h.sessionSvc.GetIDFromSession(c)
 
 	user, err := h.storage.GetUser(userID)
 	if err != nil {
@@ -45,3 +46,4 @@ func (h *UserHandler) Protected(c *fiber.Ctx) error {
 		"email":   email,
 	})
 }
+*/

@@ -2,8 +2,9 @@ package config
 
 import (
 	"os"
+	"strconv"
 
-	"github.com/go-redis/redis/v8"
+	"github.com/gofiber/storage/redis"
 	"github.com/joho/godotenv"
 	"golang.org/x/oauth2"
 	"golang.org/x/oauth2/google"
@@ -12,17 +13,12 @@ import (
 type Config struct {
 	Port        string
 	JWTSecret   []byte
-	RedisClient *redis.Client
 	OAuthConfig *oauth2.Config
+	RedisConfig *redis.Config
 }
 
 func Load() *Config {
 	godotenv.Load()
-	redisClient := redis.NewClient(&redis.Options{
-		Addr:     getEnv("REDIS_ADDR", "localhost:6379"),
-		Password: getEnv("REDIS_PASSWORD", ""),
-		DB:       0,
-	})
 
 	oauthConfig := &oauth2.Config{
 		ClientID:     getEnv("GOOGLE_CLIENT_ID", "your-client-id"),
@@ -35,17 +31,32 @@ func Load() *Config {
 		Endpoint: google.Endpoint,
 	}
 
+	redisConfig := &redis.Config{
+		Host:     getEnv("REDIS_HOST", "localhost"),
+		Port:     getEnvAsInt("REDIS_PORT", 6379),
+		Password: getEnv("REDIS_PASSWORD", ""),
+	}
+
 	return &Config{
 		Port:        getEnv("PORT", "8080"),
 		JWTSecret:   []byte(getEnv("JWT_SECRET", "your-secret-key")),
-		RedisClient: redisClient,
 		OAuthConfig: oauthConfig,
+		RedisConfig: redisConfig,
 	}
 }
 
 func getEnv(key, defaultValue string) string {
 	if value := os.Getenv(key); value != "" {
 		return value
+	}
+	return defaultValue
+}
+
+func getEnvAsInt(key string, defaultValue int) int {
+	if value := os.Getenv(key); value != "" {
+		if intValue, err := strconv.Atoi(value); err == nil {
+			return intValue
+		}
 	}
 	return defaultValue
 }

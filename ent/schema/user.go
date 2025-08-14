@@ -34,10 +34,7 @@ func (User) Fields() []ent.Field {
 // Edges of the User.
 func (User) Edges() []ent.Edge {
 	return []ent.Edge{
-		edge.To("planners", Task.Type),
-		edge.To("planners", Task.Type).Annotations(entsql.OnDelete(entsql.Cascade)),
-
-		edge.To("chatrooms", ChatRoom.Type),
+		edge.To("planners", Planner.Type).Annotations(entsql.OnDelete(entsql.Cascade)),
 		edge.To("chatrooms", ChatRoom.Type).Annotations(entsql.OnDelete(entsql.Cascade)),
 	}
 }

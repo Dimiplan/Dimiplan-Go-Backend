@@ -37,7 +37,6 @@ func (ChatRoom) Edges() []ent.Edge {
 			Unique().   // 각 ChatRoom은 하나의 User에만 속함 (N:1)
 			Required(), // User 없는 ChatRoom 생성 금지 (FK NOT NULL)
 
-		edge.To("chats", Chat.Type),
 		edge.To("chats", Chat.Type).Annotations(entsql.OnDelete(entsql.Cascade)),
 	}
 }

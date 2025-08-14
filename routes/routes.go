@@ -15,7 +15,7 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/logger"
 )
 
-func Setup(cfg *config.Config) *fiber.App {
+func Setup(cfg *config.Config, db *ent.Client) *fiber.App {
 	app := fiber.New(fiber.Config{
 		ErrorHandler: func(c *fiber.Ctx, err error) error {
 			code := fiber.StatusInternalServerError
@@ -40,7 +40,6 @@ func Setup(cfg *config.Config) *fiber.App {
 	app.Use(compress.New())
 
 	sessionService := auth.NewSessionService(cfg.RedisConfig)
-	db := ent.NewClient()
 
 	authHandler := handlers.NewAuthHandler(cfg.OAuthConfig, sessionService, db)
 	userHandler := handlers.NewUserHandler(sessionService, db)
@@ -52,10 +51,10 @@ func Setup(cfg *config.Config) *fiber.App {
 	auth.Get("/google/callback", authHandler.GoogleCallback)
 
 	admin := app.Group("/admin")
-	admin.Use(middleware.AuthMiddleware(sessionService))
+	admin.Use(middleware.AuthMiddleware(sessionService, db))
 
 	api := app.Group("/api")
-	api.Use(middleware.AuthMiddleware(sessionService))
+	api.Use(middleware.AuthMiddleware(sessionService, db))
 	api.Get("/profile", userHandler.GetProfile)
 	api.Post("/logout", userHandler.Logout)
 	api.Get("/protected", userHandler.Protected)

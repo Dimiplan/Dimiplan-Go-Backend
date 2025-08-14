@@ -13,17 +13,17 @@ import (
 
 func main() {
 	cfg := config.Load()
-	client, err := ent.Open("postgres", "host=127.0.0.1 port=5432 user=postgres dbname=dimiplan password=postgres")
+	client, err := ent.Open("postgres", cfg.DatabaseString)
 	if err != nil {
 		log.Fatalf("failed opening connection to postgres: %v", err)
 	}
 	defer client.Close()
-	// Run the auto migration tool.
+
 	if err := client.Schema.Create(context.Background()); err != nil {
 		log.Fatalf("failed creating schema resources: %v", err)
 	}
 
-	app := routes.Setup(cfg)
+	app := routes.Setup(cfg, client)
 
 	log.Printf("Server starting on port %s", cfg.Port)
 	log.Fatal(app.Listen(":" + cfg.Port))

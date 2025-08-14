@@ -1,6 +1,7 @@
 package config
 
 import (
+	"fmt"
 	"os"
 	"strconv"
 
@@ -11,10 +12,10 @@ import (
 )
 
 type Config struct {
-	Port        string
-	JWTSecret   []byte
-	OAuthConfig *oauth2.Config
-	RedisConfig *redis.Config
+	Port           string
+	OAuthConfig    *oauth2.Config
+	RedisConfig    *redis.Config
+	DatabaseString string
 }
 
 func Load() *Config {
@@ -39,9 +40,14 @@ func Load() *Config {
 
 	return &Config{
 		Port:        getEnv("PORT", "8080"),
-		JWTSecret:   []byte(getEnv("JWT_SECRET", "your-secret-key")),
 		OAuthConfig: oauthConfig,
 		RedisConfig: redisConfig,
+		DatabaseString: fmt.Sprintf("host=%s port=%d user=%s dbname=%s sslmode=disable",
+			getEnv("DB_HOST", "localhost"),
+			getEnvAsInt("DB_PORT", 5432),
+			getEnv("DB_USER", "postgres"),
+			getEnv("DB_NAME", "dimiplan"),
+		),
 	}
 }
 

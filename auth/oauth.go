@@ -33,7 +33,6 @@ func GetUser(token string) models.GoogleResponse {
 		panic(err)
 	}
 	var data models.GoogleResponse
-	fmt.Println(string(body))
 	err = json.Unmarshal(body, &data)
 	if err != nil {
 		panic(err)

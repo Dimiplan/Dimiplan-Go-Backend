@@ -35,3 +35,11 @@ func (s *SessionService) SetIDInSession(c *fiber.Ctx, id string) error {
 	session.Set("id", id)
 	return session.Save()
 }
+
+func (s *SessionService) ClearSession(c *fiber.Ctx) error {
+	session, err := s.store.Get(c)
+	if err != nil {
+		return err
+	}
+	return session.Destroy()
+}

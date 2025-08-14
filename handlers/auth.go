@@ -23,13 +23,11 @@ func NewAuthHandler(oauth *oauth2.Config, sessionSvc *auth.SessionService, db *e
 	}
 }
 
-// Auth fiber handler
 func (h *AuthHandler) GoogleLogin(c *fiber.Ctx) error {
 	url := h.oauth.AuthCodeURL("state")
 	return c.Redirect(url)
 }
 
-// Callback to receive google's response
 func (h *AuthHandler) GoogleCallback(c *fiber.Ctx) error {
 	token, error := h.oauth.Exchange(c.Context(), c.FormValue("code"))
 	if error != nil {
@@ -37,5 +35,10 @@ func (h *AuthHandler) GoogleCallback(c *fiber.Ctx) error {
 	}
 	data := auth.GetUser(token.AccessToken)
 	h.sessionSvc.SetIDInSession(c, data.ID)
-	return c.Status(200).JSON(fiber.Map{"data": data, "login": true})
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{"data": data, "login": true})
+}
+
+func (h *AuthHandler) Logout(c *fiber.Ctx) error {
+	h.sessionSvc.ClearSession(c)
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{"message": "Logged out successfully"})
 }

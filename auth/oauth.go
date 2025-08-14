@@ -5,7 +5,9 @@ import (
 	"crypto/rand"
 	"dimiplan-backend/models"
 	"encoding/base64"
-	"encoding/json"
+
+	"github.com/bytedance/sonic"
+
 	"time"
 
 	"github.com/go-redis/redis/v8"
@@ -39,7 +41,7 @@ func (o *OAuthService) SaveState(state string) error {
 		State:     state,
 		CreatedAt: time.Now(),
 	}
-	stateJSON, _ := json.Marshal(stateData)
+	stateJSON, _ := sonic.Marshal(stateData)
 	return o.redis.Set(ctx, "oauth_state:"+state, stateJSON, 5*time.Minute).Err()
 }
 
@@ -71,7 +73,7 @@ func (o *OAuthService) GetUserInfo(token *oauth2.Token) (*models.User, error) {
 	defer resp.Body.Close()
 
 	var user models.User
-	if err := json.NewDecoder(resp.Body).Decode(&user); err != nil {
+	if err := sonic.ConfigDefault.NewDecoder(resp.Body).Decode(&user); err != nil {
 		return nil, err
 	}
 

@@ -3,9 +3,9 @@ package storage
 import (
 	"context"
 	"dimiplan-backend/models"
-	"encoding/json"
 	"time"
 
+	"github.com/bytedance/sonic"
 	"github.com/go-redis/redis/v8"
 )
 
@@ -19,7 +19,7 @@ func NewRedisService(client *redis.Client) *RedisService {
 
 func (r *RedisService) SaveUser(user *models.User) error {
 	ctx := context.Background()
-	userJSON, _ := json.Marshal(user)
+	userJSON, _ := sonic.Marshal(user)
 	return r.client.Set(ctx, "user:"+user.ID, userJSON, 24*time.Hour).Err()
 }
 
@@ -31,7 +31,7 @@ func (r *RedisService) GetUser(userID string) (*models.User, error) {
 	}
 
 	var user models.User
-	err = json.Unmarshal([]byte(userJSON), &user)
+	err = sonic.Unmarshal([]byte(userJSON), &user)
 	return &user, err
 }
 

@@ -30,6 +30,7 @@ func Setup(cfg *config.Config) *fiber.App {
 		},
 		JSONEncoder: sonic.Marshal,
 		JSONDecoder: sonic.Unmarshal,
+		Prefork:     true,
 	})
 
 	app.Use(cors.New(cors.Config{

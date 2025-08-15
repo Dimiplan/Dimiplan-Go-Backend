@@ -34,7 +34,10 @@ func (h *AuthHandler) GoogleCallback(c fiber.Ctx) error {
 		panic(error)
 	}
 	data := auth.GetUser(token.AccessToken)
-	session.FromContext(c).Set("id", data.ID)
+
+	sess := session.FromContext(c)
+	sess.Set("id", data.ID)
+
 	user, err := h.db.User.Query().Where(user.ID(data.ID)).First(c)
 	if user == nil {
 		h.db.User.Create().SetID(data.ID).SetEmail(data.Email).SetName(data.Name).SetProfileURL(data.ProfileURL).SaveX(c)

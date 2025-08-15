@@ -4,35 +4,22 @@ import (
 	"dimiplan-backend/models"
 	"encoding/json"
 	"fmt"
-	"io"
-	"net/http"
-	"net/url"
+
+	"github.com/gofiber/fiber/v3/client"
 )
 
 func GetUser(token string) models.GoogleResponse {
-	reqURL, err := url.Parse("https://www.googleapis.com/oauth2/v1/userinfo")
-	if err != nil {
-		panic(err)
-	}
-	ptoken := fmt.Sprintf("Bearer %s", token)
-	res := &http.Request{
-		Method: "GET",
-		URL:    reqURL,
-		Header: map[string][]string{
-			"Authorization": {ptoken},
+	cc := client.New()
+	res, err := cc.Get("https://www.googleapis.com/oauth2/v1/userinfo", client.Config{
+		Header: map[string]string{
+			"Authorization": fmt.Sprintf("Bearer %s", token),
 		},
-	}
-	req, err := http.DefaultClient.Do(res)
-	if err != nil {
-		panic(err)
-	}
-	defer req.Body.Close()
-	body, err := io.ReadAll(req.Body)
+	})
 	if err != nil {
 		panic(err)
 	}
 	var data models.GoogleResponse
-	err = json.Unmarshal(body, &data)
+	err = json.Unmarshal(res.Body(), &data)
 	if err != nil {
 		panic(err)
 	}

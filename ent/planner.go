@@ -18,8 +18,6 @@ type Planner struct {
 	config `json:"-"`
 	// ID of the ent.
 	ID int `json:"id,omitempty"`
-	// Owner holds the value of the "owner" field.
-	Owner string `json:"owner,omitempty"`
 	// Type holds the value of the "type" field.
 	Type string `json:"type,omitempty"`
 	// Name holds the value of the "name" field.
@@ -73,7 +71,7 @@ func (*Planner) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case planner.FieldID:
 			values[i] = new(sql.NullInt64)
-		case planner.FieldOwner, planner.FieldType, planner.FieldName:
+		case planner.FieldType, planner.FieldName:
 			values[i] = new(sql.NullString)
 		case planner.FieldCreatedAt, planner.FieldUpdatedAt:
 			values[i] = new(sql.NullTime)
@@ -100,12 +98,6 @@ func (_m *Planner) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field id", value)
 			}
 			_m.ID = int(value.Int64)
-		case planner.FieldOwner:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field owner", values[i])
-			} else if value.Valid {
-				_m.Owner = value.String
-			}
 		case planner.FieldType:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field type", values[i])
@@ -183,9 +175,6 @@ func (_m *Planner) String() string {
 	var builder strings.Builder
 	builder.WriteString("Planner(")
 	builder.WriteString(fmt.Sprintf("id=%v, ", _m.ID))
-	builder.WriteString("owner=")
-	builder.WriteString(_m.Owner)
-	builder.WriteString(", ")
 	builder.WriteString("type=")
 	builder.WriteString(_m.Type)
 	builder.WriteString(", ")

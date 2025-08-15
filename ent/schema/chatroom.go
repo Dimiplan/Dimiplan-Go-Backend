@@ -17,7 +17,6 @@ type ChatRoom struct {
 // Fields of the ChatRoom.
 func (ChatRoom) Fields() []ent.Field {
 	return []ent.Field{
-		field.String("owner").NotEmpty(),
 		field.String("type"),
 		field.String("name").NotEmpty(),
 		field.Bool("isProcessing").Default(false),

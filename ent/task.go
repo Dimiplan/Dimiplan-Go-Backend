@@ -18,8 +18,6 @@ type Task struct {
 	config `json:"-"`
 	// ID of the ent.
 	ID int `json:"id,omitempty"`
-	// Owner holds the value of the "owner" field.
-	Owner string `json:"owner,omitempty"`
 	// Deadline holds the value of the "deadline" field.
 	Deadline *time.Time `json:"deadline,omitempty"`
 	// Title holds the value of the "title" field.
@@ -64,7 +62,7 @@ func (*Task) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case task.FieldID, task.FieldPriority:
 			values[i] = new(sql.NullInt64)
-		case task.FieldOwner, task.FieldTitle:
+		case task.FieldTitle:
 			values[i] = new(sql.NullString)
 		case task.FieldDeadline, task.FieldCreatedAt, task.FieldUpdatedAt:
 			values[i] = new(sql.NullTime)
@@ -91,12 +89,6 @@ func (_m *Task) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field id", value)
 			}
 			_m.ID = int(value.Int64)
-		case task.FieldOwner:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field owner", values[i])
-			} else if value.Valid {
-				_m.Owner = value.String
-			}
 		case task.FieldDeadline:
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field deadline", values[i])
@@ -176,9 +168,6 @@ func (_m *Task) String() string {
 	var builder strings.Builder
 	builder.WriteString("Task(")
 	builder.WriteString(fmt.Sprintf("id=%v, ", _m.ID))
-	builder.WriteString("owner=")
-	builder.WriteString(_m.Owner)
-	builder.WriteString(", ")
 	if v := _m.Deadline; v != nil {
 		builder.WriteString("deadline=")
 		builder.WriteString(v.Format(time.ANSIC))

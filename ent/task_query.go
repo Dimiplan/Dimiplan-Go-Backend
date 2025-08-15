@@ -299,12 +299,12 @@ func (_q *TaskQuery) WithPlanner(opts ...func(*PlannerQuery)) *TaskQuery {
 // Example:
 //
 //	var v []struct {
-//		Owner string `json:"owner,omitempty"`
+//		Deadline time.Time `json:"deadline,omitempty"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
 //	client.Task.Query().
-//		GroupBy(task.FieldOwner).
+//		GroupBy(task.FieldDeadline).
 //		Aggregate(ent.Count()).
 //		Scan(ctx, &v)
 func (_q *TaskQuery) GroupBy(field string, fields ...string) *TaskGroupBy {
@@ -322,11 +322,11 @@ func (_q *TaskQuery) GroupBy(field string, fields ...string) *TaskGroupBy {
 // Example:
 //
 //	var v []struct {
-//		Owner string `json:"owner,omitempty"`
+//		Deadline time.Time `json:"deadline,omitempty"`
 //	}
 //
 //	client.Task.Query().
-//		Select(task.FieldOwner).
+//		Select(task.FieldDeadline).
 //		Scan(ctx, &v)
 func (_q *TaskQuery) Select(fields ...string) *TaskSelect {
 	_q.ctx.Fields = append(_q.ctx.Fields, fields...)

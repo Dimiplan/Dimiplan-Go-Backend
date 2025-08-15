@@ -55,11 +55,6 @@ func IDLTE(id int) predicate.ChatRoom {
 	return predicate.ChatRoom(sql.FieldLTE(FieldID, id))
 }
 
-// Owner applies equality check predicate on the "owner" field. It's identical to OwnerEQ.
-func Owner(v string) predicate.ChatRoom {
-	return predicate.ChatRoom(sql.FieldEQ(FieldOwner, v))
-}
-
 // Type applies equality check predicate on the "type" field. It's identical to TypeEQ.
 func Type(v string) predicate.ChatRoom {
 	return predicate.ChatRoom(sql.FieldEQ(FieldType, v))
@@ -83,71 +78,6 @@ func CreatedAt(v time.Time) predicate.ChatRoom {
 // UpdatedAt applies equality check predicate on the "updatedAt" field. It's identical to UpdatedAtEQ.
 func UpdatedAt(v time.Time) predicate.ChatRoom {
 	return predicate.ChatRoom(sql.FieldEQ(FieldUpdatedAt, v))
-}
-
-// OwnerEQ applies the EQ predicate on the "owner" field.
-func OwnerEQ(v string) predicate.ChatRoom {
-	return predicate.ChatRoom(sql.FieldEQ(FieldOwner, v))
-}
-
-// OwnerNEQ applies the NEQ predicate on the "owner" field.
-func OwnerNEQ(v string) predicate.ChatRoom {
-	return predicate.ChatRoom(sql.FieldNEQ(FieldOwner, v))
-}
-
-// OwnerIn applies the In predicate on the "owner" field.
-func OwnerIn(vs ...string) predicate.ChatRoom {
-	return predicate.ChatRoom(sql.FieldIn(FieldOwner, vs...))
-}
-
-// OwnerNotIn applies the NotIn predicate on the "owner" field.
-func OwnerNotIn(vs ...string) predicate.ChatRoom {
-	return predicate.ChatRoom(sql.FieldNotIn(FieldOwner, vs...))
-}
-
-// OwnerGT applies the GT predicate on the "owner" field.
-func OwnerGT(v string) predicate.ChatRoom {
-	return predicate.ChatRoom(sql.FieldGT(FieldOwner, v))
-}
-
-// OwnerGTE applies the GTE predicate on the "owner" field.
-func OwnerGTE(v string) predicate.ChatRoom {
-	return predicate.ChatRoom(sql.FieldGTE(FieldOwner, v))
-}
-
-// OwnerLT applies the LT predicate on the "owner" field.
-func OwnerLT(v string) predicate.ChatRoom {
-	return predicate.ChatRoom(sql.FieldLT(FieldOwner, v))
-}
-
-// OwnerLTE applies the LTE predicate on the "owner" field.
-func OwnerLTE(v string) predicate.ChatRoom {
-	return predicate.ChatRoom(sql.FieldLTE(FieldOwner, v))
-}
-
-// OwnerContains applies the Contains predicate on the "owner" field.
-func OwnerContains(v string) predicate.ChatRoom {
-	return predicate.ChatRoom(sql.FieldContains(FieldOwner, v))
-}
-
-// OwnerHasPrefix applies the HasPrefix predicate on the "owner" field.
-func OwnerHasPrefix(v string) predicate.ChatRoom {
-	return predicate.ChatRoom(sql.FieldHasPrefix(FieldOwner, v))
-}
-
-// OwnerHasSuffix applies the HasSuffix predicate on the "owner" field.
-func OwnerHasSuffix(v string) predicate.ChatRoom {
-	return predicate.ChatRoom(sql.FieldHasSuffix(FieldOwner, v))
-}
-
-// OwnerEqualFold applies the EqualFold predicate on the "owner" field.
-func OwnerEqualFold(v string) predicate.ChatRoom {
-	return predicate.ChatRoom(sql.FieldEqualFold(FieldOwner, v))
-}
-
-// OwnerContainsFold applies the ContainsFold predicate on the "owner" field.
-func OwnerContainsFold(v string) predicate.ChatRoom {
-	return predicate.ChatRoom(sql.FieldContainsFold(FieldOwner, v))
 }
 
 // TypeEQ applies the EQ predicate on the "type" field.

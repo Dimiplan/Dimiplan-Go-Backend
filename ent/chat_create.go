@@ -21,12 +21,6 @@ type ChatCreate struct {
 	hooks    []Hook
 }
 
-// SetOwner sets the "owner" field.
-func (_c *ChatCreate) SetOwner(v string) *ChatCreate {
-	_c.mutation.SetOwner(v)
-	return _c
-}
-
 // SetSender sets the "sender" field.
 func (_c *ChatCreate) SetSender(v string) *ChatCreate {
 	_c.mutation.SetSender(v)
@@ -125,14 +119,6 @@ func (_c *ChatCreate) defaults() {
 
 // check runs all checks and user-defined validators on the builder.
 func (_c *ChatCreate) check() error {
-	if _, ok := _c.mutation.Owner(); !ok {
-		return &ValidationError{Name: "owner", err: errors.New(`ent: missing required field "Chat.owner"`)}
-	}
-	if v, ok := _c.mutation.Owner(); ok {
-		if err := chat.OwnerValidator(v); err != nil {
-			return &ValidationError{Name: "owner", err: fmt.Errorf(`ent: validator failed for field "Chat.owner": %w`, err)}
-		}
-	}
 	if _, ok := _c.mutation.Sender(); !ok {
 		return &ValidationError{Name: "sender", err: errors.New(`ent: missing required field "Chat.sender"`)}
 	}
@@ -179,10 +165,6 @@ func (_c *ChatCreate) createSpec() (*Chat, *sqlgraph.CreateSpec) {
 		_node = &Chat{config: _c.config}
 		_spec = sqlgraph.NewCreateSpec(chat.Table, sqlgraph.NewFieldSpec(chat.FieldID, field.TypeInt))
 	)
-	if value, ok := _c.mutation.Owner(); ok {
-		_spec.SetField(chat.FieldOwner, field.TypeString, value)
-		_node.Owner = value
-	}
 	if value, ok := _c.mutation.Sender(); ok {
 		_spec.SetField(chat.FieldSender, field.TypeString, value)
 		_node.Sender = value

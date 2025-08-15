@@ -22,12 +22,6 @@ type ChatRoomCreate struct {
 	hooks    []Hook
 }
 
-// SetOwner sets the "owner" field.
-func (_c *ChatRoomCreate) SetOwner(v string) *ChatRoomCreate {
-	_c.mutation.SetOwner(v)
-	return _c
-}
-
 // SetType sets the "type" field.
 func (_c *ChatRoomCreate) SetType(v string) *ChatRoomCreate {
 	_c.mutation.SetType(v)
@@ -159,14 +153,6 @@ func (_c *ChatRoomCreate) defaults() {
 
 // check runs all checks and user-defined validators on the builder.
 func (_c *ChatRoomCreate) check() error {
-	if _, ok := _c.mutation.Owner(); !ok {
-		return &ValidationError{Name: "owner", err: errors.New(`ent: missing required field "ChatRoom.owner"`)}
-	}
-	if v, ok := _c.mutation.Owner(); ok {
-		if err := chatroom.OwnerValidator(v); err != nil {
-			return &ValidationError{Name: "owner", err: fmt.Errorf(`ent: validator failed for field "ChatRoom.owner": %w`, err)}
-		}
-	}
 	if _, ok := _c.mutation.GetType(); !ok {
 		return &ValidationError{Name: "type", err: errors.New(`ent: missing required field "ChatRoom.type"`)}
 	}
@@ -216,10 +202,6 @@ func (_c *ChatRoomCreate) createSpec() (*ChatRoom, *sqlgraph.CreateSpec) {
 		_node = &ChatRoom{config: _c.config}
 		_spec = sqlgraph.NewCreateSpec(chatroom.Table, sqlgraph.NewFieldSpec(chatroom.FieldID, field.TypeInt))
 	)
-	if value, ok := _c.mutation.Owner(); ok {
-		_spec.SetField(chatroom.FieldOwner, field.TypeString, value)
-		_node.Owner = value
-	}
 	if value, ok := _c.mutation.GetType(); ok {
 		_spec.SetField(chatroom.FieldType, field.TypeString, value)
 		_node.Type = value

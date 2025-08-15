@@ -30,20 +30,6 @@ func (_u *PlannerUpdate) Where(ps ...predicate.Planner) *PlannerUpdate {
 	return _u
 }
 
-// SetOwner sets the "owner" field.
-func (_u *PlannerUpdate) SetOwner(v string) *PlannerUpdate {
-	_u.mutation.SetOwner(v)
-	return _u
-}
-
-// SetNillableOwner sets the "owner" field if the given value is not nil.
-func (_u *PlannerUpdate) SetNillableOwner(v *string) *PlannerUpdate {
-	if v != nil {
-		_u.SetOwner(*v)
-	}
-	return _u
-}
-
 // SetType sets the "type" field.
 func (_u *PlannerUpdate) SetType(v string) *PlannerUpdate {
 	_u.mutation.SetType(v)
@@ -174,11 +160,6 @@ func (_u *PlannerUpdate) defaults() {
 
 // check runs all checks and user-defined validators on the builder.
 func (_u *PlannerUpdate) check() error {
-	if v, ok := _u.mutation.Owner(); ok {
-		if err := planner.OwnerValidator(v); err != nil {
-			return &ValidationError{Name: "owner", err: fmt.Errorf(`ent: validator failed for field "Planner.owner": %w`, err)}
-		}
-	}
 	if v, ok := _u.mutation.Name(); ok {
 		if err := planner.NameValidator(v); err != nil {
 			return &ValidationError{Name: "name", err: fmt.Errorf(`ent: validator failed for field "Planner.name": %w`, err)}
@@ -201,9 +182,6 @@ func (_u *PlannerUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 				ps[i](selector)
 			}
 		}
-	}
-	if value, ok := _u.mutation.Owner(); ok {
-		_spec.SetField(planner.FieldOwner, field.TypeString, value)
 	}
 	if value, ok := _u.mutation.GetType(); ok {
 		_spec.SetField(planner.FieldType, field.TypeString, value)
@@ -306,20 +284,6 @@ type PlannerUpdateOne struct {
 	fields   []string
 	hooks    []Hook
 	mutation *PlannerMutation
-}
-
-// SetOwner sets the "owner" field.
-func (_u *PlannerUpdateOne) SetOwner(v string) *PlannerUpdateOne {
-	_u.mutation.SetOwner(v)
-	return _u
-}
-
-// SetNillableOwner sets the "owner" field if the given value is not nil.
-func (_u *PlannerUpdateOne) SetNillableOwner(v *string) *PlannerUpdateOne {
-	if v != nil {
-		_u.SetOwner(*v)
-	}
-	return _u
 }
 
 // SetType sets the "type" field.
@@ -465,11 +429,6 @@ func (_u *PlannerUpdateOne) defaults() {
 
 // check runs all checks and user-defined validators on the builder.
 func (_u *PlannerUpdateOne) check() error {
-	if v, ok := _u.mutation.Owner(); ok {
-		if err := planner.OwnerValidator(v); err != nil {
-			return &ValidationError{Name: "owner", err: fmt.Errorf(`ent: validator failed for field "Planner.owner": %w`, err)}
-		}
-	}
 	if v, ok := _u.mutation.Name(); ok {
 		if err := planner.NameValidator(v); err != nil {
 			return &ValidationError{Name: "name", err: fmt.Errorf(`ent: validator failed for field "Planner.name": %w`, err)}
@@ -509,9 +468,6 @@ func (_u *PlannerUpdateOne) sqlSave(ctx context.Context) (_node *Planner, err er
 				ps[i](selector)
 			}
 		}
-	}
-	if value, ok := _u.mutation.Owner(); ok {
-		_spec.SetField(planner.FieldOwner, field.TypeString, value)
 	}
 	if value, ok := _u.mutation.GetType(); ok {
 		_spec.SetField(planner.FieldType, field.TypeString, value)

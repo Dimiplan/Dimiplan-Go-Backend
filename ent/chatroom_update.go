@@ -30,20 +30,6 @@ func (_u *ChatRoomUpdate) Where(ps ...predicate.ChatRoom) *ChatRoomUpdate {
 	return _u
 }
 
-// SetOwner sets the "owner" field.
-func (_u *ChatRoomUpdate) SetOwner(v string) *ChatRoomUpdate {
-	_u.mutation.SetOwner(v)
-	return _u
-}
-
-// SetNillableOwner sets the "owner" field if the given value is not nil.
-func (_u *ChatRoomUpdate) SetNillableOwner(v *string) *ChatRoomUpdate {
-	if v != nil {
-		_u.SetOwner(*v)
-	}
-	return _u
-}
-
 // SetType sets the "type" field.
 func (_u *ChatRoomUpdate) SetType(v string) *ChatRoomUpdate {
 	_u.mutation.SetType(v)
@@ -188,11 +174,6 @@ func (_u *ChatRoomUpdate) defaults() {
 
 // check runs all checks and user-defined validators on the builder.
 func (_u *ChatRoomUpdate) check() error {
-	if v, ok := _u.mutation.Owner(); ok {
-		if err := chatroom.OwnerValidator(v); err != nil {
-			return &ValidationError{Name: "owner", err: fmt.Errorf(`ent: validator failed for field "ChatRoom.owner": %w`, err)}
-		}
-	}
 	if v, ok := _u.mutation.Name(); ok {
 		if err := chatroom.NameValidator(v); err != nil {
 			return &ValidationError{Name: "name", err: fmt.Errorf(`ent: validator failed for field "ChatRoom.name": %w`, err)}
@@ -215,9 +196,6 @@ func (_u *ChatRoomUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 				ps[i](selector)
 			}
 		}
-	}
-	if value, ok := _u.mutation.Owner(); ok {
-		_spec.SetField(chatroom.FieldOwner, field.TypeString, value)
 	}
 	if value, ok := _u.mutation.GetType(); ok {
 		_spec.SetField(chatroom.FieldType, field.TypeString, value)
@@ -323,20 +301,6 @@ type ChatRoomUpdateOne struct {
 	fields   []string
 	hooks    []Hook
 	mutation *ChatRoomMutation
-}
-
-// SetOwner sets the "owner" field.
-func (_u *ChatRoomUpdateOne) SetOwner(v string) *ChatRoomUpdateOne {
-	_u.mutation.SetOwner(v)
-	return _u
-}
-
-// SetNillableOwner sets the "owner" field if the given value is not nil.
-func (_u *ChatRoomUpdateOne) SetNillableOwner(v *string) *ChatRoomUpdateOne {
-	if v != nil {
-		_u.SetOwner(*v)
-	}
-	return _u
 }
 
 // SetType sets the "type" field.
@@ -496,11 +460,6 @@ func (_u *ChatRoomUpdateOne) defaults() {
 
 // check runs all checks and user-defined validators on the builder.
 func (_u *ChatRoomUpdateOne) check() error {
-	if v, ok := _u.mutation.Owner(); ok {
-		if err := chatroom.OwnerValidator(v); err != nil {
-			return &ValidationError{Name: "owner", err: fmt.Errorf(`ent: validator failed for field "ChatRoom.owner": %w`, err)}
-		}
-	}
 	if v, ok := _u.mutation.Name(); ok {
 		if err := chatroom.NameValidator(v); err != nil {
 			return &ValidationError{Name: "name", err: fmt.Errorf(`ent: validator failed for field "ChatRoom.name": %w`, err)}
@@ -540,9 +499,6 @@ func (_u *ChatRoomUpdateOne) sqlSave(ctx context.Context) (_node *ChatRoom, err 
 				ps[i](selector)
 			}
 		}
-	}
-	if value, ok := _u.mutation.Owner(); ok {
-		_spec.SetField(chatroom.FieldOwner, field.TypeString, value)
 	}
 	if value, ok := _u.mutation.GetType(); ok {
 		_spec.SetField(chatroom.FieldType, field.TypeString, value)

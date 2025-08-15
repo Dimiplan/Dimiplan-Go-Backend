@@ -16,7 +16,6 @@ type Chat struct {
 // Fields of the Chat.
 func (Chat) Fields() []ent.Field {
 	return []ent.Field{
-		field.String("owner").NotEmpty(),
 		field.String("sender").NotEmpty(),
 		field.Text("message"),
 		field.Time("createdAt").

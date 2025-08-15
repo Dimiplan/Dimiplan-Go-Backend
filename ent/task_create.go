@@ -21,12 +21,6 @@ type TaskCreate struct {
 	hooks    []Hook
 }
 
-// SetOwner sets the "owner" field.
-func (_c *TaskCreate) SetOwner(v string) *TaskCreate {
-	_c.mutation.SetOwner(v)
-	return _c
-}
-
 // SetDeadline sets the "deadline" field.
 func (_c *TaskCreate) SetDeadline(v time.Time) *TaskCreate {
 	_c.mutation.SetDeadline(v)
@@ -143,14 +137,6 @@ func (_c *TaskCreate) defaults() {
 
 // check runs all checks and user-defined validators on the builder.
 func (_c *TaskCreate) check() error {
-	if _, ok := _c.mutation.Owner(); !ok {
-		return &ValidationError{Name: "owner", err: errors.New(`ent: missing required field "Task.owner"`)}
-	}
-	if v, ok := _c.mutation.Owner(); ok {
-		if err := task.OwnerValidator(v); err != nil {
-			return &ValidationError{Name: "owner", err: fmt.Errorf(`ent: validator failed for field "Task.owner": %w`, err)}
-		}
-	}
 	if _, ok := _c.mutation.Deadline(); !ok {
 		return &ValidationError{Name: "deadline", err: errors.New(`ent: missing required field "Task.deadline"`)}
 	}
@@ -200,10 +186,6 @@ func (_c *TaskCreate) createSpec() (*Task, *sqlgraph.CreateSpec) {
 		_node = &Task{config: _c.config}
 		_spec = sqlgraph.NewCreateSpec(task.Table, sqlgraph.NewFieldSpec(task.FieldID, field.TypeInt))
 	)
-	if value, ok := _c.mutation.Owner(); ok {
-		_spec.SetField(task.FieldOwner, field.TypeString, value)
-		_node.Owner = value
-	}
 	if value, ok := _c.mutation.Deadline(); ok {
 		_spec.SetField(task.FieldDeadline, field.TypeTime, value)
 		_node.Deadline = &value

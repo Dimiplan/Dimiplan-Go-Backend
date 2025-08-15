@@ -336,12 +336,12 @@ func (_q *PlannerQuery) WithTasks(opts ...func(*TaskQuery)) *PlannerQuery {
 // Example:
 //
 //	var v []struct {
-//		Owner string `json:"owner,omitempty"`
+//		Type string `json:"type,omitempty"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
 //	client.Planner.Query().
-//		GroupBy(planner.FieldOwner).
+//		GroupBy(planner.FieldType).
 //		Aggregate(ent.Count()).
 //		Scan(ctx, &v)
 func (_q *PlannerQuery) GroupBy(field string, fields ...string) *PlannerGroupBy {
@@ -359,11 +359,11 @@ func (_q *PlannerQuery) GroupBy(field string, fields ...string) *PlannerGroupBy 
 // Example:
 //
 //	var v []struct {
-//		Owner string `json:"owner,omitempty"`
+//		Type string `json:"type,omitempty"`
 //	}
 //
 //	client.Planner.Query().
-//		Select(planner.FieldOwner).
+//		Select(planner.FieldType).
 //		Scan(ctx, &v)
 func (_q *PlannerQuery) Select(fields ...string) *PlannerSelect {
 	_q.ctx.Fields = append(_q.ctx.Fields, fields...)

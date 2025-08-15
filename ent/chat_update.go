@@ -29,20 +29,6 @@ func (_u *ChatUpdate) Where(ps ...predicate.Chat) *ChatUpdate {
 	return _u
 }
 
-// SetOwner sets the "owner" field.
-func (_u *ChatUpdate) SetOwner(v string) *ChatUpdate {
-	_u.mutation.SetOwner(v)
-	return _u
-}
-
-// SetNillableOwner sets the "owner" field if the given value is not nil.
-func (_u *ChatUpdate) SetNillableOwner(v *string) *ChatUpdate {
-	if v != nil {
-		_u.SetOwner(*v)
-	}
-	return _u
-}
-
 // SetSender sets the "sender" field.
 func (_u *ChatUpdate) SetSender(v string) *ChatUpdate {
 	_u.mutation.SetSender(v)
@@ -137,11 +123,6 @@ func (_u *ChatUpdate) defaults() {
 
 // check runs all checks and user-defined validators on the builder.
 func (_u *ChatUpdate) check() error {
-	if v, ok := _u.mutation.Owner(); ok {
-		if err := chat.OwnerValidator(v); err != nil {
-			return &ValidationError{Name: "owner", err: fmt.Errorf(`ent: validator failed for field "Chat.owner": %w`, err)}
-		}
-	}
 	if v, ok := _u.mutation.Sender(); ok {
 		if err := chat.SenderValidator(v); err != nil {
 			return &ValidationError{Name: "sender", err: fmt.Errorf(`ent: validator failed for field "Chat.sender": %w`, err)}
@@ -164,9 +145,6 @@ func (_u *ChatUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 				ps[i](selector)
 			}
 		}
-	}
-	if value, ok := _u.mutation.Owner(); ok {
-		_spec.SetField(chat.FieldOwner, field.TypeString, value)
 	}
 	if value, ok := _u.mutation.Sender(); ok {
 		_spec.SetField(chat.FieldSender, field.TypeString, value)
@@ -224,20 +202,6 @@ type ChatUpdateOne struct {
 	fields   []string
 	hooks    []Hook
 	mutation *ChatMutation
-}
-
-// SetOwner sets the "owner" field.
-func (_u *ChatUpdateOne) SetOwner(v string) *ChatUpdateOne {
-	_u.mutation.SetOwner(v)
-	return _u
-}
-
-// SetNillableOwner sets the "owner" field if the given value is not nil.
-func (_u *ChatUpdateOne) SetNillableOwner(v *string) *ChatUpdateOne {
-	if v != nil {
-		_u.SetOwner(*v)
-	}
-	return _u
 }
 
 // SetSender sets the "sender" field.
@@ -347,11 +311,6 @@ func (_u *ChatUpdateOne) defaults() {
 
 // check runs all checks and user-defined validators on the builder.
 func (_u *ChatUpdateOne) check() error {
-	if v, ok := _u.mutation.Owner(); ok {
-		if err := chat.OwnerValidator(v); err != nil {
-			return &ValidationError{Name: "owner", err: fmt.Errorf(`ent: validator failed for field "Chat.owner": %w`, err)}
-		}
-	}
 	if v, ok := _u.mutation.Sender(); ok {
 		if err := chat.SenderValidator(v); err != nil {
 			return &ValidationError{Name: "sender", err: fmt.Errorf(`ent: validator failed for field "Chat.sender": %w`, err)}
@@ -391,9 +350,6 @@ func (_u *ChatUpdateOne) sqlSave(ctx context.Context) (_node *Chat, err error) {
 				ps[i](selector)
 			}
 		}
-	}
-	if value, ok := _u.mutation.Owner(); ok {
-		_spec.SetField(chat.FieldOwner, field.TypeString, value)
 	}
 	if value, ok := _u.mutation.Sender(); ok {
 		_spec.SetField(chat.FieldSender, field.TypeString, value)

@@ -18,8 +18,6 @@ type ChatRoom struct {
 	config `json:"-"`
 	// ID of the ent.
 	ID int `json:"id,omitempty"`
-	// Owner holds the value of the "owner" field.
-	Owner string `json:"owner,omitempty"`
 	// Type holds the value of the "type" field.
 	Type string `json:"type,omitempty"`
 	// Name holds the value of the "name" field.
@@ -77,7 +75,7 @@ func (*ChatRoom) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullBool)
 		case chatroom.FieldID:
 			values[i] = new(sql.NullInt64)
-		case chatroom.FieldOwner, chatroom.FieldType, chatroom.FieldName:
+		case chatroom.FieldType, chatroom.FieldName:
 			values[i] = new(sql.NullString)
 		case chatroom.FieldCreatedAt, chatroom.FieldUpdatedAt:
 			values[i] = new(sql.NullTime)
@@ -104,12 +102,6 @@ func (_m *ChatRoom) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field id", value)
 			}
 			_m.ID = int(value.Int64)
-		case chatroom.FieldOwner:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field owner", values[i])
-			} else if value.Valid {
-				_m.Owner = value.String
-			}
 		case chatroom.FieldType:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field type", values[i])
@@ -193,9 +185,6 @@ func (_m *ChatRoom) String() string {
 	var builder strings.Builder
 	builder.WriteString("ChatRoom(")
 	builder.WriteString(fmt.Sprintf("id=%v, ", _m.ID))
-	builder.WriteString("owner=")
-	builder.WriteString(_m.Owner)
-	builder.WriteString(", ")
 	builder.WriteString("type=")
 	builder.WriteString(_m.Type)
 	builder.WriteString(", ")

@@ -55,11 +55,6 @@ func IDLTE(id int) predicate.Chat {
 	return predicate.Chat(sql.FieldLTE(FieldID, id))
 }
 
-// Owner applies equality check predicate on the "owner" field. It's identical to OwnerEQ.
-func Owner(v string) predicate.Chat {
-	return predicate.Chat(sql.FieldEQ(FieldOwner, v))
-}
-
 // Sender applies equality check predicate on the "sender" field. It's identical to SenderEQ.
 func Sender(v string) predicate.Chat {
 	return predicate.Chat(sql.FieldEQ(FieldSender, v))
@@ -78,71 +73,6 @@ func CreatedAt(v time.Time) predicate.Chat {
 // UpdatedAt applies equality check predicate on the "updatedAt" field. It's identical to UpdatedAtEQ.
 func UpdatedAt(v time.Time) predicate.Chat {
 	return predicate.Chat(sql.FieldEQ(FieldUpdatedAt, v))
-}
-
-// OwnerEQ applies the EQ predicate on the "owner" field.
-func OwnerEQ(v string) predicate.Chat {
-	return predicate.Chat(sql.FieldEQ(FieldOwner, v))
-}
-
-// OwnerNEQ applies the NEQ predicate on the "owner" field.
-func OwnerNEQ(v string) predicate.Chat {
-	return predicate.Chat(sql.FieldNEQ(FieldOwner, v))
-}
-
-// OwnerIn applies the In predicate on the "owner" field.
-func OwnerIn(vs ...string) predicate.Chat {
-	return predicate.Chat(sql.FieldIn(FieldOwner, vs...))
-}
-
-// OwnerNotIn applies the NotIn predicate on the "owner" field.
-func OwnerNotIn(vs ...string) predicate.Chat {
-	return predicate.Chat(sql.FieldNotIn(FieldOwner, vs...))
-}
-
-// OwnerGT applies the GT predicate on the "owner" field.
-func OwnerGT(v string) predicate.Chat {
-	return predicate.Chat(sql.FieldGT(FieldOwner, v))
-}
-
-// OwnerGTE applies the GTE predicate on the "owner" field.
-func OwnerGTE(v string) predicate.Chat {
-	return predicate.Chat(sql.FieldGTE(FieldOwner, v))
-}
-
-// OwnerLT applies the LT predicate on the "owner" field.
-func OwnerLT(v string) predicate.Chat {
-	return predicate.Chat(sql.FieldLT(FieldOwner, v))
-}
-
-// OwnerLTE applies the LTE predicate on the "owner" field.
-func OwnerLTE(v string) predicate.Chat {
-	return predicate.Chat(sql.FieldLTE(FieldOwner, v))
-}
-
-// OwnerContains applies the Contains predicate on the "owner" field.
-func OwnerContains(v string) predicate.Chat {
-	return predicate.Chat(sql.FieldContains(FieldOwner, v))
-}
-
-// OwnerHasPrefix applies the HasPrefix predicate on the "owner" field.
-func OwnerHasPrefix(v string) predicate.Chat {
-	return predicate.Chat(sql.FieldHasPrefix(FieldOwner, v))
-}
-
-// OwnerHasSuffix applies the HasSuffix predicate on the "owner" field.
-func OwnerHasSuffix(v string) predicate.Chat {
-	return predicate.Chat(sql.FieldHasSuffix(FieldOwner, v))
-}
-
-// OwnerEqualFold applies the EqualFold predicate on the "owner" field.
-func OwnerEqualFold(v string) predicate.Chat {
-	return predicate.Chat(sql.FieldEqualFold(FieldOwner, v))
-}
-
-// OwnerContainsFold applies the ContainsFold predicate on the "owner" field.
-func OwnerContainsFold(v string) predicate.Chat {
-	return predicate.Chat(sql.FieldContainsFold(FieldOwner, v))
 }
 
 // SenderEQ applies the EQ predicate on the "sender" field.

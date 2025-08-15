@@ -29,20 +29,6 @@ func (_u *TaskUpdate) Where(ps ...predicate.Task) *TaskUpdate {
 	return _u
 }
 
-// SetOwner sets the "owner" field.
-func (_u *TaskUpdate) SetOwner(v string) *TaskUpdate {
-	_u.mutation.SetOwner(v)
-	return _u
-}
-
-// SetNillableOwner sets the "owner" field if the given value is not nil.
-func (_u *TaskUpdate) SetNillableOwner(v *string) *TaskUpdate {
-	if v != nil {
-		_u.SetOwner(*v)
-	}
-	return _u
-}
-
 // SetDeadline sets the "deadline" field.
 func (_u *TaskUpdate) SetDeadline(v time.Time) *TaskUpdate {
 	_u.mutation.SetDeadline(v)
@@ -158,11 +144,6 @@ func (_u *TaskUpdate) defaults() {
 
 // check runs all checks and user-defined validators on the builder.
 func (_u *TaskUpdate) check() error {
-	if v, ok := _u.mutation.Owner(); ok {
-		if err := task.OwnerValidator(v); err != nil {
-			return &ValidationError{Name: "owner", err: fmt.Errorf(`ent: validator failed for field "Task.owner": %w`, err)}
-		}
-	}
 	if v, ok := _u.mutation.Title(); ok {
 		if err := task.TitleValidator(v); err != nil {
 			return &ValidationError{Name: "title", err: fmt.Errorf(`ent: validator failed for field "Task.title": %w`, err)}
@@ -185,9 +166,6 @@ func (_u *TaskUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 				ps[i](selector)
 			}
 		}
-	}
-	if value, ok := _u.mutation.Owner(); ok {
-		_spec.SetField(task.FieldOwner, field.TypeString, value)
 	}
 	if value, ok := _u.mutation.Deadline(); ok {
 		_spec.SetField(task.FieldDeadline, field.TypeTime, value)
@@ -251,20 +229,6 @@ type TaskUpdateOne struct {
 	fields   []string
 	hooks    []Hook
 	mutation *TaskMutation
-}
-
-// SetOwner sets the "owner" field.
-func (_u *TaskUpdateOne) SetOwner(v string) *TaskUpdateOne {
-	_u.mutation.SetOwner(v)
-	return _u
-}
-
-// SetNillableOwner sets the "owner" field if the given value is not nil.
-func (_u *TaskUpdateOne) SetNillableOwner(v *string) *TaskUpdateOne {
-	if v != nil {
-		_u.SetOwner(*v)
-	}
-	return _u
 }
 
 // SetDeadline sets the "deadline" field.
@@ -395,11 +359,6 @@ func (_u *TaskUpdateOne) defaults() {
 
 // check runs all checks and user-defined validators on the builder.
 func (_u *TaskUpdateOne) check() error {
-	if v, ok := _u.mutation.Owner(); ok {
-		if err := task.OwnerValidator(v); err != nil {
-			return &ValidationError{Name: "owner", err: fmt.Errorf(`ent: validator failed for field "Task.owner": %w`, err)}
-		}
-	}
 	if v, ok := _u.mutation.Title(); ok {
 		if err := task.TitleValidator(v); err != nil {
 			return &ValidationError{Name: "title", err: fmt.Errorf(`ent: validator failed for field "Task.title": %w`, err)}
@@ -439,9 +398,6 @@ func (_u *TaskUpdateOne) sqlSave(ctx context.Context) (_node *Task, err error) {
 				ps[i](selector)
 			}
 		}
-	}
-	if value, ok := _u.mutation.Owner(); ok {
-		_spec.SetField(task.FieldOwner, field.TypeString, value)
 	}
 	if value, ok := _u.mutation.Deadline(); ok {
 		_spec.SetField(task.FieldDeadline, field.TypeTime, value)

@@ -11,7 +11,6 @@ var (
 	// ChatsColumns holds the columns for the "chats" table.
 	ChatsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
-		{Name: "owner", Type: field.TypeString},
 		{Name: "sender", Type: field.TypeString},
 		{Name: "message", Type: field.TypeString, Size: 2147483647},
 		{Name: "created_at", Type: field.TypeTime},
@@ -26,7 +25,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "chats_chat_rooms_chats",
-				Columns:    []*schema.Column{ChatsColumns[6]},
+				Columns:    []*schema.Column{ChatsColumns[5]},
 				RefColumns: []*schema.Column{ChatRoomsColumns[0]},
 				OnDelete:   schema.Cascade,
 			},
@@ -35,7 +34,6 @@ var (
 	// ChatRoomsColumns holds the columns for the "chat_rooms" table.
 	ChatRoomsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
-		{Name: "owner", Type: field.TypeString},
 		{Name: "type", Type: field.TypeString},
 		{Name: "name", Type: field.TypeString},
 		{Name: "is_processing", Type: field.TypeBool, Default: false},
@@ -51,7 +49,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "chat_rooms_users_chatrooms",
-				Columns:    []*schema.Column{ChatRoomsColumns[7]},
+				Columns:    []*schema.Column{ChatRoomsColumns[6]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.Cascade,
 			},
@@ -60,7 +58,6 @@ var (
 	// PlannersColumns holds the columns for the "planners" table.
 	PlannersColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
-		{Name: "owner", Type: field.TypeString},
 		{Name: "type", Type: field.TypeString},
 		{Name: "name", Type: field.TypeString},
 		{Name: "created_at", Type: field.TypeTime},
@@ -75,7 +72,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "planners_users_planners",
-				Columns:    []*schema.Column{PlannersColumns[6]},
+				Columns:    []*schema.Column{PlannersColumns[5]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.Cascade,
 			},
@@ -84,7 +81,6 @@ var (
 	// TasksColumns holds the columns for the "tasks" table.
 	TasksColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
-		{Name: "owner", Type: field.TypeString},
 		{Name: "deadline", Type: field.TypeTime},
 		{Name: "title", Type: field.TypeString},
 		{Name: "priority", Type: field.TypeInt, Default: 1},
@@ -100,7 +96,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "tasks_planners_tasks",
-				Columns:    []*schema.Column{TasksColumns[7]},
+				Columns:    []*schema.Column{TasksColumns[6]},
 				RefColumns: []*schema.Column{PlannersColumns[0]},
 				OnDelete:   schema.Cascade,
 			},

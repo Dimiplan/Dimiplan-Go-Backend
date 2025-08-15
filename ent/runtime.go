@@ -18,88 +18,72 @@ import (
 func init() {
 	chatFields := schema.Chat{}.Fields()
 	_ = chatFields
-	// chatDescOwner is the schema descriptor for owner field.
-	chatDescOwner := chatFields[0].Descriptor()
-	// chat.OwnerValidator is a validator for the "owner" field. It is called by the builders before save.
-	chat.OwnerValidator = chatDescOwner.Validators[0].(func(string) error)
 	// chatDescSender is the schema descriptor for sender field.
-	chatDescSender := chatFields[1].Descriptor()
+	chatDescSender := chatFields[0].Descriptor()
 	// chat.SenderValidator is a validator for the "sender" field. It is called by the builders before save.
 	chat.SenderValidator = chatDescSender.Validators[0].(func(string) error)
 	// chatDescCreatedAt is the schema descriptor for createdAt field.
-	chatDescCreatedAt := chatFields[3].Descriptor()
+	chatDescCreatedAt := chatFields[2].Descriptor()
 	// chat.DefaultCreatedAt holds the default value on creation for the createdAt field.
 	chat.DefaultCreatedAt = chatDescCreatedAt.Default.(func() time.Time)
 	// chatDescUpdatedAt is the schema descriptor for updatedAt field.
-	chatDescUpdatedAt := chatFields[4].Descriptor()
+	chatDescUpdatedAt := chatFields[3].Descriptor()
 	// chat.DefaultUpdatedAt holds the default value on creation for the updatedAt field.
 	chat.DefaultUpdatedAt = chatDescUpdatedAt.Default.(func() time.Time)
 	// chat.UpdateDefaultUpdatedAt holds the default value on update for the updatedAt field.
 	chat.UpdateDefaultUpdatedAt = chatDescUpdatedAt.UpdateDefault.(func() time.Time)
 	chatroomFields := schema.ChatRoom{}.Fields()
 	_ = chatroomFields
-	// chatroomDescOwner is the schema descriptor for owner field.
-	chatroomDescOwner := chatroomFields[0].Descriptor()
-	// chatroom.OwnerValidator is a validator for the "owner" field. It is called by the builders before save.
-	chatroom.OwnerValidator = chatroomDescOwner.Validators[0].(func(string) error)
 	// chatroomDescName is the schema descriptor for name field.
-	chatroomDescName := chatroomFields[2].Descriptor()
+	chatroomDescName := chatroomFields[1].Descriptor()
 	// chatroom.NameValidator is a validator for the "name" field. It is called by the builders before save.
 	chatroom.NameValidator = chatroomDescName.Validators[0].(func(string) error)
 	// chatroomDescIsProcessing is the schema descriptor for isProcessing field.
-	chatroomDescIsProcessing := chatroomFields[3].Descriptor()
+	chatroomDescIsProcessing := chatroomFields[2].Descriptor()
 	// chatroom.DefaultIsProcessing holds the default value on creation for the isProcessing field.
 	chatroom.DefaultIsProcessing = chatroomDescIsProcessing.Default.(bool)
 	// chatroomDescCreatedAt is the schema descriptor for createdAt field.
-	chatroomDescCreatedAt := chatroomFields[4].Descriptor()
+	chatroomDescCreatedAt := chatroomFields[3].Descriptor()
 	// chatroom.DefaultCreatedAt holds the default value on creation for the createdAt field.
 	chatroom.DefaultCreatedAt = chatroomDescCreatedAt.Default.(func() time.Time)
 	// chatroomDescUpdatedAt is the schema descriptor for updatedAt field.
-	chatroomDescUpdatedAt := chatroomFields[5].Descriptor()
+	chatroomDescUpdatedAt := chatroomFields[4].Descriptor()
 	// chatroom.DefaultUpdatedAt holds the default value on creation for the updatedAt field.
 	chatroom.DefaultUpdatedAt = chatroomDescUpdatedAt.Default.(func() time.Time)
 	// chatroom.UpdateDefaultUpdatedAt holds the default value on update for the updatedAt field.
 	chatroom.UpdateDefaultUpdatedAt = chatroomDescUpdatedAt.UpdateDefault.(func() time.Time)
 	plannerFields := schema.Planner{}.Fields()
 	_ = plannerFields
-	// plannerDescOwner is the schema descriptor for owner field.
-	plannerDescOwner := plannerFields[0].Descriptor()
-	// planner.OwnerValidator is a validator for the "owner" field. It is called by the builders before save.
-	planner.OwnerValidator = plannerDescOwner.Validators[0].(func(string) error)
 	// plannerDescName is the schema descriptor for name field.
-	plannerDescName := plannerFields[2].Descriptor()
+	plannerDescName := plannerFields[1].Descriptor()
 	// planner.NameValidator is a validator for the "name" field. It is called by the builders before save.
 	planner.NameValidator = plannerDescName.Validators[0].(func(string) error)
 	// plannerDescCreatedAt is the schema descriptor for createdAt field.
-	plannerDescCreatedAt := plannerFields[3].Descriptor()
+	plannerDescCreatedAt := plannerFields[2].Descriptor()
 	// planner.DefaultCreatedAt holds the default value on creation for the createdAt field.
 	planner.DefaultCreatedAt = plannerDescCreatedAt.Default.(func() time.Time)
 	// plannerDescUpdatedAt is the schema descriptor for updatedAt field.
-	plannerDescUpdatedAt := plannerFields[4].Descriptor()
+	plannerDescUpdatedAt := plannerFields[3].Descriptor()
 	// planner.DefaultUpdatedAt holds the default value on creation for the updatedAt field.
 	planner.DefaultUpdatedAt = plannerDescUpdatedAt.Default.(func() time.Time)
 	// planner.UpdateDefaultUpdatedAt holds the default value on update for the updatedAt field.
 	planner.UpdateDefaultUpdatedAt = plannerDescUpdatedAt.UpdateDefault.(func() time.Time)
 	taskFields := schema.Task{}.Fields()
 	_ = taskFields
-	// taskDescOwner is the schema descriptor for owner field.
-	taskDescOwner := taskFields[0].Descriptor()
-	// task.OwnerValidator is a validator for the "owner" field. It is called by the builders before save.
-	task.OwnerValidator = taskDescOwner.Validators[0].(func(string) error)
 	// taskDescTitle is the schema descriptor for title field.
-	taskDescTitle := taskFields[2].Descriptor()
+	taskDescTitle := taskFields[1].Descriptor()
 	// task.TitleValidator is a validator for the "title" field. It is called by the builders before save.
 	task.TitleValidator = taskDescTitle.Validators[0].(func(string) error)
 	// taskDescPriority is the schema descriptor for priority field.
-	taskDescPriority := taskFields[3].Descriptor()
+	taskDescPriority := taskFields[2].Descriptor()
 	// task.DefaultPriority holds the default value on creation for the priority field.
 	task.DefaultPriority = taskDescPriority.Default.(int)
 	// taskDescCreatedAt is the schema descriptor for createdAt field.
-	taskDescCreatedAt := taskFields[4].Descriptor()
+	taskDescCreatedAt := taskFields[3].Descriptor()
 	// task.DefaultCreatedAt holds the default value on creation for the createdAt field.
 	task.DefaultCreatedAt = taskDescCreatedAt.Default.(func() time.Time)
 	// taskDescUpdatedAt is the schema descriptor for updatedAt field.
-	taskDescUpdatedAt := taskFields[5].Descriptor()
+	taskDescUpdatedAt := taskFields[4].Descriptor()
 	// task.DefaultUpdatedAt holds the default value on creation for the updatedAt field.
 	task.DefaultUpdatedAt = taskDescUpdatedAt.Default.(func() time.Time)
 	// task.UpdateDefaultUpdatedAt holds the default value on update for the updatedAt field.

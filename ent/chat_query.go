@@ -299,12 +299,12 @@ func (_q *ChatQuery) WithChatroom(opts ...func(*ChatRoomQuery)) *ChatQuery {
 // Example:
 //
 //	var v []struct {
-//		Owner string `json:"owner,omitempty"`
+//		Sender string `json:"sender,omitempty"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
 //	client.Chat.Query().
-//		GroupBy(chat.FieldOwner).
+//		GroupBy(chat.FieldSender).
 //		Aggregate(ent.Count()).
 //		Scan(ctx, &v)
 func (_q *ChatQuery) GroupBy(field string, fields ...string) *ChatGroupBy {
@@ -322,11 +322,11 @@ func (_q *ChatQuery) GroupBy(field string, fields ...string) *ChatGroupBy {
 // Example:
 //
 //	var v []struct {
-//		Owner string `json:"owner,omitempty"`
+//		Sender string `json:"sender,omitempty"`
 //	}
 //
 //	client.Chat.Query().
-//		Select(chat.FieldOwner).
+//		Select(chat.FieldSender).
 //		Scan(ctx, &v)
 func (_q *ChatQuery) Select(fields ...string) *ChatSelect {
 	_q.ctx.Fields = append(_q.ctx.Fields, fields...)

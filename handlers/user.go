@@ -5,7 +5,7 @@ import (
 	"dimiplan-backend/ent/user"
 
 	"github.com/gofiber/fiber/v3"
-	"github.com/gofiber/fiber/v3/middleware/session"
+	// "github.com/gofiber/fiber/v3/middleware/session"
 )
 
 type UserHandler struct {
@@ -19,7 +19,7 @@ func NewUserHandler(db *ent.Client) *UserHandler {
 }
 
 func (h *UserHandler) GetProfile(c fiber.Ctx) error {
-	userID := session.FromContext(c).Get("id").(string)
+	userID := c.Locals("id").(string)
 
 	user, err := h.db.User.Query().Where(user.ID(userID)).Only(c)
 	if err != nil {

@@ -14,8 +14,6 @@ const (
 	Label = "task"
 	// FieldID holds the string denoting the id field in the database.
 	FieldID = "id"
-	// FieldOwner holds the string denoting the owner field in the database.
-	FieldOwner = "owner"
 	// FieldDeadline holds the string denoting the deadline field in the database.
 	FieldDeadline = "deadline"
 	// FieldTitle holds the string denoting the title field in the database.
@@ -42,7 +40,6 @@ const (
 // Columns holds all SQL columns for task fields.
 var Columns = []string{
 	FieldID,
-	FieldOwner,
 	FieldDeadline,
 	FieldTitle,
 	FieldPriority,
@@ -72,8 +69,6 @@ func ValidColumn(column string) bool {
 }
 
 var (
-	// OwnerValidator is a validator for the "owner" field. It is called by the builders before save.
-	OwnerValidator func(string) error
 	// TitleValidator is a validator for the "title" field. It is called by the builders before save.
 	TitleValidator func(string) error
 	// DefaultPriority holds the default value on creation for the "priority" field.
@@ -92,11 +87,6 @@ type OrderOption func(*sql.Selector)
 // ByID orders the results by the id field.
 func ByID(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldID, opts...).ToFunc()
-}
-
-// ByOwner orders the results by the owner field.
-func ByOwner(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldOwner, opts...).ToFunc()
 }
 
 // ByDeadline orders the results by the deadline field.

@@ -41,7 +41,6 @@ type ChatMutation struct {
 	op              Op
 	typ             string
 	id              *int
-	owner           *string
 	sender          *string
 	message         *string
 	createdAt       *time.Time
@@ -150,42 +149,6 @@ func (m *ChatMutation) IDs(ctx context.Context) ([]int, error) {
 	default:
 		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
 	}
-}
-
-// SetOwner sets the "owner" field.
-func (m *ChatMutation) SetOwner(s string) {
-	m.owner = &s
-}
-
-// Owner returns the value of the "owner" field in the mutation.
-func (m *ChatMutation) Owner() (r string, exists bool) {
-	v := m.owner
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldOwner returns the old "owner" field's value of the Chat entity.
-// If the Chat object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *ChatMutation) OldOwner(ctx context.Context) (v string, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldOwner is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldOwner requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldOwner: %w", err)
-	}
-	return oldValue.Owner, nil
-}
-
-// ResetOwner resets all changes to the "owner" field.
-func (m *ChatMutation) ResetOwner() {
-	m.owner = nil
 }
 
 // SetSender sets the "sender" field.
@@ -405,10 +368,7 @@ func (m *ChatMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *ChatMutation) Fields() []string {
-	fields := make([]string, 0, 5)
-	if m.owner != nil {
-		fields = append(fields, chat.FieldOwner)
-	}
+	fields := make([]string, 0, 4)
 	if m.sender != nil {
 		fields = append(fields, chat.FieldSender)
 	}
@@ -429,8 +389,6 @@ func (m *ChatMutation) Fields() []string {
 // schema.
 func (m *ChatMutation) Field(name string) (ent.Value, bool) {
 	switch name {
-	case chat.FieldOwner:
-		return m.Owner()
 	case chat.FieldSender:
 		return m.Sender()
 	case chat.FieldMessage:
@@ -448,8 +406,6 @@ func (m *ChatMutation) Field(name string) (ent.Value, bool) {
 // database failed.
 func (m *ChatMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
 	switch name {
-	case chat.FieldOwner:
-		return m.OldOwner(ctx)
 	case chat.FieldSender:
 		return m.OldSender(ctx)
 	case chat.FieldMessage:
@@ -467,13 +423,6 @@ func (m *ChatMutation) OldField(ctx context.Context, name string) (ent.Value, er
 // type.
 func (m *ChatMutation) SetField(name string, value ent.Value) error {
 	switch name {
-	case chat.FieldOwner:
-		v, ok := value.(string)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetOwner(v)
-		return nil
 	case chat.FieldSender:
 		v, ok := value.(string)
 		if !ok {
@@ -551,9 +500,6 @@ func (m *ChatMutation) ClearField(name string) error {
 // It returns an error if the field is not defined in the schema.
 func (m *ChatMutation) ResetField(name string) error {
 	switch name {
-	case chat.FieldOwner:
-		m.ResetOwner()
-		return nil
 	case chat.FieldSender:
 		m.ResetSender()
 		return nil
@@ -650,7 +596,6 @@ type ChatRoomMutation struct {
 	op            Op
 	typ           string
 	id            *int
-	owner         *string
 	_type         *string
 	name          *string
 	isProcessing  *bool
@@ -763,42 +708,6 @@ func (m *ChatRoomMutation) IDs(ctx context.Context) ([]int, error) {
 	default:
 		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
 	}
-}
-
-// SetOwner sets the "owner" field.
-func (m *ChatRoomMutation) SetOwner(s string) {
-	m.owner = &s
-}
-
-// Owner returns the value of the "owner" field in the mutation.
-func (m *ChatRoomMutation) Owner() (r string, exists bool) {
-	v := m.owner
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldOwner returns the old "owner" field's value of the ChatRoom entity.
-// If the ChatRoom object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *ChatRoomMutation) OldOwner(ctx context.Context) (v string, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldOwner is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldOwner requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldOwner: %w", err)
-	}
-	return oldValue.Owner, nil
-}
-
-// ResetOwner resets all changes to the "owner" field.
-func (m *ChatRoomMutation) ResetOwner() {
-	m.owner = nil
 }
 
 // SetType sets the "type" field.
@@ -1108,10 +1017,7 @@ func (m *ChatRoomMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *ChatRoomMutation) Fields() []string {
-	fields := make([]string, 0, 6)
-	if m.owner != nil {
-		fields = append(fields, chatroom.FieldOwner)
-	}
+	fields := make([]string, 0, 5)
 	if m._type != nil {
 		fields = append(fields, chatroom.FieldType)
 	}
@@ -1135,8 +1041,6 @@ func (m *ChatRoomMutation) Fields() []string {
 // schema.
 func (m *ChatRoomMutation) Field(name string) (ent.Value, bool) {
 	switch name {
-	case chatroom.FieldOwner:
-		return m.Owner()
 	case chatroom.FieldType:
 		return m.GetType()
 	case chatroom.FieldName:
@@ -1156,8 +1060,6 @@ func (m *ChatRoomMutation) Field(name string) (ent.Value, bool) {
 // database failed.
 func (m *ChatRoomMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
 	switch name {
-	case chatroom.FieldOwner:
-		return m.OldOwner(ctx)
 	case chatroom.FieldType:
 		return m.OldType(ctx)
 	case chatroom.FieldName:
@@ -1177,13 +1079,6 @@ func (m *ChatRoomMutation) OldField(ctx context.Context, name string) (ent.Value
 // type.
 func (m *ChatRoomMutation) SetField(name string, value ent.Value) error {
 	switch name {
-	case chatroom.FieldOwner:
-		v, ok := value.(string)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetOwner(v)
-		return nil
 	case chatroom.FieldType:
 		v, ok := value.(string)
 		if !ok {
@@ -1268,9 +1163,6 @@ func (m *ChatRoomMutation) ClearField(name string) error {
 // It returns an error if the field is not defined in the schema.
 func (m *ChatRoomMutation) ResetField(name string) error {
 	switch name {
-	case chatroom.FieldOwner:
-		m.ResetOwner()
-		return nil
 	case chatroom.FieldType:
 		m.ResetType()
 		return nil
@@ -1398,7 +1290,6 @@ type PlannerMutation struct {
 	op            Op
 	typ           string
 	id            *int
-	owner         *string
 	_type         *string
 	name          *string
 	createdAt     *time.Time
@@ -1510,42 +1401,6 @@ func (m *PlannerMutation) IDs(ctx context.Context) ([]int, error) {
 	default:
 		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
 	}
-}
-
-// SetOwner sets the "owner" field.
-func (m *PlannerMutation) SetOwner(s string) {
-	m.owner = &s
-}
-
-// Owner returns the value of the "owner" field in the mutation.
-func (m *PlannerMutation) Owner() (r string, exists bool) {
-	v := m.owner
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldOwner returns the old "owner" field's value of the Planner entity.
-// If the Planner object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *PlannerMutation) OldOwner(ctx context.Context) (v string, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldOwner is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldOwner requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldOwner: %w", err)
-	}
-	return oldValue.Owner, nil
-}
-
-// ResetOwner resets all changes to the "owner" field.
-func (m *PlannerMutation) ResetOwner() {
-	m.owner = nil
 }
 
 // SetType sets the "type" field.
@@ -1819,10 +1674,7 @@ func (m *PlannerMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *PlannerMutation) Fields() []string {
-	fields := make([]string, 0, 5)
-	if m.owner != nil {
-		fields = append(fields, planner.FieldOwner)
-	}
+	fields := make([]string, 0, 4)
 	if m._type != nil {
 		fields = append(fields, planner.FieldType)
 	}
@@ -1843,8 +1695,6 @@ func (m *PlannerMutation) Fields() []string {
 // schema.
 func (m *PlannerMutation) Field(name string) (ent.Value, bool) {
 	switch name {
-	case planner.FieldOwner:
-		return m.Owner()
 	case planner.FieldType:
 		return m.GetType()
 	case planner.FieldName:
@@ -1862,8 +1712,6 @@ func (m *PlannerMutation) Field(name string) (ent.Value, bool) {
 // database failed.
 func (m *PlannerMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
 	switch name {
-	case planner.FieldOwner:
-		return m.OldOwner(ctx)
 	case planner.FieldType:
 		return m.OldType(ctx)
 	case planner.FieldName:
@@ -1881,13 +1729,6 @@ func (m *PlannerMutation) OldField(ctx context.Context, name string) (ent.Value,
 // type.
 func (m *PlannerMutation) SetField(name string, value ent.Value) error {
 	switch name {
-	case planner.FieldOwner:
-		v, ok := value.(string)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetOwner(v)
-		return nil
 	case planner.FieldType:
 		v, ok := value.(string)
 		if !ok {
@@ -1965,9 +1806,6 @@ func (m *PlannerMutation) ClearField(name string) error {
 // It returns an error if the field is not defined in the schema.
 func (m *PlannerMutation) ResetField(name string) error {
 	switch name {
-	case planner.FieldOwner:
-		m.ResetOwner()
-		return nil
 	case planner.FieldType:
 		m.ResetType()
 		return nil
@@ -2092,7 +1930,6 @@ type TaskMutation struct {
 	op             Op
 	typ            string
 	id             *int
-	owner          *string
 	deadline       *time.Time
 	title          *string
 	priority       *int
@@ -2203,42 +2040,6 @@ func (m *TaskMutation) IDs(ctx context.Context) ([]int, error) {
 	default:
 		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
 	}
-}
-
-// SetOwner sets the "owner" field.
-func (m *TaskMutation) SetOwner(s string) {
-	m.owner = &s
-}
-
-// Owner returns the value of the "owner" field in the mutation.
-func (m *TaskMutation) Owner() (r string, exists bool) {
-	v := m.owner
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldOwner returns the old "owner" field's value of the Task entity.
-// If the Task object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *TaskMutation) OldOwner(ctx context.Context) (v string, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldOwner is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldOwner requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldOwner: %w", err)
-	}
-	return oldValue.Owner, nil
-}
-
-// ResetOwner resets all changes to the "owner" field.
-func (m *TaskMutation) ResetOwner() {
-	m.owner = nil
 }
 
 // SetDeadline sets the "deadline" field.
@@ -2514,10 +2315,7 @@ func (m *TaskMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *TaskMutation) Fields() []string {
-	fields := make([]string, 0, 6)
-	if m.owner != nil {
-		fields = append(fields, task.FieldOwner)
-	}
+	fields := make([]string, 0, 5)
 	if m.deadline != nil {
 		fields = append(fields, task.FieldDeadline)
 	}
@@ -2541,8 +2339,6 @@ func (m *TaskMutation) Fields() []string {
 // schema.
 func (m *TaskMutation) Field(name string) (ent.Value, bool) {
 	switch name {
-	case task.FieldOwner:
-		return m.Owner()
 	case task.FieldDeadline:
 		return m.Deadline()
 	case task.FieldTitle:
@@ -2562,8 +2358,6 @@ func (m *TaskMutation) Field(name string) (ent.Value, bool) {
 // database failed.
 func (m *TaskMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
 	switch name {
-	case task.FieldOwner:
-		return m.OldOwner(ctx)
 	case task.FieldDeadline:
 		return m.OldDeadline(ctx)
 	case task.FieldTitle:
@@ -2583,13 +2377,6 @@ func (m *TaskMutation) OldField(ctx context.Context, name string) (ent.Value, er
 // type.
 func (m *TaskMutation) SetField(name string, value ent.Value) error {
 	switch name {
-	case task.FieldOwner:
-		v, ok := value.(string)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetOwner(v)
-		return nil
 	case task.FieldDeadline:
 		v, ok := value.(time.Time)
 		if !ok {
@@ -2689,9 +2476,6 @@ func (m *TaskMutation) ClearField(name string) error {
 // It returns an error if the field is not defined in the schema.
 func (m *TaskMutation) ResetField(name string) error {
 	switch name {
-	case task.FieldOwner:
-		m.ResetOwner()
-		return nil
 	case task.FieldDeadline:
 		m.ResetDeadline()
 		return nil

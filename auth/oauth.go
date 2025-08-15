@@ -2,7 +2,6 @@ package auth
 
 import (
 	"dimiplan-backend/models"
-	"encoding/json"
 	"fmt"
 
 	"github.com/gofiber/fiber/v3/client"
@@ -19,7 +18,7 @@ func GetUser(token string) models.GoogleResponse {
 		panic(err)
 	}
 	var data models.GoogleResponse
-	err = json.Unmarshal(res.Body(), &data)
+	err = res.JSON(&data)
 	if err != nil {
 		panic(err)
 	}

@@ -98,20 +98,16 @@ func init() {
 	userDescProfileURL := userFields[3].Descriptor()
 	// user.ProfileURLValidator is a validator for the "profileURL" field. It is called by the builders before save.
 	user.ProfileURLValidator = userDescProfileURL.Validators[0].(func(string) error)
-	// userDescAdmin is the schema descriptor for admin field.
-	userDescAdmin := userFields[4].Descriptor()
-	// user.DefaultAdmin holds the default value on creation for the admin field.
-	user.DefaultAdmin = userDescAdmin.Default.(bool)
 	// userDescPlan is the schema descriptor for plan field.
-	userDescPlan := userFields[5].Descriptor()
+	userDescPlan := userFields[4].Descriptor()
 	// user.DefaultPlan holds the default value on creation for the plan field.
 	user.DefaultPlan = userDescPlan.Default.(string)
 	// userDescCreatedAt is the schema descriptor for createdAt field.
-	userDescCreatedAt := userFields[6].Descriptor()
+	userDescCreatedAt := userFields[5].Descriptor()
 	// user.DefaultCreatedAt holds the default value on creation for the createdAt field.
 	user.DefaultCreatedAt = userDescCreatedAt.Default.(func() time.Time)
 	// userDescUpdatedAt is the schema descriptor for updatedAt field.
-	userDescUpdatedAt := userFields[7].Descriptor()
+	userDescUpdatedAt := userFields[6].Descriptor()
 	// user.DefaultUpdatedAt holds the default value on creation for the updatedAt field.
 	user.DefaultUpdatedAt = userDescUpdatedAt.Default.(func() time.Time)
 	// user.UpdateDefaultUpdatedAt holds the default value on update for the updatedAt field.

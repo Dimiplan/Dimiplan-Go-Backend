@@ -20,8 +20,6 @@ const (
 	FieldEmail = "email"
 	// FieldProfileURL holds the string denoting the profileurl field in the database.
 	FieldProfileURL = "profile_url"
-	// FieldAdmin holds the string denoting the admin field in the database.
-	FieldAdmin = "admin"
 	// FieldPlan holds the string denoting the plan field in the database.
 	FieldPlan = "plan"
 	// FieldCreatedAt holds the string denoting the createdat field in the database.
@@ -56,7 +54,6 @@ var Columns = []string{
 	FieldName,
 	FieldEmail,
 	FieldProfileURL,
-	FieldAdmin,
 	FieldPlan,
 	FieldCreatedAt,
 	FieldUpdatedAt,
@@ -77,8 +74,6 @@ var (
 	EmailValidator func(string) error
 	// ProfileURLValidator is a validator for the "profileURL" field. It is called by the builders before save.
 	ProfileURLValidator func(string) error
-	// DefaultAdmin holds the default value on creation for the "admin" field.
-	DefaultAdmin bool
 	// DefaultPlan holds the default value on creation for the "plan" field.
 	DefaultPlan string
 	// DefaultCreatedAt holds the default value on creation for the "createdAt" field.
@@ -112,11 +107,6 @@ func ByEmail(opts ...sql.OrderTermOption) OrderOption {
 // ByProfileURL orders the results by the profileURL field.
 func ByProfileURL(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldProfileURL, opts...).ToFunc()
-}
-
-// ByAdmin orders the results by the admin field.
-func ByAdmin(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldAdmin, opts...).ToFunc()
 }
 
 // ByPlan orders the results by the plan field.

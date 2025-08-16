@@ -108,7 +108,6 @@ var (
 		{Name: "name", Type: field.TypeString},
 		{Name: "email", Type: field.TypeString},
 		{Name: "profile_url", Type: field.TypeString},
-		{Name: "admin", Type: field.TypeBool, Default: false},
 		{Name: "plan", Type: field.TypeString, Default: "free"},
 		{Name: "created_at", Type: field.TypeTime},
 		{Name: "updated_at", Type: field.TypeTime},

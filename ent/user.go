@@ -23,8 +23,6 @@ type User struct {
 	Email string `json:"email,omitempty"`
 	// ProfileURL holds the value of the "profileURL" field.
 	ProfileURL string `json:"profileURL,omitempty"`
-	// Admin holds the value of the "admin" field.
-	Admin bool `json:"admin,omitempty"`
 	// Plan holds the value of the "plan" field.
 	Plan string `json:"plan,omitempty"`
 	// CreatedAt holds the value of the "createdAt" field.
@@ -71,8 +69,6 @@ func (*User) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case user.FieldAdmin:
-			values[i] = new(sql.NullBool)
 		case user.FieldID, user.FieldName, user.FieldEmail, user.FieldProfileURL, user.FieldPlan:
 			values[i] = new(sql.NullString)
 		case user.FieldCreatedAt, user.FieldUpdatedAt:
@@ -115,12 +111,6 @@ func (_m *User) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field profileURL", values[i])
 			} else if value.Valid {
 				_m.ProfileURL = value.String
-			}
-		case user.FieldAdmin:
-			if value, ok := values[i].(*sql.NullBool); !ok {
-				return fmt.Errorf("unexpected type %T for field admin", values[i])
-			} else if value.Valid {
-				_m.Admin = value.Bool
 			}
 		case user.FieldPlan:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -194,9 +184,6 @@ func (_m *User) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("profileURL=")
 	builder.WriteString(_m.ProfileURL)
-	builder.WriteString(", ")
-	builder.WriteString("admin=")
-	builder.WriteString(fmt.Sprintf("%v", _m.Admin))
 	builder.WriteString(", ")
 	builder.WriteString("plan=")
 	builder.WriteString(_m.Plan)

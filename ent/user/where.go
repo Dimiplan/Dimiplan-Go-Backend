@@ -80,11 +80,6 @@ func ProfileURL(v string) predicate.User {
 	return predicate.User(sql.FieldEQ(FieldProfileURL, v))
 }
 
-// Admin applies equality check predicate on the "admin" field. It's identical to AdminEQ.
-func Admin(v bool) predicate.User {
-	return predicate.User(sql.FieldEQ(FieldAdmin, v))
-}
-
 // Plan applies equality check predicate on the "plan" field. It's identical to PlanEQ.
 func Plan(v string) predicate.User {
 	return predicate.User(sql.FieldEQ(FieldPlan, v))
@@ -293,16 +288,6 @@ func ProfileURLEqualFold(v string) predicate.User {
 // ProfileURLContainsFold applies the ContainsFold predicate on the "profileURL" field.
 func ProfileURLContainsFold(v string) predicate.User {
 	return predicate.User(sql.FieldContainsFold(FieldProfileURL, v))
-}
-
-// AdminEQ applies the EQ predicate on the "admin" field.
-func AdminEQ(v bool) predicate.User {
-	return predicate.User(sql.FieldEQ(FieldAdmin, v))
-}
-
-// AdminNEQ applies the NEQ predicate on the "admin" field.
-func AdminNEQ(v bool) predicate.User {
-	return predicate.User(sql.FieldNEQ(FieldAdmin, v))
 }
 
 // PlanEQ applies the EQ predicate on the "plan" field.

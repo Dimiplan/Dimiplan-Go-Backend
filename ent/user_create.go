@@ -40,20 +40,6 @@ func (_c *UserCreate) SetProfileURL(v string) *UserCreate {
 	return _c
 }
 
-// SetAdmin sets the "admin" field.
-func (_c *UserCreate) SetAdmin(v bool) *UserCreate {
-	_c.mutation.SetAdmin(v)
-	return _c
-}
-
-// SetNillableAdmin sets the "admin" field if the given value is not nil.
-func (_c *UserCreate) SetNillableAdmin(v *bool) *UserCreate {
-	if v != nil {
-		_c.SetAdmin(*v)
-	}
-	return _c
-}
-
 // SetPlan sets the "plan" field.
 func (_c *UserCreate) SetPlan(v string) *UserCreate {
 	_c.mutation.SetPlan(v)
@@ -167,10 +153,6 @@ func (_c *UserCreate) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (_c *UserCreate) defaults() {
-	if _, ok := _c.mutation.Admin(); !ok {
-		v := user.DefaultAdmin
-		_c.mutation.SetAdmin(v)
-	}
 	if _, ok := _c.mutation.Plan(); !ok {
 		v := user.DefaultPlan
 		_c.mutation.SetPlan(v)
@@ -205,9 +187,6 @@ func (_c *UserCreate) check() error {
 		if err := user.ProfileURLValidator(v); err != nil {
 			return &ValidationError{Name: "profileURL", err: fmt.Errorf(`ent: validator failed for field "User.profileURL": %w`, err)}
 		}
-	}
-	if _, ok := _c.mutation.Admin(); !ok {
-		return &ValidationError{Name: "admin", err: errors.New(`ent: missing required field "User.admin"`)}
 	}
 	if _, ok := _c.mutation.Plan(); !ok {
 		return &ValidationError{Name: "plan", err: errors.New(`ent: missing required field "User.plan"`)}
@@ -269,10 +248,6 @@ func (_c *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 	if value, ok := _c.mutation.ProfileURL(); ok {
 		_spec.SetField(user.FieldProfileURL, field.TypeString, value)
 		_node.ProfileURL = value
-	}
-	if value, ok := _c.mutation.Admin(); ok {
-		_spec.SetField(user.FieldAdmin, field.TypeBool, value)
-		_node.Admin = value
 	}
 	if value, ok := _c.mutation.Plan(); ok {
 		_spec.SetField(user.FieldPlan, field.TypeString, value)

@@ -21,7 +21,6 @@ func (User) Fields() []ent.Field {
 		field.String("name"),
 		field.String("email").NotEmpty(),
 		field.String("profileURL").NotEmpty(),
-		field.Bool("admin").Default(false),
 		field.String("plan").Default("free"),
 		field.Time("createdAt").
 			Default(time.Now).Immutable(),

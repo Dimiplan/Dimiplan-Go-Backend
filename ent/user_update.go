@@ -72,20 +72,6 @@ func (_u *UserUpdate) SetNillableProfileURL(v *string) *UserUpdate {
 	return _u
 }
 
-// SetAdmin sets the "admin" field.
-func (_u *UserUpdate) SetAdmin(v bool) *UserUpdate {
-	_u.mutation.SetAdmin(v)
-	return _u
-}
-
-// SetNillableAdmin sets the "admin" field if the given value is not nil.
-func (_u *UserUpdate) SetNillableAdmin(v *bool) *UserUpdate {
-	if v != nil {
-		_u.SetAdmin(*v)
-	}
-	return _u
-}
-
 // SetPlan sets the "plan" field.
 func (_u *UserUpdate) SetPlan(v string) *UserUpdate {
 	_u.mutation.SetPlan(v)
@@ -255,9 +241,6 @@ func (_u *UserUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	if value, ok := _u.mutation.ProfileURL(); ok {
 		_spec.SetField(user.FieldProfileURL, field.TypeString, value)
 	}
-	if value, ok := _u.mutation.Admin(); ok {
-		_spec.SetField(user.FieldAdmin, field.TypeBool, value)
-	}
 	if value, ok := _u.mutation.Plan(); ok {
 		_spec.SetField(user.FieldPlan, field.TypeString, value)
 	}
@@ -412,20 +395,6 @@ func (_u *UserUpdateOne) SetProfileURL(v string) *UserUpdateOne {
 func (_u *UserUpdateOne) SetNillableProfileURL(v *string) *UserUpdateOne {
 	if v != nil {
 		_u.SetProfileURL(*v)
-	}
-	return _u
-}
-
-// SetAdmin sets the "admin" field.
-func (_u *UserUpdateOne) SetAdmin(v bool) *UserUpdateOne {
-	_u.mutation.SetAdmin(v)
-	return _u
-}
-
-// SetNillableAdmin sets the "admin" field if the given value is not nil.
-func (_u *UserUpdateOne) SetNillableAdmin(v *bool) *UserUpdateOne {
-	if v != nil {
-		_u.SetAdmin(*v)
 	}
 	return _u
 }
@@ -628,9 +597,6 @@ func (_u *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) {
 	}
 	if value, ok := _u.mutation.ProfileURL(); ok {
 		_spec.SetField(user.FieldProfileURL, field.TypeString, value)
-	}
-	if value, ok := _u.mutation.Admin(); ok {
-		_spec.SetField(user.FieldAdmin, field.TypeBool, value)
 	}
 	if value, ok := _u.mutation.Plan(); ok {
 		_spec.SetField(user.FieldPlan, field.TypeString, value)

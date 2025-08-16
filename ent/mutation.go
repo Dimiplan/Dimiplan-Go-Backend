@@ -2578,7 +2578,6 @@ type UserMutation struct {
 	name             *string
 	email            *string
 	profileURL       *string
-	admin            *bool
 	plan             *string
 	createdAt        *time.Time
 	updatedAt        *time.Time
@@ -2804,42 +2803,6 @@ func (m *UserMutation) OldProfileURL(ctx context.Context) (v string, err error) 
 // ResetProfileURL resets all changes to the "profileURL" field.
 func (m *UserMutation) ResetProfileURL() {
 	m.profileURL = nil
-}
-
-// SetAdmin sets the "admin" field.
-func (m *UserMutation) SetAdmin(b bool) {
-	m.admin = &b
-}
-
-// Admin returns the value of the "admin" field in the mutation.
-func (m *UserMutation) Admin() (r bool, exists bool) {
-	v := m.admin
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldAdmin returns the old "admin" field's value of the User entity.
-// If the User object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *UserMutation) OldAdmin(ctx context.Context) (v bool, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldAdmin is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldAdmin requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldAdmin: %w", err)
-	}
-	return oldValue.Admin, nil
-}
-
-// ResetAdmin resets all changes to the "admin" field.
-func (m *UserMutation) ResetAdmin() {
-	m.admin = nil
 }
 
 // SetPlan sets the "plan" field.
@@ -3092,7 +3055,7 @@ func (m *UserMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *UserMutation) Fields() []string {
-	fields := make([]string, 0, 7)
+	fields := make([]string, 0, 6)
 	if m.name != nil {
 		fields = append(fields, user.FieldName)
 	}
@@ -3101,9 +3064,6 @@ func (m *UserMutation) Fields() []string {
 	}
 	if m.profileURL != nil {
 		fields = append(fields, user.FieldProfileURL)
-	}
-	if m.admin != nil {
-		fields = append(fields, user.FieldAdmin)
 	}
 	if m.plan != nil {
 		fields = append(fields, user.FieldPlan)
@@ -3128,8 +3088,6 @@ func (m *UserMutation) Field(name string) (ent.Value, bool) {
 		return m.Email()
 	case user.FieldProfileURL:
 		return m.ProfileURL()
-	case user.FieldAdmin:
-		return m.Admin()
 	case user.FieldPlan:
 		return m.Plan()
 	case user.FieldCreatedAt:
@@ -3151,8 +3109,6 @@ func (m *UserMutation) OldField(ctx context.Context, name string) (ent.Value, er
 		return m.OldEmail(ctx)
 	case user.FieldProfileURL:
 		return m.OldProfileURL(ctx)
-	case user.FieldAdmin:
-		return m.OldAdmin(ctx)
 	case user.FieldPlan:
 		return m.OldPlan(ctx)
 	case user.FieldCreatedAt:
@@ -3188,13 +3144,6 @@ func (m *UserMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetProfileURL(v)
-		return nil
-	case user.FieldAdmin:
-		v, ok := value.(bool)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetAdmin(v)
 		return nil
 	case user.FieldPlan:
 		v, ok := value.(string)
@@ -3274,9 +3223,6 @@ func (m *UserMutation) ResetField(name string) error {
 		return nil
 	case user.FieldProfileURL:
 		m.ResetProfileURL()
-		return nil
-	case user.FieldAdmin:
-		m.ResetAdmin()
 		return nil
 	case user.FieldPlan:
 		m.ResetPlan()

@@ -2,9 +2,6 @@ package handlers
 
 import (
 	"dimiplan-backend/ent"
-	"dimiplan-backend/ent/user"
-
-	"github.com/gofiber/fiber/v3"
 	// "github.com/gofiber/fiber/v3/middleware/session"
 )
 
@@ -18,34 +15,18 @@ func NewUserHandler(db *ent.Client) *UserHandler {
 	}
 }
 
-func (h *UserHandler) GetProfile(c fiber.Ctx) error {
-	userID := c.Locals("id").(string)
+/// @brief ID를 통해 유저 정보 가져오기
+///
+// func (h *UserHandler) GetUser(c fiber.Ctx) error {
+// 	uid := c.Locals("id").(string)
 
-	user, err := h.db.User.Query().Where(user.ID(userID)).Only(c)
-	if err != nil {
-		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
-			"error": "User not found",
-		})
-	}
+// 	u, err := h.db.User.Query().Where(user.ID(uid)).Only(c)
+// 	if err != nil {
+// 		log.Errorf("Failed to retrieve user: %v", err)
+// 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+// 			"error": "Internal Server Error",
+// 		})
+// 	}
 
-	return c.JSON(fiber.Map{
-		"user": user,
-	})
-}
-
-func (h *UserHandler) Logout(c fiber.Ctx) error {
-	userID := c.Locals("user_id").(string)
-	h.db.User.Delete().Where(user.ID(userID)).Exec(c)
-
-	return c.JSON(fiber.Map{
-		"message": "Logged out successfully",
-	})
-}
-
-func (h *UserHandler) Protected(c fiber.Ctx) error {
-	email := c.Locals("email").(string)
-	return c.JSON(fiber.Map{
-		"message": "Access to protected resource",
-		"email":   email,
-	})
-}
+// 	return c.JSON(toUserRes(u))
+// }

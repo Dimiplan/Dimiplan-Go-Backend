@@ -1,6 +1,7 @@
 package server
 
 import (
+	"os"
 	"dimiplan-backend/config"
 
 	"github.com/bytedance/sonic"
@@ -37,7 +38,9 @@ func Setup(cfg *config.Config) *fiber.App {
 		KeyLookup: "cookie:dimiplan.sid",
 	}))
 
-	app.Use(static.New("./dist"))
+	app.Use("/", static.New("/", static.Config{
+	    FS: os.DirFS("dist"),
+	}))
 
 	return app
 }

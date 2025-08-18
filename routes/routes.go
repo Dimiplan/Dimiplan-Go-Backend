@@ -50,5 +50,9 @@ func Setup(app *fiber.App, cfg *config.Config, db *ent.Client) *fiber.App {
 				Patch(plannerHandler.UpdateTask).
 				Delete(plannerHandler.DeleteTask)
 
+	app.Get("/*", func(c fiber.Ctx) error {
+	    return c.SendFile("dist/index.html")
+	})
+
 	return app
 }

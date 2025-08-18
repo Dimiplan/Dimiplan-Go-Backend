@@ -5,6 +5,15 @@ type CreatePlannerReq struct {
 	Name string `json:"name"`
 }
 
-type GetTasksInPlannerReq struct {
-	Id int `uri:"id"`
+type GetTasksReq struct {
+	ID int `uri:"id"`
+}
+
+type RenamePlannerReq struct {
+	ID   int    `uri:"id"`
+	Name string `json:"name"`
+}
+
+type DeletePlannerReq struct {
+	ID int `uri:"id"`
 }

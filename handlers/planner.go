@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"dimiplan-backend/ent"
+	"dimiplan-backend/ent/planner"
 	"dimiplan-backend/models"
 
 	"github.com/gofiber/fiber/v3"
@@ -60,4 +61,76 @@ func (h *PlannerHandler) CreatePlanner(c fiber.Ctx) error {
 	return c.Status(fiber.StatusCreated).JSON(planner)
 }
 
-func (h* PlannerHandler) 
+func (h *PlannerHandler) GetTasks(c fiber.Ctx) error {
+	user := c.Locals("user").(*ent.User)
+
+	data := new(models.GetTasksReq)
+	if err := c.Bind().All(data); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": "Failed to parse request",
+		})
+	}
+
+	if planner, err := user.QueryPlanners().Where(planner.ID(data.ID)).Only(c); err != nil {
+		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+			"error": "Planner not found",
+		})
+	} else {
+		tasks, err := planner.QueryTasks().All(c)
+		if err != nil {
+			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+				"error": "Failed to retrieve tasks",
+			})
+		}
+		return c.JSON(tasks)
+	}
+}
+
+func (h *PlannerHandler) RenamePlanner(c fiber.Ctx) error {
+	user := c.Locals("user").(*ent.User)
+
+	data := new(models.RenamePlannerReq)
+
+	if err := c.Bind().All(data); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": "Failed to parse request",
+		})
+	}
+
+	if planner, err := user.QueryPlanners().Where(planner.ID(data.ID)).Only(c); err != nil {
+		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+			"error": "Planner not found",
+		})
+	} else {
+		planner.Update().SetName(data.Name).Exec(c)
+		return c.Status(fiber.StatusOK).JSON(fiber.Map{
+			"message": "Planner renamed successfully",
+		})
+	}
+}
+
+func (h *PlannerHandler) DeletePlanner(c fiber.Ctx) error {
+	user := c.Locals("user").(*ent.User)
+
+	data := new(models.DeletePlannerReq)
+	if err := c.Bind().All(data); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": "Failed to parse request",
+		})
+	}
+
+	if planner, err := user.QueryPlanners().Where(planner.ID(data.ID)).Only(c); err != nil {
+		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+			"error": "Planner not found",
+		})
+	} else {
+		if err := h.db.Planner.DeleteOne(planner).Exec(c); err != nil {
+			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+				"error": "Failed to delete planner",
+			})
+		}
+		return c.Status(fiber.StatusOK).JSON(fiber.Map{
+			"message": "Planner deleted successfully",
+		})
+	}
+}

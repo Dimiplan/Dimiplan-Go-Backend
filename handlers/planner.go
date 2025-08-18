@@ -18,7 +18,7 @@ func NewPlannerHandler(db *ent.Client) *PlannerHandler {
 	}
 }
 
-func (h *PlannerHandler) GetPlanner(c fiber.Ctx) error {
+func (h *PlannerHandler) GetPlanners(c fiber.Ctx) error {
 	user := c.Locals("user").(*ent.User)
 
 	// user에 Edges로 연결된 Planners 조회
@@ -61,32 +61,7 @@ func (h *PlannerHandler) CreatePlanner(c fiber.Ctx) error {
 	return c.Status(fiber.StatusCreated).JSON(planner)
 }
 
-func (h *PlannerHandler) GetTasks(c fiber.Ctx) error {
-	user := c.Locals("user").(*ent.User)
-
-	data := new(models.GetTasksReq)
-	if err := c.Bind().All(data); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"error": "Failed to parse request",
-		})
-	}
-
-	if planner, err := user.QueryPlanners().Where(planner.ID(data.ID)).Only(c); err != nil {
-		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
-			"error": "Planner not found",
-		})
-	} else {
-		tasks, err := planner.QueryTasks().All(c)
-		if err != nil {
-			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-				"error": "Failed to retrieve tasks",
-			})
-		}
-		return c.JSON(tasks)
-	}
-}
-
-func (h *PlannerHandler) RenamePlanner(c fiber.Ctx) error {
+func (h *PlannerHandler) UpdatePlanner(c fiber.Ctx) error {
 	user := c.Locals("user").(*ent.User)
 
 	data := new(models.RenamePlannerReq)
@@ -97,7 +72,7 @@ func (h *PlannerHandler) RenamePlanner(c fiber.Ctx) error {
 		})
 	}
 
-	if planner, err := user.QueryPlanners().Where(planner.ID(data.ID)).Only(c); err != nil {
+	if planner, err := user.QueryPlanners().Where(planner.ID(data.PlannerID)).Only(c); err != nil {
 		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
 			"error": "Planner not found",
 		})
@@ -119,7 +94,7 @@ func (h *PlannerHandler) DeletePlanner(c fiber.Ctx) error {
 		})
 	}
 
-	if planner, err := user.QueryPlanners().Where(planner.ID(data.ID)).Only(c); err != nil {
+	if planner, err := user.QueryPlanners().Where(planner.ID(data.PlannerID)).Only(c); err != nil {
 		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
 			"error": "Planner not found",
 		})

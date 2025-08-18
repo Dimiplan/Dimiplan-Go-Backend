@@ -9,6 +9,31 @@ import (
 	"github.com/gofiber/fiber/v3"
 )
 
+func (h *PlannerHandler) GetTasks(c fiber.Ctx) error {
+	user := c.Locals("user").(*ent.User)
+
+	data := new(models.GetTasksReq)
+	if err := c.Bind().All(data); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": "Failed to parse request",
+		})
+	}
+
+	if planner, err := user.QueryPlanners().Where(planner.ID(data.PlannerID)).Only(c); err != nil {
+		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+			"error": "Planner not found",
+		})
+	} else {
+		tasks, err := planner.QueryTasks().All(c)
+		if err != nil {
+			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+				"error": "Failed to retrieve tasks",
+			})
+		}
+		return c.JSON(tasks)
+	}
+}
+
 func (h *PlannerHandler) CreateTask(c fiber.Ctx) error {
 	user := c.Locals("user").(*ent.User)
 
@@ -47,14 +72,14 @@ func (h *PlannerHandler) UpdateTask(c fiber.Ctx) error {
 			"error": "Failed to parse request",
 		})
 	}
-	planner, perr := user.QueryPlanners().Where(planner.ID(data.ID)).Only(c)
+	planner, perr := user.QueryPlanners().Where(planner.ID(data.PlannerID)).Only(c)
 	if perr != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"error": "Planner not found",
 		})
 	}
 
-	if task, err := planner.QueryTasks().Where(task.ID(data.ID)).Only(c); err != nil {
+	if task, err := planner.QueryTasks().Where(task.ID(data.TaskID)).Only(c); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"error": "Task not found",
 		})
@@ -82,14 +107,14 @@ func (h *PlannerHandler) DeleteTask(c fiber.Ctx) error {
 		})
 	}
 
-	planner, perr := user.QueryPlanners().Where(planner.ID(data.ID)).Only(c)
+	planner, perr := user.QueryPlanners().Where(planner.ID(data.PlannerID)).Only(c)
 	if perr != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"error": "Planner not found",
 		})
 	}
 
-	if task, err := planner.QueryTasks().Where(task.ID(data.ID)).Only(c); err != nil {
+	if task, err := planner.QueryTasks().Where(task.ID(data.TaskID)).Only(c); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"error": "Task not found",
 		})

@@ -40,7 +40,7 @@ type UserEdges struct {
 	// Planners holds the value of the planners edge.
 	Planners []*Planner `json:"planners,omitempty"`
 	// Chatrooms holds the value of the chatrooms edge.
-	Chatrooms []*ChatRoom `json:"chatrooms,omitempty"`
+	Chatrooms []*Chatroom `json:"chatrooms,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
 	loadedTypes [2]bool
@@ -57,7 +57,7 @@ func (e UserEdges) PlannersOrErr() ([]*Planner, error) {
 
 // ChatroomsOrErr returns the Chatrooms value or an error if the edge
 // was not loaded in eager-loading.
-func (e UserEdges) ChatroomsOrErr() ([]*ChatRoom, error) {
+func (e UserEdges) ChatroomsOrErr() ([]*Chatroom, error) {
 	if e.loadedTypes[1] {
 		return e.Chatrooms, nil
 	}
@@ -149,7 +149,7 @@ func (_m *User) QueryPlanners() *PlannerQuery {
 }
 
 // QueryChatrooms queries the "chatrooms" edge of the User entity.
-func (_m *User) QueryChatrooms() *ChatRoomQuery {
+func (_m *User) QueryChatrooms() *ChatroomQuery {
 	return NewUserClient(_m.config).QueryChatrooms(_m)
 }
 

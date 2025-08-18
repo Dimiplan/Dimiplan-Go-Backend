@@ -13,13 +13,11 @@ import (
 	"entgo.io/ent/dialect/sql"
 )
 
-// ChatRoom is the model entity for the ChatRoom schema.
-type ChatRoom struct {
+// Chatroom is the model entity for the Chatroom schema.
+type Chatroom struct {
 	config `json:"-"`
 	// ID of the ent.
 	ID int `json:"id,omitempty"`
-	// Type holds the value of the "type" field.
-	Type string `json:"type,omitempty"`
 	// Name holds the value of the "name" field.
 	Name string `json:"name,omitempty"`
 	// IsProcessing holds the value of the "isProcessing" field.
@@ -29,18 +27,18 @@ type ChatRoom struct {
 	// UpdatedAt holds the value of the "updatedAt" field.
 	UpdatedAt time.Time `json:"updatedAt,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
-	// The values are being populated by the ChatRoomQuery when eager-loading is set.
-	Edges          ChatRoomEdges `json:"edges"`
+	// The values are being populated by the ChatroomQuery when eager-loading is set.
+	Edges          ChatroomEdges `json:"edges"`
 	user_chatrooms *string
 	selectValues   sql.SelectValues
 }
 
-// ChatRoomEdges holds the relations/edges for other nodes in the graph.
-type ChatRoomEdges struct {
+// ChatroomEdges holds the relations/edges for other nodes in the graph.
+type ChatroomEdges struct {
 	// User holds the value of the user edge.
 	User *User `json:"user,omitempty"`
-	// Chats holds the value of the chats edge.
-	Chats []*Chat `json:"chats,omitempty"`
+	// Messages holds the value of the messages edge.
+	Messages []*Message `json:"messages,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
 	loadedTypes [2]bool
@@ -48,7 +46,7 @@ type ChatRoomEdges struct {
 
 // UserOrErr returns the User value or an error if the edge
 // was not loaded in eager-loading, or loaded but was not found.
-func (e ChatRoomEdges) UserOrErr() (*User, error) {
+func (e ChatroomEdges) UserOrErr() (*User, error) {
 	if e.User != nil {
 		return e.User, nil
 	} else if e.loadedTypes[0] {
@@ -57,17 +55,17 @@ func (e ChatRoomEdges) UserOrErr() (*User, error) {
 	return nil, &NotLoadedError{edge: "user"}
 }
 
-// ChatsOrErr returns the Chats value or an error if the edge
+// MessagesOrErr returns the Messages value or an error if the edge
 // was not loaded in eager-loading.
-func (e ChatRoomEdges) ChatsOrErr() ([]*Chat, error) {
+func (e ChatroomEdges) MessagesOrErr() ([]*Message, error) {
 	if e.loadedTypes[1] {
-		return e.Chats, nil
+		return e.Messages, nil
 	}
-	return nil, &NotLoadedError{edge: "chats"}
+	return nil, &NotLoadedError{edge: "messages"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
-func (*ChatRoom) scanValues(columns []string) ([]any, error) {
+func (*Chatroom) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
@@ -75,7 +73,7 @@ func (*ChatRoom) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullBool)
 		case chatroom.FieldID:
 			values[i] = new(sql.NullInt64)
-		case chatroom.FieldType, chatroom.FieldName:
+		case chatroom.FieldName:
 			values[i] = new(sql.NullString)
 		case chatroom.FieldCreatedAt, chatroom.FieldUpdatedAt:
 			values[i] = new(sql.NullTime)
@@ -89,8 +87,8 @@ func (*ChatRoom) scanValues(columns []string) ([]any, error) {
 }
 
 // assignValues assigns the values that were returned from sql.Rows (after scanning)
-// to the ChatRoom fields.
-func (_m *ChatRoom) assignValues(columns []string, values []any) error {
+// to the Chatroom fields.
+func (_m *Chatroom) assignValues(columns []string, values []any) error {
 	if m, n := len(values), len(columns); m < n {
 		return fmt.Errorf("mismatch number of scan values: %d != %d", m, n)
 	}
@@ -102,12 +100,6 @@ func (_m *ChatRoom) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field id", value)
 			}
 			_m.ID = int(value.Int64)
-		case chatroom.FieldType:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field type", values[i])
-			} else if value.Valid {
-				_m.Type = value.String
-			}
 		case chatroom.FieldName:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field name", values[i])
@@ -146,48 +138,45 @@ func (_m *ChatRoom) assignValues(columns []string, values []any) error {
 	return nil
 }
 
-// Value returns the ent.Value that was dynamically selected and assigned to the ChatRoom.
+// Value returns the ent.Value that was dynamically selected and assigned to the Chatroom.
 // This includes values selected through modifiers, order, etc.
-func (_m *ChatRoom) Value(name string) (ent.Value, error) {
+func (_m *Chatroom) Value(name string) (ent.Value, error) {
 	return _m.selectValues.Get(name)
 }
 
-// QueryUser queries the "user" edge of the ChatRoom entity.
-func (_m *ChatRoom) QueryUser() *UserQuery {
-	return NewChatRoomClient(_m.config).QueryUser(_m)
+// QueryUser queries the "user" edge of the Chatroom entity.
+func (_m *Chatroom) QueryUser() *UserQuery {
+	return NewChatroomClient(_m.config).QueryUser(_m)
 }
 
-// QueryChats queries the "chats" edge of the ChatRoom entity.
-func (_m *ChatRoom) QueryChats() *ChatQuery {
-	return NewChatRoomClient(_m.config).QueryChats(_m)
+// QueryMessages queries the "messages" edge of the Chatroom entity.
+func (_m *Chatroom) QueryMessages() *MessageQuery {
+	return NewChatroomClient(_m.config).QueryMessages(_m)
 }
 
-// Update returns a builder for updating this ChatRoom.
-// Note that you need to call ChatRoom.Unwrap() before calling this method if this ChatRoom
+// Update returns a builder for updating this Chatroom.
+// Note that you need to call Chatroom.Unwrap() before calling this method if this Chatroom
 // was returned from a transaction, and the transaction was committed or rolled back.
-func (_m *ChatRoom) Update() *ChatRoomUpdateOne {
-	return NewChatRoomClient(_m.config).UpdateOne(_m)
+func (_m *Chatroom) Update() *ChatroomUpdateOne {
+	return NewChatroomClient(_m.config).UpdateOne(_m)
 }
 
-// Unwrap unwraps the ChatRoom entity that was returned from a transaction after it was closed,
+// Unwrap unwraps the Chatroom entity that was returned from a transaction after it was closed,
 // so that all future queries will be executed through the driver which created the transaction.
-func (_m *ChatRoom) Unwrap() *ChatRoom {
+func (_m *Chatroom) Unwrap() *Chatroom {
 	_tx, ok := _m.config.driver.(*txDriver)
 	if !ok {
-		panic("ent: ChatRoom is not a transactional entity")
+		panic("ent: Chatroom is not a transactional entity")
 	}
 	_m.config.driver = _tx.drv
 	return _m
 }
 
 // String implements the fmt.Stringer.
-func (_m *ChatRoom) String() string {
+func (_m *Chatroom) String() string {
 	var builder strings.Builder
-	builder.WriteString("ChatRoom(")
+	builder.WriteString("Chatroom(")
 	builder.WriteString(fmt.Sprintf("id=%v, ", _m.ID))
-	builder.WriteString("type=")
-	builder.WriteString(_m.Type)
-	builder.WriteString(", ")
 	builder.WriteString("name=")
 	builder.WriteString(_m.Name)
 	builder.WriteString(", ")
@@ -203,5 +192,5 @@ func (_m *ChatRoom) String() string {
 	return builder.String()
 }
 
-// ChatRooms is a parsable slice of ChatRoom.
-type ChatRooms []*ChatRoom
+// Chatrooms is a parsable slice of Chatroom.
+type Chatrooms []*Chatroom

@@ -9,15 +9,14 @@ import (
 	"entgo.io/ent/schema/field"
 )
 
-// ChatRoom holds the schema definition for the ChatRoom entity.
-type ChatRoom struct {
+// Chatroom holds the schema definition for the ChatRoom entity.
+type Chatroom struct {
 	ent.Schema
 }
 
-// Fields of the ChatRoom.
-func (ChatRoom) Fields() []ent.Field {
+// Fields of the Chatroom.
+func (Chatroom) Fields() []ent.Field {
 	return []ent.Field{
-		field.String("type"),
 		field.String("name").NotEmpty(),
 		field.Bool("isProcessing").Default(false),
 		field.Time("createdAt").
@@ -28,14 +27,14 @@ func (ChatRoom) Fields() []ent.Field {
 	}
 }
 
-// Edges of the ChatRoom.
-func (ChatRoom) Edges() []ent.Edge {
+// Edges of the Chatroom.
+func (Chatroom) Edges() []ent.Edge {
 	return []ent.Edge{
 		edge.From("user", User.Type).
 			Ref("chatrooms").
 			Unique().   // 각 ChatRoom은 하나의 User에만 속함 (N:1)
 			Required(), // User 없는 ChatRoom 생성 금지 (FK NOT NULL)
 
-		edge.To("chats", Chat.Type).Annotations(entsql.OnDelete(entsql.Cascade)),
+		edge.To("messages", Message.Type).Annotations(entsql.OnDelete(entsql.Cascade)),
 	}
 }

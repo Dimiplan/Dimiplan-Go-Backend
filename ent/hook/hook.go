@@ -8,28 +8,28 @@ import (
 	"fmt"
 )
 
-// The ChatFunc type is an adapter to allow the use of ordinary
-// function as Chat mutator.
-type ChatFunc func(context.Context, *ent.ChatMutation) (ent.Value, error)
+// The ChatroomFunc type is an adapter to allow the use of ordinary
+// function as Chatroom mutator.
+type ChatroomFunc func(context.Context, *ent.ChatroomMutation) (ent.Value, error)
 
 // Mutate calls f(ctx, m).
-func (f ChatFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
-	if mv, ok := m.(*ent.ChatMutation); ok {
+func (f ChatroomFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.ChatroomMutation); ok {
 		return f(ctx, mv)
 	}
-	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.ChatMutation", m)
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.ChatroomMutation", m)
 }
 
-// The ChatRoomFunc type is an adapter to allow the use of ordinary
-// function as ChatRoom mutator.
-type ChatRoomFunc func(context.Context, *ent.ChatRoomMutation) (ent.Value, error)
+// The MessageFunc type is an adapter to allow the use of ordinary
+// function as Message mutator.
+type MessageFunc func(context.Context, *ent.MessageMutation) (ent.Value, error)
 
 // Mutate calls f(ctx, m).
-func (f ChatRoomFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
-	if mv, ok := m.(*ent.ChatRoomMutation); ok {
+func (f MessageFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.MessageMutation); ok {
 		return f(ctx, mv)
 	}
-	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.ChatRoomMutation", m)
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.MessageMutation", m)
 }
 
 // The PlannerFunc type is an adapter to allow the use of ordinary

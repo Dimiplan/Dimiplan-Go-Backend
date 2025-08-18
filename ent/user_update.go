@@ -107,14 +107,14 @@ func (_u *UserUpdate) AddPlanners(v ...*Planner) *UserUpdate {
 	return _u.AddPlannerIDs(ids...)
 }
 
-// AddChatroomIDs adds the "chatrooms" edge to the ChatRoom entity by IDs.
+// AddChatroomIDs adds the "chatrooms" edge to the Chatroom entity by IDs.
 func (_u *UserUpdate) AddChatroomIDs(ids ...int) *UserUpdate {
 	_u.mutation.AddChatroomIDs(ids...)
 	return _u
 }
 
-// AddChatrooms adds the "chatrooms" edges to the ChatRoom entity.
-func (_u *UserUpdate) AddChatrooms(v ...*ChatRoom) *UserUpdate {
+// AddChatrooms adds the "chatrooms" edges to the Chatroom entity.
+func (_u *UserUpdate) AddChatrooms(v ...*Chatroom) *UserUpdate {
 	ids := make([]int, len(v))
 	for i := range v {
 		ids[i] = v[i].ID
@@ -148,20 +148,20 @@ func (_u *UserUpdate) RemovePlanners(v ...*Planner) *UserUpdate {
 	return _u.RemovePlannerIDs(ids...)
 }
 
-// ClearChatrooms clears all "chatrooms" edges to the ChatRoom entity.
+// ClearChatrooms clears all "chatrooms" edges to the Chatroom entity.
 func (_u *UserUpdate) ClearChatrooms() *UserUpdate {
 	_u.mutation.ClearChatrooms()
 	return _u
 }
 
-// RemoveChatroomIDs removes the "chatrooms" edge to ChatRoom entities by IDs.
+// RemoveChatroomIDs removes the "chatrooms" edge to Chatroom entities by IDs.
 func (_u *UserUpdate) RemoveChatroomIDs(ids ...int) *UserUpdate {
 	_u.mutation.RemoveChatroomIDs(ids...)
 	return _u
 }
 
-// RemoveChatrooms removes "chatrooms" edges to ChatRoom entities.
-func (_u *UserUpdate) RemoveChatrooms(v ...*ChatRoom) *UserUpdate {
+// RemoveChatrooms removes "chatrooms" edges to Chatroom entities.
+func (_u *UserUpdate) RemoveChatrooms(v ...*Chatroom) *UserUpdate {
 	ids := make([]int, len(v))
 	for i := range v {
 		ids[i] = v[i].ID
@@ -434,14 +434,14 @@ func (_u *UserUpdateOne) AddPlanners(v ...*Planner) *UserUpdateOne {
 	return _u.AddPlannerIDs(ids...)
 }
 
-// AddChatroomIDs adds the "chatrooms" edge to the ChatRoom entity by IDs.
+// AddChatroomIDs adds the "chatrooms" edge to the Chatroom entity by IDs.
 func (_u *UserUpdateOne) AddChatroomIDs(ids ...int) *UserUpdateOne {
 	_u.mutation.AddChatroomIDs(ids...)
 	return _u
 }
 
-// AddChatrooms adds the "chatrooms" edges to the ChatRoom entity.
-func (_u *UserUpdateOne) AddChatrooms(v ...*ChatRoom) *UserUpdateOne {
+// AddChatrooms adds the "chatrooms" edges to the Chatroom entity.
+func (_u *UserUpdateOne) AddChatrooms(v ...*Chatroom) *UserUpdateOne {
 	ids := make([]int, len(v))
 	for i := range v {
 		ids[i] = v[i].ID
@@ -475,20 +475,20 @@ func (_u *UserUpdateOne) RemovePlanners(v ...*Planner) *UserUpdateOne {
 	return _u.RemovePlannerIDs(ids...)
 }
 
-// ClearChatrooms clears all "chatrooms" edges to the ChatRoom entity.
+// ClearChatrooms clears all "chatrooms" edges to the Chatroom entity.
 func (_u *UserUpdateOne) ClearChatrooms() *UserUpdateOne {
 	_u.mutation.ClearChatrooms()
 	return _u
 }
 
-// RemoveChatroomIDs removes the "chatrooms" edge to ChatRoom entities by IDs.
+// RemoveChatroomIDs removes the "chatrooms" edge to Chatroom entities by IDs.
 func (_u *UserUpdateOne) RemoveChatroomIDs(ids ...int) *UserUpdateOne {
 	_u.mutation.RemoveChatroomIDs(ids...)
 	return _u
 }
 
-// RemoveChatrooms removes "chatrooms" edges to ChatRoom entities.
-func (_u *UserUpdateOne) RemoveChatrooms(v ...*ChatRoom) *UserUpdateOne {
+// RemoveChatrooms removes "chatrooms" edges to Chatroom entities.
+func (_u *UserUpdateOne) RemoveChatrooms(v ...*Chatroom) *UserUpdateOne {
 	ids := make([]int, len(v))
 	for i := range v {
 		ids[i] = v[i].ID

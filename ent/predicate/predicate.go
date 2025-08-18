@@ -6,11 +6,11 @@ import (
 	"entgo.io/ent/dialect/sql"
 )
 
-// Chat is the predicate function for chat builders.
-type Chat func(*sql.Selector)
+// Chatroom is the predicate function for chatroom builders.
+type Chatroom func(*sql.Selector)
 
-// ChatRoom is the predicate function for chatroom builders.
-type ChatRoom func(*sql.Selector)
+// Message is the predicate function for message builders.
+type Message func(*sql.Selector)
 
 // Planner is the predicate function for planner builders.
 type Planner func(*sql.Selector)

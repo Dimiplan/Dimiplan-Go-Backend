@@ -4,8 +4,8 @@ package ent
 
 import (
 	"context"
-	"dimiplan-backend/ent/chat"
 	"dimiplan-backend/ent/chatroom"
+	"dimiplan-backend/ent/message"
 	"dimiplan-backend/ent/planner"
 	"dimiplan-backend/ent/task"
 	"dimiplan-backend/ent/user"
@@ -77,8 +77,8 @@ var (
 func checkColumn(t, c string) error {
 	initCheck.Do(func() {
 		columnCheck = sql.NewColumnCheck(map[string]func(string) bool{
-			chat.Table:     chat.ValidColumn,
 			chatroom.Table: chatroom.ValidColumn,
+			message.Table:  message.ValidColumn,
 			planner.Table:  planner.ValidColumn,
 			task.Table:     task.ValidColumn,
 			user.Table:     user.ValidColumn,

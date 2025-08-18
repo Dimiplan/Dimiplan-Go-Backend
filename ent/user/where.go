@@ -470,7 +470,7 @@ func HasChatrooms() predicate.User {
 }
 
 // HasChatroomsWith applies the HasEdge predicate on the "chatrooms" edge with a given conditions (other predicates).
-func HasChatroomsWith(preds ...predicate.ChatRoom) predicate.User {
+func HasChatroomsWith(preds ...predicate.Chatroom) predicate.User {
 	return predicate.User(func(s *sql.Selector) {
 		step := newChatroomsStep()
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {

@@ -7,6 +7,8 @@ import (
 
 	"github.com/gofiber/storage/redis/v3"
 	"github.com/joho/godotenv"
+	"github.com/openai/openai-go/v2"
+	"github.com/openai/openai-go/v2/option"
 	"golang.org/x/oauth2"
 	"golang.org/x/oauth2/google"
 )
@@ -16,6 +18,9 @@ type Config struct {
 	OAuthConfig    *oauth2.Config
 	RedisConfig    *redis.Config
 	DatabaseString string
+	AIClient       openai.Client
+	PreAIModel     string
+	AIModels       []string
 }
 
 func Load() *Config {
@@ -48,6 +53,26 @@ func Load() *Config {
 			getEnv("DB_USER", "postgres"),
 			getEnv("DB_NAME", "dimiplan"),
 		),
+		AIClient: openai.NewClient(
+			option.WithBaseURL("https://openrouter.ai/api/v1"),
+			option.WithAPIKey(getEnv("OPENAI_API_KEY", "your-api-key")),
+		),
+		PreAIModel: "openai/gpt-oss-120b",
+		AIModels: []string{
+			"anthropic/claude-3.5-haiku",
+			"deepseek/deepseek-prover-v2",
+			"deepseek/deepseek-r1-0528",
+			"google/gemini-2.5-flash",
+			"meta-llama/llama-4-maverick",
+			"microsoft/phi-4-reasoning-plus",
+			"mistralai/devstral-medium",
+			"mistralai/magistral-medium-2506:thinking",
+			"moonshotai/kimi-k2",
+			"openai/gpt-5-chat",
+			"openai/gpt-oss-120b",
+			"qwen/qwen3-coder",
+			"x-ai/grok-3-mini",
+		},
 	}
 }
 

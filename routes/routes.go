@@ -12,6 +12,8 @@ import (
 func Setup(app *fiber.App, cfg *config.Config, db *ent.Client) *fiber.App {
 	authHandler := handlers.NewAuthHandler(cfg.OAuthConfig, db)
 	userHandler := handlers.NewUserHandler(db)
+	aiHandler := handlers.NewAIHandler(cfg, db)
+	chatroomHandler := handlers.NewChatroomHandler(db)
 
 	auth := app.Group("/auth")
 	auth.Get("/login", authHandler.Login)
@@ -21,8 +23,18 @@ func Setup(app *fiber.App, cfg *config.Config, db *ent.Client) *fiber.App {
 	api := app.Group("/api")
 	api.Use(middleware.AuthMiddleware(db))
 
-	user := api.Group("/user")
-	user.Get("/", userHandler.GetUser)
-	user.Patch("/", userHandler.UpdateUser)
+	api.Route("/user").
+		Get(userHandler.GetUser).
+		Patch(userHandler.UpdateUser)
+
+	api.Route("/ai").
+		Post(aiHandler.AIChat).
+		Route("/chatroom").
+			Get(chatroomHandler.ListChatrooms).
+			Post(chatroomHandler.CreateChatroom).
+		Route("/:id").
+			Get(chatroomHandler.GetMessages).
+			Patch(chatroomHandler.UpdateChatroom).
+			Delete(chatroomHandler.RemoveChatroom)
 	return app
 }

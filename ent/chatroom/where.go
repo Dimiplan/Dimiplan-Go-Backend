@@ -11,298 +11,228 @@ import (
 )
 
 // ID filters vertices based on their ID field.
-func ID(id int) predicate.ChatRoom {
-	return predicate.ChatRoom(sql.FieldEQ(FieldID, id))
+func ID(id int) predicate.Chatroom {
+	return predicate.Chatroom(sql.FieldEQ(FieldID, id))
 }
 
 // IDEQ applies the EQ predicate on the ID field.
-func IDEQ(id int) predicate.ChatRoom {
-	return predicate.ChatRoom(sql.FieldEQ(FieldID, id))
+func IDEQ(id int) predicate.Chatroom {
+	return predicate.Chatroom(sql.FieldEQ(FieldID, id))
 }
 
 // IDNEQ applies the NEQ predicate on the ID field.
-func IDNEQ(id int) predicate.ChatRoom {
-	return predicate.ChatRoom(sql.FieldNEQ(FieldID, id))
+func IDNEQ(id int) predicate.Chatroom {
+	return predicate.Chatroom(sql.FieldNEQ(FieldID, id))
 }
 
 // IDIn applies the In predicate on the ID field.
-func IDIn(ids ...int) predicate.ChatRoom {
-	return predicate.ChatRoom(sql.FieldIn(FieldID, ids...))
+func IDIn(ids ...int) predicate.Chatroom {
+	return predicate.Chatroom(sql.FieldIn(FieldID, ids...))
 }
 
 // IDNotIn applies the NotIn predicate on the ID field.
-func IDNotIn(ids ...int) predicate.ChatRoom {
-	return predicate.ChatRoom(sql.FieldNotIn(FieldID, ids...))
+func IDNotIn(ids ...int) predicate.Chatroom {
+	return predicate.Chatroom(sql.FieldNotIn(FieldID, ids...))
 }
 
 // IDGT applies the GT predicate on the ID field.
-func IDGT(id int) predicate.ChatRoom {
-	return predicate.ChatRoom(sql.FieldGT(FieldID, id))
+func IDGT(id int) predicate.Chatroom {
+	return predicate.Chatroom(sql.FieldGT(FieldID, id))
 }
 
 // IDGTE applies the GTE predicate on the ID field.
-func IDGTE(id int) predicate.ChatRoom {
-	return predicate.ChatRoom(sql.FieldGTE(FieldID, id))
+func IDGTE(id int) predicate.Chatroom {
+	return predicate.Chatroom(sql.FieldGTE(FieldID, id))
 }
 
 // IDLT applies the LT predicate on the ID field.
-func IDLT(id int) predicate.ChatRoom {
-	return predicate.ChatRoom(sql.FieldLT(FieldID, id))
+func IDLT(id int) predicate.Chatroom {
+	return predicate.Chatroom(sql.FieldLT(FieldID, id))
 }
 
 // IDLTE applies the LTE predicate on the ID field.
-func IDLTE(id int) predicate.ChatRoom {
-	return predicate.ChatRoom(sql.FieldLTE(FieldID, id))
-}
-
-// Type applies equality check predicate on the "type" field. It's identical to TypeEQ.
-func Type(v string) predicate.ChatRoom {
-	return predicate.ChatRoom(sql.FieldEQ(FieldType, v))
+func IDLTE(id int) predicate.Chatroom {
+	return predicate.Chatroom(sql.FieldLTE(FieldID, id))
 }
 
 // Name applies equality check predicate on the "name" field. It's identical to NameEQ.
-func Name(v string) predicate.ChatRoom {
-	return predicate.ChatRoom(sql.FieldEQ(FieldName, v))
+func Name(v string) predicate.Chatroom {
+	return predicate.Chatroom(sql.FieldEQ(FieldName, v))
 }
 
 // IsProcessing applies equality check predicate on the "isProcessing" field. It's identical to IsProcessingEQ.
-func IsProcessing(v bool) predicate.ChatRoom {
-	return predicate.ChatRoom(sql.FieldEQ(FieldIsProcessing, v))
+func IsProcessing(v bool) predicate.Chatroom {
+	return predicate.Chatroom(sql.FieldEQ(FieldIsProcessing, v))
 }
 
 // CreatedAt applies equality check predicate on the "createdAt" field. It's identical to CreatedAtEQ.
-func CreatedAt(v time.Time) predicate.ChatRoom {
-	return predicate.ChatRoom(sql.FieldEQ(FieldCreatedAt, v))
+func CreatedAt(v time.Time) predicate.Chatroom {
+	return predicate.Chatroom(sql.FieldEQ(FieldCreatedAt, v))
 }
 
 // UpdatedAt applies equality check predicate on the "updatedAt" field. It's identical to UpdatedAtEQ.
-func UpdatedAt(v time.Time) predicate.ChatRoom {
-	return predicate.ChatRoom(sql.FieldEQ(FieldUpdatedAt, v))
-}
-
-// TypeEQ applies the EQ predicate on the "type" field.
-func TypeEQ(v string) predicate.ChatRoom {
-	return predicate.ChatRoom(sql.FieldEQ(FieldType, v))
-}
-
-// TypeNEQ applies the NEQ predicate on the "type" field.
-func TypeNEQ(v string) predicate.ChatRoom {
-	return predicate.ChatRoom(sql.FieldNEQ(FieldType, v))
-}
-
-// TypeIn applies the In predicate on the "type" field.
-func TypeIn(vs ...string) predicate.ChatRoom {
-	return predicate.ChatRoom(sql.FieldIn(FieldType, vs...))
-}
-
-// TypeNotIn applies the NotIn predicate on the "type" field.
-func TypeNotIn(vs ...string) predicate.ChatRoom {
-	return predicate.ChatRoom(sql.FieldNotIn(FieldType, vs...))
-}
-
-// TypeGT applies the GT predicate on the "type" field.
-func TypeGT(v string) predicate.ChatRoom {
-	return predicate.ChatRoom(sql.FieldGT(FieldType, v))
-}
-
-// TypeGTE applies the GTE predicate on the "type" field.
-func TypeGTE(v string) predicate.ChatRoom {
-	return predicate.ChatRoom(sql.FieldGTE(FieldType, v))
-}
-
-// TypeLT applies the LT predicate on the "type" field.
-func TypeLT(v string) predicate.ChatRoom {
-	return predicate.ChatRoom(sql.FieldLT(FieldType, v))
-}
-
-// TypeLTE applies the LTE predicate on the "type" field.
-func TypeLTE(v string) predicate.ChatRoom {
-	return predicate.ChatRoom(sql.FieldLTE(FieldType, v))
-}
-
-// TypeContains applies the Contains predicate on the "type" field.
-func TypeContains(v string) predicate.ChatRoom {
-	return predicate.ChatRoom(sql.FieldContains(FieldType, v))
-}
-
-// TypeHasPrefix applies the HasPrefix predicate on the "type" field.
-func TypeHasPrefix(v string) predicate.ChatRoom {
-	return predicate.ChatRoom(sql.FieldHasPrefix(FieldType, v))
-}
-
-// TypeHasSuffix applies the HasSuffix predicate on the "type" field.
-func TypeHasSuffix(v string) predicate.ChatRoom {
-	return predicate.ChatRoom(sql.FieldHasSuffix(FieldType, v))
-}
-
-// TypeEqualFold applies the EqualFold predicate on the "type" field.
-func TypeEqualFold(v string) predicate.ChatRoom {
-	return predicate.ChatRoom(sql.FieldEqualFold(FieldType, v))
-}
-
-// TypeContainsFold applies the ContainsFold predicate on the "type" field.
-func TypeContainsFold(v string) predicate.ChatRoom {
-	return predicate.ChatRoom(sql.FieldContainsFold(FieldType, v))
+func UpdatedAt(v time.Time) predicate.Chatroom {
+	return predicate.Chatroom(sql.FieldEQ(FieldUpdatedAt, v))
 }
 
 // NameEQ applies the EQ predicate on the "name" field.
-func NameEQ(v string) predicate.ChatRoom {
-	return predicate.ChatRoom(sql.FieldEQ(FieldName, v))
+func NameEQ(v string) predicate.Chatroom {
+	return predicate.Chatroom(sql.FieldEQ(FieldName, v))
 }
 
 // NameNEQ applies the NEQ predicate on the "name" field.
-func NameNEQ(v string) predicate.ChatRoom {
-	return predicate.ChatRoom(sql.FieldNEQ(FieldName, v))
+func NameNEQ(v string) predicate.Chatroom {
+	return predicate.Chatroom(sql.FieldNEQ(FieldName, v))
 }
 
 // NameIn applies the In predicate on the "name" field.
-func NameIn(vs ...string) predicate.ChatRoom {
-	return predicate.ChatRoom(sql.FieldIn(FieldName, vs...))
+func NameIn(vs ...string) predicate.Chatroom {
+	return predicate.Chatroom(sql.FieldIn(FieldName, vs...))
 }
 
 // NameNotIn applies the NotIn predicate on the "name" field.
-func NameNotIn(vs ...string) predicate.ChatRoom {
-	return predicate.ChatRoom(sql.FieldNotIn(FieldName, vs...))
+func NameNotIn(vs ...string) predicate.Chatroom {
+	return predicate.Chatroom(sql.FieldNotIn(FieldName, vs...))
 }
 
 // NameGT applies the GT predicate on the "name" field.
-func NameGT(v string) predicate.ChatRoom {
-	return predicate.ChatRoom(sql.FieldGT(FieldName, v))
+func NameGT(v string) predicate.Chatroom {
+	return predicate.Chatroom(sql.FieldGT(FieldName, v))
 }
 
 // NameGTE applies the GTE predicate on the "name" field.
-func NameGTE(v string) predicate.ChatRoom {
-	return predicate.ChatRoom(sql.FieldGTE(FieldName, v))
+func NameGTE(v string) predicate.Chatroom {
+	return predicate.Chatroom(sql.FieldGTE(FieldName, v))
 }
 
 // NameLT applies the LT predicate on the "name" field.
-func NameLT(v string) predicate.ChatRoom {
-	return predicate.ChatRoom(sql.FieldLT(FieldName, v))
+func NameLT(v string) predicate.Chatroom {
+	return predicate.Chatroom(sql.FieldLT(FieldName, v))
 }
 
 // NameLTE applies the LTE predicate on the "name" field.
-func NameLTE(v string) predicate.ChatRoom {
-	return predicate.ChatRoom(sql.FieldLTE(FieldName, v))
+func NameLTE(v string) predicate.Chatroom {
+	return predicate.Chatroom(sql.FieldLTE(FieldName, v))
 }
 
 // NameContains applies the Contains predicate on the "name" field.
-func NameContains(v string) predicate.ChatRoom {
-	return predicate.ChatRoom(sql.FieldContains(FieldName, v))
+func NameContains(v string) predicate.Chatroom {
+	return predicate.Chatroom(sql.FieldContains(FieldName, v))
 }
 
 // NameHasPrefix applies the HasPrefix predicate on the "name" field.
-func NameHasPrefix(v string) predicate.ChatRoom {
-	return predicate.ChatRoom(sql.FieldHasPrefix(FieldName, v))
+func NameHasPrefix(v string) predicate.Chatroom {
+	return predicate.Chatroom(sql.FieldHasPrefix(FieldName, v))
 }
 
 // NameHasSuffix applies the HasSuffix predicate on the "name" field.
-func NameHasSuffix(v string) predicate.ChatRoom {
-	return predicate.ChatRoom(sql.FieldHasSuffix(FieldName, v))
+func NameHasSuffix(v string) predicate.Chatroom {
+	return predicate.Chatroom(sql.FieldHasSuffix(FieldName, v))
 }
 
 // NameEqualFold applies the EqualFold predicate on the "name" field.
-func NameEqualFold(v string) predicate.ChatRoom {
-	return predicate.ChatRoom(sql.FieldEqualFold(FieldName, v))
+func NameEqualFold(v string) predicate.Chatroom {
+	return predicate.Chatroom(sql.FieldEqualFold(FieldName, v))
 }
 
 // NameContainsFold applies the ContainsFold predicate on the "name" field.
-func NameContainsFold(v string) predicate.ChatRoom {
-	return predicate.ChatRoom(sql.FieldContainsFold(FieldName, v))
+func NameContainsFold(v string) predicate.Chatroom {
+	return predicate.Chatroom(sql.FieldContainsFold(FieldName, v))
 }
 
 // IsProcessingEQ applies the EQ predicate on the "isProcessing" field.
-func IsProcessingEQ(v bool) predicate.ChatRoom {
-	return predicate.ChatRoom(sql.FieldEQ(FieldIsProcessing, v))
+func IsProcessingEQ(v bool) predicate.Chatroom {
+	return predicate.Chatroom(sql.FieldEQ(FieldIsProcessing, v))
 }
 
 // IsProcessingNEQ applies the NEQ predicate on the "isProcessing" field.
-func IsProcessingNEQ(v bool) predicate.ChatRoom {
-	return predicate.ChatRoom(sql.FieldNEQ(FieldIsProcessing, v))
+func IsProcessingNEQ(v bool) predicate.Chatroom {
+	return predicate.Chatroom(sql.FieldNEQ(FieldIsProcessing, v))
 }
 
 // CreatedAtEQ applies the EQ predicate on the "createdAt" field.
-func CreatedAtEQ(v time.Time) predicate.ChatRoom {
-	return predicate.ChatRoom(sql.FieldEQ(FieldCreatedAt, v))
+func CreatedAtEQ(v time.Time) predicate.Chatroom {
+	return predicate.Chatroom(sql.FieldEQ(FieldCreatedAt, v))
 }
 
 // CreatedAtNEQ applies the NEQ predicate on the "createdAt" field.
-func CreatedAtNEQ(v time.Time) predicate.ChatRoom {
-	return predicate.ChatRoom(sql.FieldNEQ(FieldCreatedAt, v))
+func CreatedAtNEQ(v time.Time) predicate.Chatroom {
+	return predicate.Chatroom(sql.FieldNEQ(FieldCreatedAt, v))
 }
 
 // CreatedAtIn applies the In predicate on the "createdAt" field.
-func CreatedAtIn(vs ...time.Time) predicate.ChatRoom {
-	return predicate.ChatRoom(sql.FieldIn(FieldCreatedAt, vs...))
+func CreatedAtIn(vs ...time.Time) predicate.Chatroom {
+	return predicate.Chatroom(sql.FieldIn(FieldCreatedAt, vs...))
 }
 
 // CreatedAtNotIn applies the NotIn predicate on the "createdAt" field.
-func CreatedAtNotIn(vs ...time.Time) predicate.ChatRoom {
-	return predicate.ChatRoom(sql.FieldNotIn(FieldCreatedAt, vs...))
+func CreatedAtNotIn(vs ...time.Time) predicate.Chatroom {
+	return predicate.Chatroom(sql.FieldNotIn(FieldCreatedAt, vs...))
 }
 
 // CreatedAtGT applies the GT predicate on the "createdAt" field.
-func CreatedAtGT(v time.Time) predicate.ChatRoom {
-	return predicate.ChatRoom(sql.FieldGT(FieldCreatedAt, v))
+func CreatedAtGT(v time.Time) predicate.Chatroom {
+	return predicate.Chatroom(sql.FieldGT(FieldCreatedAt, v))
 }
 
 // CreatedAtGTE applies the GTE predicate on the "createdAt" field.
-func CreatedAtGTE(v time.Time) predicate.ChatRoom {
-	return predicate.ChatRoom(sql.FieldGTE(FieldCreatedAt, v))
+func CreatedAtGTE(v time.Time) predicate.Chatroom {
+	return predicate.Chatroom(sql.FieldGTE(FieldCreatedAt, v))
 }
 
 // CreatedAtLT applies the LT predicate on the "createdAt" field.
-func CreatedAtLT(v time.Time) predicate.ChatRoom {
-	return predicate.ChatRoom(sql.FieldLT(FieldCreatedAt, v))
+func CreatedAtLT(v time.Time) predicate.Chatroom {
+	return predicate.Chatroom(sql.FieldLT(FieldCreatedAt, v))
 }
 
 // CreatedAtLTE applies the LTE predicate on the "createdAt" field.
-func CreatedAtLTE(v time.Time) predicate.ChatRoom {
-	return predicate.ChatRoom(sql.FieldLTE(FieldCreatedAt, v))
+func CreatedAtLTE(v time.Time) predicate.Chatroom {
+	return predicate.Chatroom(sql.FieldLTE(FieldCreatedAt, v))
 }
 
 // UpdatedAtEQ applies the EQ predicate on the "updatedAt" field.
-func UpdatedAtEQ(v time.Time) predicate.ChatRoom {
-	return predicate.ChatRoom(sql.FieldEQ(FieldUpdatedAt, v))
+func UpdatedAtEQ(v time.Time) predicate.Chatroom {
+	return predicate.Chatroom(sql.FieldEQ(FieldUpdatedAt, v))
 }
 
 // UpdatedAtNEQ applies the NEQ predicate on the "updatedAt" field.
-func UpdatedAtNEQ(v time.Time) predicate.ChatRoom {
-	return predicate.ChatRoom(sql.FieldNEQ(FieldUpdatedAt, v))
+func UpdatedAtNEQ(v time.Time) predicate.Chatroom {
+	return predicate.Chatroom(sql.FieldNEQ(FieldUpdatedAt, v))
 }
 
 // UpdatedAtIn applies the In predicate on the "updatedAt" field.
-func UpdatedAtIn(vs ...time.Time) predicate.ChatRoom {
-	return predicate.ChatRoom(sql.FieldIn(FieldUpdatedAt, vs...))
+func UpdatedAtIn(vs ...time.Time) predicate.Chatroom {
+	return predicate.Chatroom(sql.FieldIn(FieldUpdatedAt, vs...))
 }
 
 // UpdatedAtNotIn applies the NotIn predicate on the "updatedAt" field.
-func UpdatedAtNotIn(vs ...time.Time) predicate.ChatRoom {
-	return predicate.ChatRoom(sql.FieldNotIn(FieldUpdatedAt, vs...))
+func UpdatedAtNotIn(vs ...time.Time) predicate.Chatroom {
+	return predicate.Chatroom(sql.FieldNotIn(FieldUpdatedAt, vs...))
 }
 
 // UpdatedAtGT applies the GT predicate on the "updatedAt" field.
-func UpdatedAtGT(v time.Time) predicate.ChatRoom {
-	return predicate.ChatRoom(sql.FieldGT(FieldUpdatedAt, v))
+func UpdatedAtGT(v time.Time) predicate.Chatroom {
+	return predicate.Chatroom(sql.FieldGT(FieldUpdatedAt, v))
 }
 
 // UpdatedAtGTE applies the GTE predicate on the "updatedAt" field.
-func UpdatedAtGTE(v time.Time) predicate.ChatRoom {
-	return predicate.ChatRoom(sql.FieldGTE(FieldUpdatedAt, v))
+func UpdatedAtGTE(v time.Time) predicate.Chatroom {
+	return predicate.Chatroom(sql.FieldGTE(FieldUpdatedAt, v))
 }
 
 // UpdatedAtLT applies the LT predicate on the "updatedAt" field.
-func UpdatedAtLT(v time.Time) predicate.ChatRoom {
-	return predicate.ChatRoom(sql.FieldLT(FieldUpdatedAt, v))
+func UpdatedAtLT(v time.Time) predicate.Chatroom {
+	return predicate.Chatroom(sql.FieldLT(FieldUpdatedAt, v))
 }
 
 // UpdatedAtLTE applies the LTE predicate on the "updatedAt" field.
-func UpdatedAtLTE(v time.Time) predicate.ChatRoom {
-	return predicate.ChatRoom(sql.FieldLTE(FieldUpdatedAt, v))
+func UpdatedAtLTE(v time.Time) predicate.Chatroom {
+	return predicate.Chatroom(sql.FieldLTE(FieldUpdatedAt, v))
 }
 
 // HasUser applies the HasEdge predicate on the "user" edge.
-func HasUser() predicate.ChatRoom {
-	return predicate.ChatRoom(func(s *sql.Selector) {
+func HasUser() predicate.Chatroom {
+	return predicate.Chatroom(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, true, UserTable, UserColumn),
@@ -312,8 +242,8 @@ func HasUser() predicate.ChatRoom {
 }
 
 // HasUserWith applies the HasEdge predicate on the "user" edge with a given conditions (other predicates).
-func HasUserWith(preds ...predicate.User) predicate.ChatRoom {
-	return predicate.ChatRoom(func(s *sql.Selector) {
+func HasUserWith(preds ...predicate.User) predicate.Chatroom {
+	return predicate.Chatroom(func(s *sql.Selector) {
 		step := newUserStep()
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {
@@ -323,21 +253,21 @@ func HasUserWith(preds ...predicate.User) predicate.ChatRoom {
 	})
 }
 
-// HasChats applies the HasEdge predicate on the "chats" edge.
-func HasChats() predicate.ChatRoom {
-	return predicate.ChatRoom(func(s *sql.Selector) {
+// HasMessages applies the HasEdge predicate on the "messages" edge.
+func HasMessages() predicate.Chatroom {
+	return predicate.Chatroom(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, ChatsTable, ChatsColumn),
+			sqlgraph.Edge(sqlgraph.O2M, false, MessagesTable, MessagesColumn),
 		)
 		sqlgraph.HasNeighbors(s, step)
 	})
 }
 
-// HasChatsWith applies the HasEdge predicate on the "chats" edge with a given conditions (other predicates).
-func HasChatsWith(preds ...predicate.Chat) predicate.ChatRoom {
-	return predicate.ChatRoom(func(s *sql.Selector) {
-		step := newChatsStep()
+// HasMessagesWith applies the HasEdge predicate on the "messages" edge with a given conditions (other predicates).
+func HasMessagesWith(preds ...predicate.Message) predicate.Chatroom {
+	return predicate.Chatroom(func(s *sql.Selector) {
+		step := newMessagesStep()
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {
 				p(s)
@@ -347,16 +277,16 @@ func HasChatsWith(preds ...predicate.Chat) predicate.ChatRoom {
 }
 
 // And groups predicates with the AND operator between them.
-func And(predicates ...predicate.ChatRoom) predicate.ChatRoom {
-	return predicate.ChatRoom(sql.AndPredicates(predicates...))
+func And(predicates ...predicate.Chatroom) predicate.Chatroom {
+	return predicate.Chatroom(sql.AndPredicates(predicates...))
 }
 
 // Or groups predicates with the OR operator between them.
-func Or(predicates ...predicate.ChatRoom) predicate.ChatRoom {
-	return predicate.ChatRoom(sql.OrPredicates(predicates...))
+func Or(predicates ...predicate.Chatroom) predicate.Chatroom {
+	return predicate.Chatroom(sql.OrPredicates(predicates...))
 }
 
 // Not applies the not operator on the given predicate.
-func Not(p predicate.ChatRoom) predicate.ChatRoom {
-	return predicate.ChatRoom(sql.NotPredicates(p))
+func Not(p predicate.Chatroom) predicate.Chatroom {
+	return predicate.Chatroom(sql.NotPredicates(p))
 }

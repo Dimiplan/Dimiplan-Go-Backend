@@ -4,8 +4,8 @@ package ent
 
 import (
 	"context"
-	"dimiplan-backend/ent/chat"
 	"dimiplan-backend/ent/chatroom"
+	"dimiplan-backend/ent/message"
 	"dimiplan-backend/ent/user"
 	"errors"
 	"fmt"
@@ -15,33 +15,27 @@ import (
 	"entgo.io/ent/schema/field"
 )
 
-// ChatRoomCreate is the builder for creating a ChatRoom entity.
-type ChatRoomCreate struct {
+// ChatroomCreate is the builder for creating a Chatroom entity.
+type ChatroomCreate struct {
 	config
-	mutation *ChatRoomMutation
+	mutation *ChatroomMutation
 	hooks    []Hook
 }
 
-// SetType sets the "type" field.
-func (_c *ChatRoomCreate) SetType(v string) *ChatRoomCreate {
-	_c.mutation.SetType(v)
-	return _c
-}
-
 // SetName sets the "name" field.
-func (_c *ChatRoomCreate) SetName(v string) *ChatRoomCreate {
+func (_c *ChatroomCreate) SetName(v string) *ChatroomCreate {
 	_c.mutation.SetName(v)
 	return _c
 }
 
 // SetIsProcessing sets the "isProcessing" field.
-func (_c *ChatRoomCreate) SetIsProcessing(v bool) *ChatRoomCreate {
+func (_c *ChatroomCreate) SetIsProcessing(v bool) *ChatroomCreate {
 	_c.mutation.SetIsProcessing(v)
 	return _c
 }
 
 // SetNillableIsProcessing sets the "isProcessing" field if the given value is not nil.
-func (_c *ChatRoomCreate) SetNillableIsProcessing(v *bool) *ChatRoomCreate {
+func (_c *ChatroomCreate) SetNillableIsProcessing(v *bool) *ChatroomCreate {
 	if v != nil {
 		_c.SetIsProcessing(*v)
 	}
@@ -49,13 +43,13 @@ func (_c *ChatRoomCreate) SetNillableIsProcessing(v *bool) *ChatRoomCreate {
 }
 
 // SetCreatedAt sets the "createdAt" field.
-func (_c *ChatRoomCreate) SetCreatedAt(v time.Time) *ChatRoomCreate {
+func (_c *ChatroomCreate) SetCreatedAt(v time.Time) *ChatroomCreate {
 	_c.mutation.SetCreatedAt(v)
 	return _c
 }
 
 // SetNillableCreatedAt sets the "createdAt" field if the given value is not nil.
-func (_c *ChatRoomCreate) SetNillableCreatedAt(v *time.Time) *ChatRoomCreate {
+func (_c *ChatroomCreate) SetNillableCreatedAt(v *time.Time) *ChatroomCreate {
 	if v != nil {
 		_c.SetCreatedAt(*v)
 	}
@@ -63,13 +57,13 @@ func (_c *ChatRoomCreate) SetNillableCreatedAt(v *time.Time) *ChatRoomCreate {
 }
 
 // SetUpdatedAt sets the "updatedAt" field.
-func (_c *ChatRoomCreate) SetUpdatedAt(v time.Time) *ChatRoomCreate {
+func (_c *ChatroomCreate) SetUpdatedAt(v time.Time) *ChatroomCreate {
 	_c.mutation.SetUpdatedAt(v)
 	return _c
 }
 
 // SetNillableUpdatedAt sets the "updatedAt" field if the given value is not nil.
-func (_c *ChatRoomCreate) SetNillableUpdatedAt(v *time.Time) *ChatRoomCreate {
+func (_c *ChatroomCreate) SetNillableUpdatedAt(v *time.Time) *ChatroomCreate {
 	if v != nil {
 		_c.SetUpdatedAt(*v)
 	}
@@ -77,44 +71,44 @@ func (_c *ChatRoomCreate) SetNillableUpdatedAt(v *time.Time) *ChatRoomCreate {
 }
 
 // SetUserID sets the "user" edge to the User entity by ID.
-func (_c *ChatRoomCreate) SetUserID(id string) *ChatRoomCreate {
+func (_c *ChatroomCreate) SetUserID(id string) *ChatroomCreate {
 	_c.mutation.SetUserID(id)
 	return _c
 }
 
 // SetUser sets the "user" edge to the User entity.
-func (_c *ChatRoomCreate) SetUser(v *User) *ChatRoomCreate {
+func (_c *ChatroomCreate) SetUser(v *User) *ChatroomCreate {
 	return _c.SetUserID(v.ID)
 }
 
-// AddChatIDs adds the "chats" edge to the Chat entity by IDs.
-func (_c *ChatRoomCreate) AddChatIDs(ids ...int) *ChatRoomCreate {
-	_c.mutation.AddChatIDs(ids...)
+// AddMessageIDs adds the "messages" edge to the Message entity by IDs.
+func (_c *ChatroomCreate) AddMessageIDs(ids ...int) *ChatroomCreate {
+	_c.mutation.AddMessageIDs(ids...)
 	return _c
 }
 
-// AddChats adds the "chats" edges to the Chat entity.
-func (_c *ChatRoomCreate) AddChats(v ...*Chat) *ChatRoomCreate {
+// AddMessages adds the "messages" edges to the Message entity.
+func (_c *ChatroomCreate) AddMessages(v ...*Message) *ChatroomCreate {
 	ids := make([]int, len(v))
 	for i := range v {
 		ids[i] = v[i].ID
 	}
-	return _c.AddChatIDs(ids...)
+	return _c.AddMessageIDs(ids...)
 }
 
-// Mutation returns the ChatRoomMutation object of the builder.
-func (_c *ChatRoomCreate) Mutation() *ChatRoomMutation {
+// Mutation returns the ChatroomMutation object of the builder.
+func (_c *ChatroomCreate) Mutation() *ChatroomMutation {
 	return _c.mutation
 }
 
-// Save creates the ChatRoom in the database.
-func (_c *ChatRoomCreate) Save(ctx context.Context) (*ChatRoom, error) {
+// Save creates the Chatroom in the database.
+func (_c *ChatroomCreate) Save(ctx context.Context) (*Chatroom, error) {
 	_c.defaults()
 	return withHooks(ctx, _c.sqlSave, _c.mutation, _c.hooks)
 }
 
 // SaveX calls Save and panics if Save returns an error.
-func (_c *ChatRoomCreate) SaveX(ctx context.Context) *ChatRoom {
+func (_c *ChatroomCreate) SaveX(ctx context.Context) *Chatroom {
 	v, err := _c.Save(ctx)
 	if err != nil {
 		panic(err)
@@ -123,20 +117,20 @@ func (_c *ChatRoomCreate) SaveX(ctx context.Context) *ChatRoom {
 }
 
 // Exec executes the query.
-func (_c *ChatRoomCreate) Exec(ctx context.Context) error {
+func (_c *ChatroomCreate) Exec(ctx context.Context) error {
 	_, err := _c.Save(ctx)
 	return err
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (_c *ChatRoomCreate) ExecX(ctx context.Context) {
+func (_c *ChatroomCreate) ExecX(ctx context.Context) {
 	if err := _c.Exec(ctx); err != nil {
 		panic(err)
 	}
 }
 
 // defaults sets the default values of the builder before save.
-func (_c *ChatRoomCreate) defaults() {
+func (_c *ChatroomCreate) defaults() {
 	if _, ok := _c.mutation.IsProcessing(); !ok {
 		v := chatroom.DefaultIsProcessing
 		_c.mutation.SetIsProcessing(v)
@@ -152,34 +146,31 @@ func (_c *ChatRoomCreate) defaults() {
 }
 
 // check runs all checks and user-defined validators on the builder.
-func (_c *ChatRoomCreate) check() error {
-	if _, ok := _c.mutation.GetType(); !ok {
-		return &ValidationError{Name: "type", err: errors.New(`ent: missing required field "ChatRoom.type"`)}
-	}
+func (_c *ChatroomCreate) check() error {
 	if _, ok := _c.mutation.Name(); !ok {
-		return &ValidationError{Name: "name", err: errors.New(`ent: missing required field "ChatRoom.name"`)}
+		return &ValidationError{Name: "name", err: errors.New(`ent: missing required field "Chatroom.name"`)}
 	}
 	if v, ok := _c.mutation.Name(); ok {
 		if err := chatroom.NameValidator(v); err != nil {
-			return &ValidationError{Name: "name", err: fmt.Errorf(`ent: validator failed for field "ChatRoom.name": %w`, err)}
+			return &ValidationError{Name: "name", err: fmt.Errorf(`ent: validator failed for field "Chatroom.name": %w`, err)}
 		}
 	}
 	if _, ok := _c.mutation.IsProcessing(); !ok {
-		return &ValidationError{Name: "isProcessing", err: errors.New(`ent: missing required field "ChatRoom.isProcessing"`)}
+		return &ValidationError{Name: "isProcessing", err: errors.New(`ent: missing required field "Chatroom.isProcessing"`)}
 	}
 	if _, ok := _c.mutation.CreatedAt(); !ok {
-		return &ValidationError{Name: "createdAt", err: errors.New(`ent: missing required field "ChatRoom.createdAt"`)}
+		return &ValidationError{Name: "createdAt", err: errors.New(`ent: missing required field "Chatroom.createdAt"`)}
 	}
 	if _, ok := _c.mutation.UpdatedAt(); !ok {
-		return &ValidationError{Name: "updatedAt", err: errors.New(`ent: missing required field "ChatRoom.updatedAt"`)}
+		return &ValidationError{Name: "updatedAt", err: errors.New(`ent: missing required field "Chatroom.updatedAt"`)}
 	}
 	if len(_c.mutation.UserIDs()) == 0 {
-		return &ValidationError{Name: "user", err: errors.New(`ent: missing required edge "ChatRoom.user"`)}
+		return &ValidationError{Name: "user", err: errors.New(`ent: missing required edge "Chatroom.user"`)}
 	}
 	return nil
 }
 
-func (_c *ChatRoomCreate) sqlSave(ctx context.Context) (*ChatRoom, error) {
+func (_c *ChatroomCreate) sqlSave(ctx context.Context) (*Chatroom, error) {
 	if err := _c.check(); err != nil {
 		return nil, err
 	}
@@ -197,15 +188,11 @@ func (_c *ChatRoomCreate) sqlSave(ctx context.Context) (*ChatRoom, error) {
 	return _node, nil
 }
 
-func (_c *ChatRoomCreate) createSpec() (*ChatRoom, *sqlgraph.CreateSpec) {
+func (_c *ChatroomCreate) createSpec() (*Chatroom, *sqlgraph.CreateSpec) {
 	var (
-		_node = &ChatRoom{config: _c.config}
+		_node = &Chatroom{config: _c.config}
 		_spec = sqlgraph.NewCreateSpec(chatroom.Table, sqlgraph.NewFieldSpec(chatroom.FieldID, field.TypeInt))
 	)
-	if value, ok := _c.mutation.GetType(); ok {
-		_spec.SetField(chatroom.FieldType, field.TypeString, value)
-		_node.Type = value
-	}
 	if value, ok := _c.mutation.Name(); ok {
 		_spec.SetField(chatroom.FieldName, field.TypeString, value)
 		_node.Name = value
@@ -239,15 +226,15 @@ func (_c *ChatRoomCreate) createSpec() (*ChatRoom, *sqlgraph.CreateSpec) {
 		_node.user_chatrooms = &nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
-	if nodes := _c.mutation.ChatsIDs(); len(nodes) > 0 {
+	if nodes := _c.mutation.MessagesIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   chatroom.ChatsTable,
-			Columns: []string{chatroom.ChatsColumn},
+			Table:   chatroom.MessagesTable,
+			Columns: []string{chatroom.MessagesColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(chat.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(message.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {
@@ -258,27 +245,27 @@ func (_c *ChatRoomCreate) createSpec() (*ChatRoom, *sqlgraph.CreateSpec) {
 	return _node, _spec
 }
 
-// ChatRoomCreateBulk is the builder for creating many ChatRoom entities in bulk.
-type ChatRoomCreateBulk struct {
+// ChatroomCreateBulk is the builder for creating many Chatroom entities in bulk.
+type ChatroomCreateBulk struct {
 	config
 	err      error
-	builders []*ChatRoomCreate
+	builders []*ChatroomCreate
 }
 
-// Save creates the ChatRoom entities in the database.
-func (_c *ChatRoomCreateBulk) Save(ctx context.Context) ([]*ChatRoom, error) {
+// Save creates the Chatroom entities in the database.
+func (_c *ChatroomCreateBulk) Save(ctx context.Context) ([]*Chatroom, error) {
 	if _c.err != nil {
 		return nil, _c.err
 	}
 	specs := make([]*sqlgraph.CreateSpec, len(_c.builders))
-	nodes := make([]*ChatRoom, len(_c.builders))
+	nodes := make([]*Chatroom, len(_c.builders))
 	mutators := make([]Mutator, len(_c.builders))
 	for i := range _c.builders {
 		func(i int, root context.Context) {
 			builder := _c.builders[i]
 			builder.defaults()
 			var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
-				mutation, ok := m.(*ChatRoomMutation)
+				mutation, ok := m.(*ChatroomMutation)
 				if !ok {
 					return nil, fmt.Errorf("unexpected mutation type %T", m)
 				}
@@ -325,7 +312,7 @@ func (_c *ChatRoomCreateBulk) Save(ctx context.Context) ([]*ChatRoom, error) {
 }
 
 // SaveX is like Save, but panics if an error occurs.
-func (_c *ChatRoomCreateBulk) SaveX(ctx context.Context) []*ChatRoom {
+func (_c *ChatroomCreateBulk) SaveX(ctx context.Context) []*Chatroom {
 	v, err := _c.Save(ctx)
 	if err != nil {
 		panic(err)
@@ -334,13 +321,13 @@ func (_c *ChatRoomCreateBulk) SaveX(ctx context.Context) []*ChatRoom {
 }
 
 // Exec executes the query.
-func (_c *ChatRoomCreateBulk) Exec(ctx context.Context) error {
+func (_c *ChatroomCreateBulk) Exec(ctx context.Context) error {
 	_, err := _c.Save(ctx)
 	return err
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (_c *ChatRoomCreateBulk) ExecX(ctx context.Context) {
+func (_c *ChatroomCreateBulk) ExecX(ctx context.Context) {
 	if err := _c.Exec(ctx); err != nil {
 		panic(err)
 	}

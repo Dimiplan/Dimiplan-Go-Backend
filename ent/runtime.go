@@ -3,8 +3,8 @@
 package ent
 
 import (
-	"dimiplan-backend/ent/chat"
 	"dimiplan-backend/ent/chatroom"
+	"dimiplan-backend/ent/message"
 	"dimiplan-backend/ent/planner"
 	"dimiplan-backend/ent/schema"
 	"dimiplan-backend/ent/task"
@@ -16,42 +16,42 @@ import (
 // (default values, validators, hooks and policies) and stitches it
 // to their package variables.
 func init() {
-	chatFields := schema.Chat{}.Fields()
-	_ = chatFields
-	// chatDescSender is the schema descriptor for sender field.
-	chatDescSender := chatFields[0].Descriptor()
-	// chat.SenderValidator is a validator for the "sender" field. It is called by the builders before save.
-	chat.SenderValidator = chatDescSender.Validators[0].(func(string) error)
-	// chatDescCreatedAt is the schema descriptor for createdAt field.
-	chatDescCreatedAt := chatFields[2].Descriptor()
-	// chat.DefaultCreatedAt holds the default value on creation for the createdAt field.
-	chat.DefaultCreatedAt = chatDescCreatedAt.Default.(func() time.Time)
-	// chatDescUpdatedAt is the schema descriptor for updatedAt field.
-	chatDescUpdatedAt := chatFields[3].Descriptor()
-	// chat.DefaultUpdatedAt holds the default value on creation for the updatedAt field.
-	chat.DefaultUpdatedAt = chatDescUpdatedAt.Default.(func() time.Time)
-	// chat.UpdateDefaultUpdatedAt holds the default value on update for the updatedAt field.
-	chat.UpdateDefaultUpdatedAt = chatDescUpdatedAt.UpdateDefault.(func() time.Time)
-	chatroomFields := schema.ChatRoom{}.Fields()
+	chatroomFields := schema.Chatroom{}.Fields()
 	_ = chatroomFields
 	// chatroomDescName is the schema descriptor for name field.
-	chatroomDescName := chatroomFields[1].Descriptor()
+	chatroomDescName := chatroomFields[0].Descriptor()
 	// chatroom.NameValidator is a validator for the "name" field. It is called by the builders before save.
 	chatroom.NameValidator = chatroomDescName.Validators[0].(func(string) error)
 	// chatroomDescIsProcessing is the schema descriptor for isProcessing field.
-	chatroomDescIsProcessing := chatroomFields[2].Descriptor()
+	chatroomDescIsProcessing := chatroomFields[1].Descriptor()
 	// chatroom.DefaultIsProcessing holds the default value on creation for the isProcessing field.
 	chatroom.DefaultIsProcessing = chatroomDescIsProcessing.Default.(bool)
 	// chatroomDescCreatedAt is the schema descriptor for createdAt field.
-	chatroomDescCreatedAt := chatroomFields[3].Descriptor()
+	chatroomDescCreatedAt := chatroomFields[2].Descriptor()
 	// chatroom.DefaultCreatedAt holds the default value on creation for the createdAt field.
 	chatroom.DefaultCreatedAt = chatroomDescCreatedAt.Default.(func() time.Time)
 	// chatroomDescUpdatedAt is the schema descriptor for updatedAt field.
-	chatroomDescUpdatedAt := chatroomFields[4].Descriptor()
+	chatroomDescUpdatedAt := chatroomFields[3].Descriptor()
 	// chatroom.DefaultUpdatedAt holds the default value on creation for the updatedAt field.
 	chatroom.DefaultUpdatedAt = chatroomDescUpdatedAt.Default.(func() time.Time)
 	// chatroom.UpdateDefaultUpdatedAt holds the default value on update for the updatedAt field.
 	chatroom.UpdateDefaultUpdatedAt = chatroomDescUpdatedAt.UpdateDefault.(func() time.Time)
+	messageFields := schema.Message{}.Fields()
+	_ = messageFields
+	// messageDescSender is the schema descriptor for sender field.
+	messageDescSender := messageFields[0].Descriptor()
+	// message.SenderValidator is a validator for the "sender" field. It is called by the builders before save.
+	message.SenderValidator = messageDescSender.Validators[0].(func(string) error)
+	// messageDescCreatedAt is the schema descriptor for createdAt field.
+	messageDescCreatedAt := messageFields[2].Descriptor()
+	// message.DefaultCreatedAt holds the default value on creation for the createdAt field.
+	message.DefaultCreatedAt = messageDescCreatedAt.Default.(func() time.Time)
+	// messageDescUpdatedAt is the schema descriptor for updatedAt field.
+	messageDescUpdatedAt := messageFields[3].Descriptor()
+	// message.DefaultUpdatedAt holds the default value on creation for the updatedAt field.
+	message.DefaultUpdatedAt = messageDescUpdatedAt.Default.(func() time.Time)
+	// message.UpdateDefaultUpdatedAt holds the default value on update for the updatedAt field.
+	message.UpdateDefaultUpdatedAt = messageDescUpdatedAt.UpdateDefault.(func() time.Time)
 	plannerFields := schema.Planner{}.Fields()
 	_ = plannerFields
 	// plannerDescName is the schema descriptor for name field.

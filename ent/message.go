@@ -3,8 +3,8 @@
 package ent
 
 import (
-	"dimiplan-backend/ent/chat"
 	"dimiplan-backend/ent/chatroom"
+	"dimiplan-backend/ent/message"
 	"fmt"
 	"strings"
 	"time"
@@ -13,8 +13,8 @@ import (
 	"entgo.io/ent/dialect/sql"
 )
 
-// Chat is the model entity for the Chat schema.
-type Chat struct {
+// Message is the model entity for the Message schema.
+type Message struct {
 	config `json:"-"`
 	// ID of the ent.
 	ID int `json:"id,omitempty"`
@@ -27,16 +27,16 @@ type Chat struct {
 	// UpdatedAt holds the value of the "updatedAt" field.
 	UpdatedAt time.Time `json:"updatedAt,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
-	// The values are being populated by the ChatQuery when eager-loading is set.
-	Edges           ChatEdges `json:"edges"`
-	chat_room_chats *int
-	selectValues    sql.SelectValues
+	// The values are being populated by the MessageQuery when eager-loading is set.
+	Edges             MessageEdges `json:"edges"`
+	chatroom_messages *int
+	selectValues      sql.SelectValues
 }
 
-// ChatEdges holds the relations/edges for other nodes in the graph.
-type ChatEdges struct {
+// MessageEdges holds the relations/edges for other nodes in the graph.
+type MessageEdges struct {
 	// Chatroom holds the value of the chatroom edge.
-	Chatroom *ChatRoom `json:"chatroom,omitempty"`
+	Chatroom *Chatroom `json:"chatroom,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
 	loadedTypes [1]bool
@@ -44,7 +44,7 @@ type ChatEdges struct {
 
 // ChatroomOrErr returns the Chatroom value or an error if the edge
 // was not loaded in eager-loading, or loaded but was not found.
-func (e ChatEdges) ChatroomOrErr() (*ChatRoom, error) {
+func (e MessageEdges) ChatroomOrErr() (*Chatroom, error) {
 	if e.Chatroom != nil {
 		return e.Chatroom, nil
 	} else if e.loadedTypes[0] {
@@ -54,17 +54,17 @@ func (e ChatEdges) ChatroomOrErr() (*ChatRoom, error) {
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
-func (*Chat) scanValues(columns []string) ([]any, error) {
+func (*Message) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case chat.FieldID:
+		case message.FieldID:
 			values[i] = new(sql.NullInt64)
-		case chat.FieldSender, chat.FieldMessage:
+		case message.FieldSender, message.FieldMessage:
 			values[i] = new(sql.NullString)
-		case chat.FieldCreatedAt, chat.FieldUpdatedAt:
+		case message.FieldCreatedAt, message.FieldUpdatedAt:
 			values[i] = new(sql.NullTime)
-		case chat.ForeignKeys[0]: // chat_room_chats
+		case message.ForeignKeys[0]: // chatroom_messages
 			values[i] = new(sql.NullInt64)
 		default:
 			values[i] = new(sql.UnknownType)
@@ -74,49 +74,49 @@ func (*Chat) scanValues(columns []string) ([]any, error) {
 }
 
 // assignValues assigns the values that were returned from sql.Rows (after scanning)
-// to the Chat fields.
-func (_m *Chat) assignValues(columns []string, values []any) error {
+// to the Message fields.
+func (_m *Message) assignValues(columns []string, values []any) error {
 	if m, n := len(values), len(columns); m < n {
 		return fmt.Errorf("mismatch number of scan values: %d != %d", m, n)
 	}
 	for i := range columns {
 		switch columns[i] {
-		case chat.FieldID:
+		case message.FieldID:
 			value, ok := values[i].(*sql.NullInt64)
 			if !ok {
 				return fmt.Errorf("unexpected type %T for field id", value)
 			}
 			_m.ID = int(value.Int64)
-		case chat.FieldSender:
+		case message.FieldSender:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field sender", values[i])
 			} else if value.Valid {
 				_m.Sender = value.String
 			}
-		case chat.FieldMessage:
+		case message.FieldMessage:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field message", values[i])
 			} else if value.Valid {
 				_m.Message = value.String
 			}
-		case chat.FieldCreatedAt:
+		case message.FieldCreatedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field createdAt", values[i])
 			} else if value.Valid {
 				_m.CreatedAt = value.Time
 			}
-		case chat.FieldUpdatedAt:
+		case message.FieldUpdatedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field updatedAt", values[i])
 			} else if value.Valid {
 				_m.UpdatedAt = value.Time
 			}
-		case chat.ForeignKeys[0]:
+		case message.ForeignKeys[0]:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for edge-field chat_room_chats", value)
+				return fmt.Errorf("unexpected type %T for edge-field chatroom_messages", value)
 			} else if value.Valid {
-				_m.chat_room_chats = new(int)
-				*_m.chat_room_chats = int(value.Int64)
+				_m.chatroom_messages = new(int)
+				*_m.chatroom_messages = int(value.Int64)
 			}
 		default:
 			_m.selectValues.Set(columns[i], values[i])
@@ -125,39 +125,39 @@ func (_m *Chat) assignValues(columns []string, values []any) error {
 	return nil
 }
 
-// Value returns the ent.Value that was dynamically selected and assigned to the Chat.
+// Value returns the ent.Value that was dynamically selected and assigned to the Message.
 // This includes values selected through modifiers, order, etc.
-func (_m *Chat) Value(name string) (ent.Value, error) {
+func (_m *Message) Value(name string) (ent.Value, error) {
 	return _m.selectValues.Get(name)
 }
 
-// QueryChatroom queries the "chatroom" edge of the Chat entity.
-func (_m *Chat) QueryChatroom() *ChatRoomQuery {
-	return NewChatClient(_m.config).QueryChatroom(_m)
+// QueryChatroom queries the "chatroom" edge of the Message entity.
+func (_m *Message) QueryChatroom() *ChatroomQuery {
+	return NewMessageClient(_m.config).QueryChatroom(_m)
 }
 
-// Update returns a builder for updating this Chat.
-// Note that you need to call Chat.Unwrap() before calling this method if this Chat
+// Update returns a builder for updating this Message.
+// Note that you need to call Message.Unwrap() before calling this method if this Message
 // was returned from a transaction, and the transaction was committed or rolled back.
-func (_m *Chat) Update() *ChatUpdateOne {
-	return NewChatClient(_m.config).UpdateOne(_m)
+func (_m *Message) Update() *MessageUpdateOne {
+	return NewMessageClient(_m.config).UpdateOne(_m)
 }
 
-// Unwrap unwraps the Chat entity that was returned from a transaction after it was closed,
+// Unwrap unwraps the Message entity that was returned from a transaction after it was closed,
 // so that all future queries will be executed through the driver which created the transaction.
-func (_m *Chat) Unwrap() *Chat {
+func (_m *Message) Unwrap() *Message {
 	_tx, ok := _m.config.driver.(*txDriver)
 	if !ok {
-		panic("ent: Chat is not a transactional entity")
+		panic("ent: Message is not a transactional entity")
 	}
 	_m.config.driver = _tx.drv
 	return _m
 }
 
 // String implements the fmt.Stringer.
-func (_m *Chat) String() string {
+func (_m *Message) String() string {
 	var builder strings.Builder
-	builder.WriteString("Chat(")
+	builder.WriteString("Message(")
 	builder.WriteString(fmt.Sprintf("id=%v, ", _m.ID))
 	builder.WriteString("sender=")
 	builder.WriteString(_m.Sender)
@@ -174,5 +174,5 @@ func (_m *Chat) String() string {
 	return builder.String()
 }
 
-// Chats is a parsable slice of Chat.
-type Chats []*Chat
+// Messages is a parsable slice of Message.
+type Messages []*Message

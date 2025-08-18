@@ -12,26 +12,26 @@ import (
 	"entgo.io/ent/schema/field"
 )
 
-// ChatRoomDelete is the builder for deleting a ChatRoom entity.
-type ChatRoomDelete struct {
+// ChatroomDelete is the builder for deleting a Chatroom entity.
+type ChatroomDelete struct {
 	config
 	hooks    []Hook
-	mutation *ChatRoomMutation
+	mutation *ChatroomMutation
 }
 
-// Where appends a list predicates to the ChatRoomDelete builder.
-func (_d *ChatRoomDelete) Where(ps ...predicate.ChatRoom) *ChatRoomDelete {
+// Where appends a list predicates to the ChatroomDelete builder.
+func (_d *ChatroomDelete) Where(ps ...predicate.Chatroom) *ChatroomDelete {
 	_d.mutation.Where(ps...)
 	return _d
 }
 
 // Exec executes the deletion query and returns how many vertices were deleted.
-func (_d *ChatRoomDelete) Exec(ctx context.Context) (int, error) {
+func (_d *ChatroomDelete) Exec(ctx context.Context) (int, error) {
 	return withHooks(ctx, _d.sqlExec, _d.mutation, _d.hooks)
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (_d *ChatRoomDelete) ExecX(ctx context.Context) int {
+func (_d *ChatroomDelete) ExecX(ctx context.Context) int {
 	n, err := _d.Exec(ctx)
 	if err != nil {
 		panic(err)
@@ -39,7 +39,7 @@ func (_d *ChatRoomDelete) ExecX(ctx context.Context) int {
 	return n
 }
 
-func (_d *ChatRoomDelete) sqlExec(ctx context.Context) (int, error) {
+func (_d *ChatroomDelete) sqlExec(ctx context.Context) (int, error) {
 	_spec := sqlgraph.NewDeleteSpec(chatroom.Table, sqlgraph.NewFieldSpec(chatroom.FieldID, field.TypeInt))
 	if ps := _d.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
@@ -56,19 +56,19 @@ func (_d *ChatRoomDelete) sqlExec(ctx context.Context) (int, error) {
 	return affected, err
 }
 
-// ChatRoomDeleteOne is the builder for deleting a single ChatRoom entity.
-type ChatRoomDeleteOne struct {
-	_d *ChatRoomDelete
+// ChatroomDeleteOne is the builder for deleting a single Chatroom entity.
+type ChatroomDeleteOne struct {
+	_d *ChatroomDelete
 }
 
-// Where appends a list predicates to the ChatRoomDelete builder.
-func (_d *ChatRoomDeleteOne) Where(ps ...predicate.ChatRoom) *ChatRoomDeleteOne {
+// Where appends a list predicates to the ChatroomDelete builder.
+func (_d *ChatroomDeleteOne) Where(ps ...predicate.Chatroom) *ChatroomDeleteOne {
 	_d._d.mutation.Where(ps...)
 	return _d
 }
 
 // Exec executes the deletion query.
-func (_d *ChatRoomDeleteOne) Exec(ctx context.Context) error {
+func (_d *ChatroomDeleteOne) Exec(ctx context.Context) error {
 	n, err := _d._d.Exec(ctx)
 	switch {
 	case err != nil:
@@ -81,7 +81,7 @@ func (_d *ChatRoomDeleteOne) Exec(ctx context.Context) error {
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (_d *ChatRoomDeleteOne) ExecX(ctx context.Context) {
+func (_d *ChatroomDeleteOne) ExecX(ctx context.Context) {
 	if err := _d.Exec(ctx); err != nil {
 		panic(err)
 	}

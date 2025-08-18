@@ -40,10 +40,10 @@ const (
 	// PlannersColumn is the table column denoting the planners relation/edge.
 	PlannersColumn = "user_planners"
 	// ChatroomsTable is the table that holds the chatrooms relation/edge.
-	ChatroomsTable = "chat_rooms"
-	// ChatroomsInverseTable is the table name for the ChatRoom entity.
+	ChatroomsTable = "chatrooms"
+	// ChatroomsInverseTable is the table name for the Chatroom entity.
 	// It exists in this package in order to avoid circular dependency with the "chatroom" package.
-	ChatroomsInverseTable = "chat_rooms"
+	ChatroomsInverseTable = "chatrooms"
 	// ChatroomsColumn is the table column denoting the chatrooms relation/edge.
 	ChatroomsColumn = "user_chatrooms"
 )

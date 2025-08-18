@@ -11,8 +11,8 @@ import (
 
 	"dimiplan-backend/ent/migrate"
 
-	"dimiplan-backend/ent/chat"
 	"dimiplan-backend/ent/chatroom"
+	"dimiplan-backend/ent/message"
 	"dimiplan-backend/ent/planner"
 	"dimiplan-backend/ent/task"
 	"dimiplan-backend/ent/user"
@@ -28,10 +28,10 @@ type Client struct {
 	config
 	// Schema is the client for creating, migrating and dropping schema.
 	Schema *migrate.Schema
-	// Chat is the client for interacting with the Chat builders.
-	Chat *ChatClient
-	// ChatRoom is the client for interacting with the ChatRoom builders.
-	ChatRoom *ChatRoomClient
+	// Chatroom is the client for interacting with the Chatroom builders.
+	Chatroom *ChatroomClient
+	// Message is the client for interacting with the Message builders.
+	Message *MessageClient
 	// Planner is the client for interacting with the Planner builders.
 	Planner *PlannerClient
 	// Task is the client for interacting with the Task builders.
@@ -49,8 +49,8 @@ func NewClient(opts ...Option) *Client {
 
 func (c *Client) init() {
 	c.Schema = migrate.NewSchema(c.driver)
-	c.Chat = NewChatClient(c.config)
-	c.ChatRoom = NewChatRoomClient(c.config)
+	c.Chatroom = NewChatroomClient(c.config)
+	c.Message = NewMessageClient(c.config)
 	c.Planner = NewPlannerClient(c.config)
 	c.Task = NewTaskClient(c.config)
 	c.User = NewUserClient(c.config)
@@ -146,8 +146,8 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 	return &Tx{
 		ctx:      ctx,
 		config:   cfg,
-		Chat:     NewChatClient(cfg),
-		ChatRoom: NewChatRoomClient(cfg),
+		Chatroom: NewChatroomClient(cfg),
+		Message:  NewMessageClient(cfg),
 		Planner:  NewPlannerClient(cfg),
 		Task:     NewTaskClient(cfg),
 		User:     NewUserClient(cfg),
@@ -170,8 +170,8 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 	return &Tx{
 		ctx:      ctx,
 		config:   cfg,
-		Chat:     NewChatClient(cfg),
-		ChatRoom: NewChatRoomClient(cfg),
+		Chatroom: NewChatroomClient(cfg),
+		Message:  NewMessageClient(cfg),
 		Planner:  NewPlannerClient(cfg),
 		Task:     NewTaskClient(cfg),
 		User:     NewUserClient(cfg),
@@ -181,7 +181,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 // Debug returns a new debug-client. It's used to get verbose logging on specific operations.
 //
 //	client.Debug().
-//		Chat.
+//		Chatroom.
 //		Query().
 //		Count(ctx)
 func (c *Client) Debug() *Client {
@@ -203,8 +203,8 @@ func (c *Client) Close() error {
 // Use adds the mutation hooks to all the entity clients.
 // In order to add hooks to a specific client, call: `client.Node.Use(...)`.
 func (c *Client) Use(hooks ...Hook) {
-	c.Chat.Use(hooks...)
-	c.ChatRoom.Use(hooks...)
+	c.Chatroom.Use(hooks...)
+	c.Message.Use(hooks...)
 	c.Planner.Use(hooks...)
 	c.Task.Use(hooks...)
 	c.User.Use(hooks...)
@@ -213,8 +213,8 @@ func (c *Client) Use(hooks ...Hook) {
 // Intercept adds the query interceptors to all the entity clients.
 // In order to add interceptors to a specific client, call: `client.Node.Intercept(...)`.
 func (c *Client) Intercept(interceptors ...Interceptor) {
-	c.Chat.Intercept(interceptors...)
-	c.ChatRoom.Intercept(interceptors...)
+	c.Chatroom.Intercept(interceptors...)
+	c.Message.Intercept(interceptors...)
 	c.Planner.Intercept(interceptors...)
 	c.Task.Intercept(interceptors...)
 	c.User.Intercept(interceptors...)
@@ -223,10 +223,10 @@ func (c *Client) Intercept(interceptors ...Interceptor) {
 // Mutate implements the ent.Mutator interface.
 func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 	switch m := m.(type) {
-	case *ChatMutation:
-		return c.Chat.mutate(ctx, m)
-	case *ChatRoomMutation:
-		return c.ChatRoom.mutate(ctx, m)
+	case *ChatroomMutation:
+		return c.Chatroom.mutate(ctx, m)
+	case *MessageMutation:
+		return c.Message.mutate(ctx, m)
 	case *PlannerMutation:
 		return c.Planner.mutate(ctx, m)
 	case *TaskMutation:
@@ -238,256 +238,107 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 	}
 }
 
-// ChatClient is a client for the Chat schema.
-type ChatClient struct {
+// ChatroomClient is a client for the Chatroom schema.
+type ChatroomClient struct {
 	config
 }
 
-// NewChatClient returns a client for the Chat from the given config.
-func NewChatClient(c config) *ChatClient {
-	return &ChatClient{config: c}
-}
-
-// Use adds a list of mutation hooks to the hooks stack.
-// A call to `Use(f, g, h)` equals to `chat.Hooks(f(g(h())))`.
-func (c *ChatClient) Use(hooks ...Hook) {
-	c.hooks.Chat = append(c.hooks.Chat, hooks...)
-}
-
-// Intercept adds a list of query interceptors to the interceptors stack.
-// A call to `Intercept(f, g, h)` equals to `chat.Intercept(f(g(h())))`.
-func (c *ChatClient) Intercept(interceptors ...Interceptor) {
-	c.inters.Chat = append(c.inters.Chat, interceptors...)
-}
-
-// Create returns a builder for creating a Chat entity.
-func (c *ChatClient) Create() *ChatCreate {
-	mutation := newChatMutation(c.config, OpCreate)
-	return &ChatCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// CreateBulk returns a builder for creating a bulk of Chat entities.
-func (c *ChatClient) CreateBulk(builders ...*ChatCreate) *ChatCreateBulk {
-	return &ChatCreateBulk{config: c.config, builders: builders}
-}
-
-// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
-// a builder and applies setFunc on it.
-func (c *ChatClient) MapCreateBulk(slice any, setFunc func(*ChatCreate, int)) *ChatCreateBulk {
-	rv := reflect.ValueOf(slice)
-	if rv.Kind() != reflect.Slice {
-		return &ChatCreateBulk{err: fmt.Errorf("calling to ChatClient.MapCreateBulk with wrong type %T, need slice", slice)}
-	}
-	builders := make([]*ChatCreate, rv.Len())
-	for i := 0; i < rv.Len(); i++ {
-		builders[i] = c.Create()
-		setFunc(builders[i], i)
-	}
-	return &ChatCreateBulk{config: c.config, builders: builders}
-}
-
-// Update returns an update builder for Chat.
-func (c *ChatClient) Update() *ChatUpdate {
-	mutation := newChatMutation(c.config, OpUpdate)
-	return &ChatUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// UpdateOne returns an update builder for the given entity.
-func (c *ChatClient) UpdateOne(_m *Chat) *ChatUpdateOne {
-	mutation := newChatMutation(c.config, OpUpdateOne, withChat(_m))
-	return &ChatUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// UpdateOneID returns an update builder for the given id.
-func (c *ChatClient) UpdateOneID(id int) *ChatUpdateOne {
-	mutation := newChatMutation(c.config, OpUpdateOne, withChatID(id))
-	return &ChatUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// Delete returns a delete builder for Chat.
-func (c *ChatClient) Delete() *ChatDelete {
-	mutation := newChatMutation(c.config, OpDelete)
-	return &ChatDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// DeleteOne returns a builder for deleting the given entity.
-func (c *ChatClient) DeleteOne(_m *Chat) *ChatDeleteOne {
-	return c.DeleteOneID(_m.ID)
-}
-
-// DeleteOneID returns a builder for deleting the given entity by its id.
-func (c *ChatClient) DeleteOneID(id int) *ChatDeleteOne {
-	builder := c.Delete().Where(chat.ID(id))
-	builder.mutation.id = &id
-	builder.mutation.op = OpDeleteOne
-	return &ChatDeleteOne{builder}
-}
-
-// Query returns a query builder for Chat.
-func (c *ChatClient) Query() *ChatQuery {
-	return &ChatQuery{
-		config: c.config,
-		ctx:    &QueryContext{Type: TypeChat},
-		inters: c.Interceptors(),
-	}
-}
-
-// Get returns a Chat entity by its id.
-func (c *ChatClient) Get(ctx context.Context, id int) (*Chat, error) {
-	return c.Query().Where(chat.ID(id)).Only(ctx)
-}
-
-// GetX is like Get, but panics if an error occurs.
-func (c *ChatClient) GetX(ctx context.Context, id int) *Chat {
-	obj, err := c.Get(ctx, id)
-	if err != nil {
-		panic(err)
-	}
-	return obj
-}
-
-// QueryChatroom queries the chatroom edge of a Chat.
-func (c *ChatClient) QueryChatroom(_m *Chat) *ChatRoomQuery {
-	query := (&ChatRoomClient{config: c.config}).Query()
-	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
-		id := _m.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(chat.Table, chat.FieldID, id),
-			sqlgraph.To(chatroom.Table, chatroom.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, chat.ChatroomTable, chat.ChatroomColumn),
-		)
-		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
-}
-
-// Hooks returns the client hooks.
-func (c *ChatClient) Hooks() []Hook {
-	return c.hooks.Chat
-}
-
-// Interceptors returns the client interceptors.
-func (c *ChatClient) Interceptors() []Interceptor {
-	return c.inters.Chat
-}
-
-func (c *ChatClient) mutate(ctx context.Context, m *ChatMutation) (Value, error) {
-	switch m.Op() {
-	case OpCreate:
-		return (&ChatCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
-	case OpUpdate:
-		return (&ChatUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
-	case OpUpdateOne:
-		return (&ChatUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
-	case OpDelete, OpDeleteOne:
-		return (&ChatDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
-	default:
-		return nil, fmt.Errorf("ent: unknown Chat mutation op: %q", m.Op())
-	}
-}
-
-// ChatRoomClient is a client for the ChatRoom schema.
-type ChatRoomClient struct {
-	config
-}
-
-// NewChatRoomClient returns a client for the ChatRoom from the given config.
-func NewChatRoomClient(c config) *ChatRoomClient {
-	return &ChatRoomClient{config: c}
+// NewChatroomClient returns a client for the Chatroom from the given config.
+func NewChatroomClient(c config) *ChatroomClient {
+	return &ChatroomClient{config: c}
 }
 
 // Use adds a list of mutation hooks to the hooks stack.
 // A call to `Use(f, g, h)` equals to `chatroom.Hooks(f(g(h())))`.
-func (c *ChatRoomClient) Use(hooks ...Hook) {
-	c.hooks.ChatRoom = append(c.hooks.ChatRoom, hooks...)
+func (c *ChatroomClient) Use(hooks ...Hook) {
+	c.hooks.Chatroom = append(c.hooks.Chatroom, hooks...)
 }
 
 // Intercept adds a list of query interceptors to the interceptors stack.
 // A call to `Intercept(f, g, h)` equals to `chatroom.Intercept(f(g(h())))`.
-func (c *ChatRoomClient) Intercept(interceptors ...Interceptor) {
-	c.inters.ChatRoom = append(c.inters.ChatRoom, interceptors...)
+func (c *ChatroomClient) Intercept(interceptors ...Interceptor) {
+	c.inters.Chatroom = append(c.inters.Chatroom, interceptors...)
 }
 
-// Create returns a builder for creating a ChatRoom entity.
-func (c *ChatRoomClient) Create() *ChatRoomCreate {
-	mutation := newChatRoomMutation(c.config, OpCreate)
-	return &ChatRoomCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+// Create returns a builder for creating a Chatroom entity.
+func (c *ChatroomClient) Create() *ChatroomCreate {
+	mutation := newChatroomMutation(c.config, OpCreate)
+	return &ChatroomCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
-// CreateBulk returns a builder for creating a bulk of ChatRoom entities.
-func (c *ChatRoomClient) CreateBulk(builders ...*ChatRoomCreate) *ChatRoomCreateBulk {
-	return &ChatRoomCreateBulk{config: c.config, builders: builders}
+// CreateBulk returns a builder for creating a bulk of Chatroom entities.
+func (c *ChatroomClient) CreateBulk(builders ...*ChatroomCreate) *ChatroomCreateBulk {
+	return &ChatroomCreateBulk{config: c.config, builders: builders}
 }
 
 // MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
 // a builder and applies setFunc on it.
-func (c *ChatRoomClient) MapCreateBulk(slice any, setFunc func(*ChatRoomCreate, int)) *ChatRoomCreateBulk {
+func (c *ChatroomClient) MapCreateBulk(slice any, setFunc func(*ChatroomCreate, int)) *ChatroomCreateBulk {
 	rv := reflect.ValueOf(slice)
 	if rv.Kind() != reflect.Slice {
-		return &ChatRoomCreateBulk{err: fmt.Errorf("calling to ChatRoomClient.MapCreateBulk with wrong type %T, need slice", slice)}
+		return &ChatroomCreateBulk{err: fmt.Errorf("calling to ChatroomClient.MapCreateBulk with wrong type %T, need slice", slice)}
 	}
-	builders := make([]*ChatRoomCreate, rv.Len())
+	builders := make([]*ChatroomCreate, rv.Len())
 	for i := 0; i < rv.Len(); i++ {
 		builders[i] = c.Create()
 		setFunc(builders[i], i)
 	}
-	return &ChatRoomCreateBulk{config: c.config, builders: builders}
+	return &ChatroomCreateBulk{config: c.config, builders: builders}
 }
 
-// Update returns an update builder for ChatRoom.
-func (c *ChatRoomClient) Update() *ChatRoomUpdate {
-	mutation := newChatRoomMutation(c.config, OpUpdate)
-	return &ChatRoomUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+// Update returns an update builder for Chatroom.
+func (c *ChatroomClient) Update() *ChatroomUpdate {
+	mutation := newChatroomMutation(c.config, OpUpdate)
+	return &ChatroomUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
 // UpdateOne returns an update builder for the given entity.
-func (c *ChatRoomClient) UpdateOne(_m *ChatRoom) *ChatRoomUpdateOne {
-	mutation := newChatRoomMutation(c.config, OpUpdateOne, withChatRoom(_m))
-	return &ChatRoomUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+func (c *ChatroomClient) UpdateOne(_m *Chatroom) *ChatroomUpdateOne {
+	mutation := newChatroomMutation(c.config, OpUpdateOne, withChatroom(_m))
+	return &ChatroomUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
 // UpdateOneID returns an update builder for the given id.
-func (c *ChatRoomClient) UpdateOneID(id int) *ChatRoomUpdateOne {
-	mutation := newChatRoomMutation(c.config, OpUpdateOne, withChatRoomID(id))
-	return &ChatRoomUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+func (c *ChatroomClient) UpdateOneID(id int) *ChatroomUpdateOne {
+	mutation := newChatroomMutation(c.config, OpUpdateOne, withChatroomID(id))
+	return &ChatroomUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
-// Delete returns a delete builder for ChatRoom.
-func (c *ChatRoomClient) Delete() *ChatRoomDelete {
-	mutation := newChatRoomMutation(c.config, OpDelete)
-	return &ChatRoomDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+// Delete returns a delete builder for Chatroom.
+func (c *ChatroomClient) Delete() *ChatroomDelete {
+	mutation := newChatroomMutation(c.config, OpDelete)
+	return &ChatroomDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
 // DeleteOne returns a builder for deleting the given entity.
-func (c *ChatRoomClient) DeleteOne(_m *ChatRoom) *ChatRoomDeleteOne {
+func (c *ChatroomClient) DeleteOne(_m *Chatroom) *ChatroomDeleteOne {
 	return c.DeleteOneID(_m.ID)
 }
 
 // DeleteOneID returns a builder for deleting the given entity by its id.
-func (c *ChatRoomClient) DeleteOneID(id int) *ChatRoomDeleteOne {
+func (c *ChatroomClient) DeleteOneID(id int) *ChatroomDeleteOne {
 	builder := c.Delete().Where(chatroom.ID(id))
 	builder.mutation.id = &id
 	builder.mutation.op = OpDeleteOne
-	return &ChatRoomDeleteOne{builder}
+	return &ChatroomDeleteOne{builder}
 }
 
-// Query returns a query builder for ChatRoom.
-func (c *ChatRoomClient) Query() *ChatRoomQuery {
-	return &ChatRoomQuery{
+// Query returns a query builder for Chatroom.
+func (c *ChatroomClient) Query() *ChatroomQuery {
+	return &ChatroomQuery{
 		config: c.config,
-		ctx:    &QueryContext{Type: TypeChatRoom},
+		ctx:    &QueryContext{Type: TypeChatroom},
 		inters: c.Interceptors(),
 	}
 }
 
-// Get returns a ChatRoom entity by its id.
-func (c *ChatRoomClient) Get(ctx context.Context, id int) (*ChatRoom, error) {
+// Get returns a Chatroom entity by its id.
+func (c *ChatroomClient) Get(ctx context.Context, id int) (*Chatroom, error) {
 	return c.Query().Where(chatroom.ID(id)).Only(ctx)
 }
 
 // GetX is like Get, but panics if an error occurs.
-func (c *ChatRoomClient) GetX(ctx context.Context, id int) *ChatRoom {
+func (c *ChatroomClient) GetX(ctx context.Context, id int) *Chatroom {
 	obj, err := c.Get(ctx, id)
 	if err != nil {
 		panic(err)
@@ -495,8 +346,8 @@ func (c *ChatRoomClient) GetX(ctx context.Context, id int) *ChatRoom {
 	return obj
 }
 
-// QueryUser queries the user edge of a ChatRoom.
-func (c *ChatRoomClient) QueryUser(_m *ChatRoom) *UserQuery {
+// QueryUser queries the user edge of a Chatroom.
+func (c *ChatroomClient) QueryUser(_m *Chatroom) *UserQuery {
 	query := (&UserClient{config: c.config}).Query()
 	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
 		id := _m.ID
@@ -511,15 +362,15 @@ func (c *ChatRoomClient) QueryUser(_m *ChatRoom) *UserQuery {
 	return query
 }
 
-// QueryChats queries the chats edge of a ChatRoom.
-func (c *ChatRoomClient) QueryChats(_m *ChatRoom) *ChatQuery {
-	query := (&ChatClient{config: c.config}).Query()
+// QueryMessages queries the messages edge of a Chatroom.
+func (c *ChatroomClient) QueryMessages(_m *Chatroom) *MessageQuery {
+	query := (&MessageClient{config: c.config}).Query()
 	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
 		id := _m.ID
 		step := sqlgraph.NewStep(
 			sqlgraph.From(chatroom.Table, chatroom.FieldID, id),
-			sqlgraph.To(chat.Table, chat.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, chatroom.ChatsTable, chatroom.ChatsColumn),
+			sqlgraph.To(message.Table, message.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, chatroom.MessagesTable, chatroom.MessagesColumn),
 		)
 		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
 		return fromV, nil
@@ -528,27 +379,176 @@ func (c *ChatRoomClient) QueryChats(_m *ChatRoom) *ChatQuery {
 }
 
 // Hooks returns the client hooks.
-func (c *ChatRoomClient) Hooks() []Hook {
-	return c.hooks.ChatRoom
+func (c *ChatroomClient) Hooks() []Hook {
+	return c.hooks.Chatroom
 }
 
 // Interceptors returns the client interceptors.
-func (c *ChatRoomClient) Interceptors() []Interceptor {
-	return c.inters.ChatRoom
+func (c *ChatroomClient) Interceptors() []Interceptor {
+	return c.inters.Chatroom
 }
 
-func (c *ChatRoomClient) mutate(ctx context.Context, m *ChatRoomMutation) (Value, error) {
+func (c *ChatroomClient) mutate(ctx context.Context, m *ChatroomMutation) (Value, error) {
 	switch m.Op() {
 	case OpCreate:
-		return (&ChatRoomCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+		return (&ChatroomCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
 	case OpUpdate:
-		return (&ChatRoomUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+		return (&ChatroomUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
 	case OpUpdateOne:
-		return (&ChatRoomUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+		return (&ChatroomUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
 	case OpDelete, OpDeleteOne:
-		return (&ChatRoomDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+		return (&ChatroomDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
 	default:
-		return nil, fmt.Errorf("ent: unknown ChatRoom mutation op: %q", m.Op())
+		return nil, fmt.Errorf("ent: unknown Chatroom mutation op: %q", m.Op())
+	}
+}
+
+// MessageClient is a client for the Message schema.
+type MessageClient struct {
+	config
+}
+
+// NewMessageClient returns a client for the Message from the given config.
+func NewMessageClient(c config) *MessageClient {
+	return &MessageClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `message.Hooks(f(g(h())))`.
+func (c *MessageClient) Use(hooks ...Hook) {
+	c.hooks.Message = append(c.hooks.Message, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `message.Intercept(f(g(h())))`.
+func (c *MessageClient) Intercept(interceptors ...Interceptor) {
+	c.inters.Message = append(c.inters.Message, interceptors...)
+}
+
+// Create returns a builder for creating a Message entity.
+func (c *MessageClient) Create() *MessageCreate {
+	mutation := newMessageMutation(c.config, OpCreate)
+	return &MessageCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of Message entities.
+func (c *MessageClient) CreateBulk(builders ...*MessageCreate) *MessageCreateBulk {
+	return &MessageCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *MessageClient) MapCreateBulk(slice any, setFunc func(*MessageCreate, int)) *MessageCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &MessageCreateBulk{err: fmt.Errorf("calling to MessageClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*MessageCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &MessageCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for Message.
+func (c *MessageClient) Update() *MessageUpdate {
+	mutation := newMessageMutation(c.config, OpUpdate)
+	return &MessageUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *MessageClient) UpdateOne(_m *Message) *MessageUpdateOne {
+	mutation := newMessageMutation(c.config, OpUpdateOne, withMessage(_m))
+	return &MessageUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *MessageClient) UpdateOneID(id int) *MessageUpdateOne {
+	mutation := newMessageMutation(c.config, OpUpdateOne, withMessageID(id))
+	return &MessageUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for Message.
+func (c *MessageClient) Delete() *MessageDelete {
+	mutation := newMessageMutation(c.config, OpDelete)
+	return &MessageDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *MessageClient) DeleteOne(_m *Message) *MessageDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *MessageClient) DeleteOneID(id int) *MessageDeleteOne {
+	builder := c.Delete().Where(message.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &MessageDeleteOne{builder}
+}
+
+// Query returns a query builder for Message.
+func (c *MessageClient) Query() *MessageQuery {
+	return &MessageQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeMessage},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a Message entity by its id.
+func (c *MessageClient) Get(ctx context.Context, id int) (*Message, error) {
+	return c.Query().Where(message.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *MessageClient) GetX(ctx context.Context, id int) *Message {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryChatroom queries the chatroom edge of a Message.
+func (c *MessageClient) QueryChatroom(_m *Message) *ChatroomQuery {
+	query := (&ChatroomClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(message.Table, message.FieldID, id),
+			sqlgraph.To(chatroom.Table, chatroom.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, message.ChatroomTable, message.ChatroomColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *MessageClient) Hooks() []Hook {
+	return c.hooks.Message
+}
+
+// Interceptors returns the client interceptors.
+func (c *MessageClient) Interceptors() []Interceptor {
+	return c.inters.Message
+}
+
+func (c *MessageClient) mutate(ctx context.Context, m *MessageMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&MessageCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&MessageUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&MessageUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&MessageDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown Message mutation op: %q", m.Op())
 	}
 }
 
@@ -991,8 +991,8 @@ func (c *UserClient) QueryPlanners(_m *User) *PlannerQuery {
 }
 
 // QueryChatrooms queries the chatrooms edge of a User.
-func (c *UserClient) QueryChatrooms(_m *User) *ChatRoomQuery {
-	query := (&ChatRoomClient{config: c.config}).Query()
+func (c *UserClient) QueryChatrooms(_m *User) *ChatroomQuery {
+	query := (&ChatroomClient{config: c.config}).Query()
 	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
 		id := _m.ID
 		step := sqlgraph.NewStep(
@@ -1034,9 +1034,9 @@ func (c *UserClient) mutate(ctx context.Context, m *UserMutation) (Value, error)
 // hooks and interceptors per client, for fast access.
 type (
 	hooks struct {
-		Chat, ChatRoom, Planner, Task, User []ent.Hook
+		Chatroom, Message, Planner, Task, User []ent.Hook
 	}
 	inters struct {
-		Chat, ChatRoom, Planner, Task, User []ent.Interceptor
+		Chatroom, Message, Planner, Task, User []ent.Interceptor
 	}
 )

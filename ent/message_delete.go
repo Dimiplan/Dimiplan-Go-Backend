@@ -4,7 +4,7 @@ package ent
 
 import (
 	"context"
-	"dimiplan-backend/ent/chat"
+	"dimiplan-backend/ent/message"
 	"dimiplan-backend/ent/predicate"
 
 	"entgo.io/ent/dialect/sql"
@@ -12,26 +12,26 @@ import (
 	"entgo.io/ent/schema/field"
 )
 
-// ChatDelete is the builder for deleting a Chat entity.
-type ChatDelete struct {
+// MessageDelete is the builder for deleting a Message entity.
+type MessageDelete struct {
 	config
 	hooks    []Hook
-	mutation *ChatMutation
+	mutation *MessageMutation
 }
 
-// Where appends a list predicates to the ChatDelete builder.
-func (_d *ChatDelete) Where(ps ...predicate.Chat) *ChatDelete {
+// Where appends a list predicates to the MessageDelete builder.
+func (_d *MessageDelete) Where(ps ...predicate.Message) *MessageDelete {
 	_d.mutation.Where(ps...)
 	return _d
 }
 
 // Exec executes the deletion query and returns how many vertices were deleted.
-func (_d *ChatDelete) Exec(ctx context.Context) (int, error) {
+func (_d *MessageDelete) Exec(ctx context.Context) (int, error) {
 	return withHooks(ctx, _d.sqlExec, _d.mutation, _d.hooks)
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (_d *ChatDelete) ExecX(ctx context.Context) int {
+func (_d *MessageDelete) ExecX(ctx context.Context) int {
 	n, err := _d.Exec(ctx)
 	if err != nil {
 		panic(err)
@@ -39,8 +39,8 @@ func (_d *ChatDelete) ExecX(ctx context.Context) int {
 	return n
 }
 
-func (_d *ChatDelete) sqlExec(ctx context.Context) (int, error) {
-	_spec := sqlgraph.NewDeleteSpec(chat.Table, sqlgraph.NewFieldSpec(chat.FieldID, field.TypeInt))
+func (_d *MessageDelete) sqlExec(ctx context.Context) (int, error) {
+	_spec := sqlgraph.NewDeleteSpec(message.Table, sqlgraph.NewFieldSpec(message.FieldID, field.TypeInt))
 	if ps := _d.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -56,32 +56,32 @@ func (_d *ChatDelete) sqlExec(ctx context.Context) (int, error) {
 	return affected, err
 }
 
-// ChatDeleteOne is the builder for deleting a single Chat entity.
-type ChatDeleteOne struct {
-	_d *ChatDelete
+// MessageDeleteOne is the builder for deleting a single Message entity.
+type MessageDeleteOne struct {
+	_d *MessageDelete
 }
 
-// Where appends a list predicates to the ChatDelete builder.
-func (_d *ChatDeleteOne) Where(ps ...predicate.Chat) *ChatDeleteOne {
+// Where appends a list predicates to the MessageDelete builder.
+func (_d *MessageDeleteOne) Where(ps ...predicate.Message) *MessageDeleteOne {
 	_d._d.mutation.Where(ps...)
 	return _d
 }
 
 // Exec executes the deletion query.
-func (_d *ChatDeleteOne) Exec(ctx context.Context) error {
+func (_d *MessageDeleteOne) Exec(ctx context.Context) error {
 	n, err := _d._d.Exec(ctx)
 	switch {
 	case err != nil:
 		return err
 	case n == 0:
-		return &NotFoundError{chat.Label}
+		return &NotFoundError{message.Label}
 	default:
 		return nil
 	}
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (_d *ChatDeleteOne) ExecX(ctx context.Context) {
+func (_d *MessageDeleteOne) ExecX(ctx context.Context) {
 	if err := _d.Exec(ctx); err != nil {
 		panic(err)
 	}

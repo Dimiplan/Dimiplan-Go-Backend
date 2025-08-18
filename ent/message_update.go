@@ -4,8 +4,8 @@ package ent
 
 import (
 	"context"
-	"dimiplan-backend/ent/chat"
 	"dimiplan-backend/ent/chatroom"
+	"dimiplan-backend/ent/message"
 	"dimiplan-backend/ent/predicate"
 	"errors"
 	"fmt"
@@ -16,27 +16,27 @@ import (
 	"entgo.io/ent/schema/field"
 )
 
-// ChatUpdate is the builder for updating Chat entities.
-type ChatUpdate struct {
+// MessageUpdate is the builder for updating Message entities.
+type MessageUpdate struct {
 	config
 	hooks    []Hook
-	mutation *ChatMutation
+	mutation *MessageMutation
 }
 
-// Where appends a list predicates to the ChatUpdate builder.
-func (_u *ChatUpdate) Where(ps ...predicate.Chat) *ChatUpdate {
+// Where appends a list predicates to the MessageUpdate builder.
+func (_u *MessageUpdate) Where(ps ...predicate.Message) *MessageUpdate {
 	_u.mutation.Where(ps...)
 	return _u
 }
 
 // SetSender sets the "sender" field.
-func (_u *ChatUpdate) SetSender(v string) *ChatUpdate {
+func (_u *MessageUpdate) SetSender(v string) *MessageUpdate {
 	_u.mutation.SetSender(v)
 	return _u
 }
 
 // SetNillableSender sets the "sender" field if the given value is not nil.
-func (_u *ChatUpdate) SetNillableSender(v *string) *ChatUpdate {
+func (_u *MessageUpdate) SetNillableSender(v *string) *MessageUpdate {
 	if v != nil {
 		_u.SetSender(*v)
 	}
@@ -44,13 +44,13 @@ func (_u *ChatUpdate) SetNillableSender(v *string) *ChatUpdate {
 }
 
 // SetMessage sets the "message" field.
-func (_u *ChatUpdate) SetMessage(v string) *ChatUpdate {
+func (_u *MessageUpdate) SetMessage(v string) *MessageUpdate {
 	_u.mutation.SetMessage(v)
 	return _u
 }
 
 // SetNillableMessage sets the "message" field if the given value is not nil.
-func (_u *ChatUpdate) SetNillableMessage(v *string) *ChatUpdate {
+func (_u *MessageUpdate) SetNillableMessage(v *string) *MessageUpdate {
 	if v != nil {
 		_u.SetMessage(*v)
 	}
@@ -58,41 +58,41 @@ func (_u *ChatUpdate) SetNillableMessage(v *string) *ChatUpdate {
 }
 
 // SetUpdatedAt sets the "updatedAt" field.
-func (_u *ChatUpdate) SetUpdatedAt(v time.Time) *ChatUpdate {
+func (_u *MessageUpdate) SetUpdatedAt(v time.Time) *MessageUpdate {
 	_u.mutation.SetUpdatedAt(v)
 	return _u
 }
 
-// SetChatroomID sets the "chatroom" edge to the ChatRoom entity by ID.
-func (_u *ChatUpdate) SetChatroomID(id int) *ChatUpdate {
+// SetChatroomID sets the "chatroom" edge to the Chatroom entity by ID.
+func (_u *MessageUpdate) SetChatroomID(id int) *MessageUpdate {
 	_u.mutation.SetChatroomID(id)
 	return _u
 }
 
-// SetChatroom sets the "chatroom" edge to the ChatRoom entity.
-func (_u *ChatUpdate) SetChatroom(v *ChatRoom) *ChatUpdate {
+// SetChatroom sets the "chatroom" edge to the Chatroom entity.
+func (_u *MessageUpdate) SetChatroom(v *Chatroom) *MessageUpdate {
 	return _u.SetChatroomID(v.ID)
 }
 
-// Mutation returns the ChatMutation object of the builder.
-func (_u *ChatUpdate) Mutation() *ChatMutation {
+// Mutation returns the MessageMutation object of the builder.
+func (_u *MessageUpdate) Mutation() *MessageMutation {
 	return _u.mutation
 }
 
-// ClearChatroom clears the "chatroom" edge to the ChatRoom entity.
-func (_u *ChatUpdate) ClearChatroom() *ChatUpdate {
+// ClearChatroom clears the "chatroom" edge to the Chatroom entity.
+func (_u *MessageUpdate) ClearChatroom() *MessageUpdate {
 	_u.mutation.ClearChatroom()
 	return _u
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
-func (_u *ChatUpdate) Save(ctx context.Context) (int, error) {
+func (_u *MessageUpdate) Save(ctx context.Context) (int, error) {
 	_u.defaults()
 	return withHooks(ctx, _u.sqlSave, _u.mutation, _u.hooks)
 }
 
 // SaveX is like Save, but panics if an error occurs.
-func (_u *ChatUpdate) SaveX(ctx context.Context) int {
+func (_u *MessageUpdate) SaveX(ctx context.Context) int {
 	affected, err := _u.Save(ctx)
 	if err != nil {
 		panic(err)
@@ -101,44 +101,44 @@ func (_u *ChatUpdate) SaveX(ctx context.Context) int {
 }
 
 // Exec executes the query.
-func (_u *ChatUpdate) Exec(ctx context.Context) error {
+func (_u *MessageUpdate) Exec(ctx context.Context) error {
 	_, err := _u.Save(ctx)
 	return err
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (_u *ChatUpdate) ExecX(ctx context.Context) {
+func (_u *MessageUpdate) ExecX(ctx context.Context) {
 	if err := _u.Exec(ctx); err != nil {
 		panic(err)
 	}
 }
 
 // defaults sets the default values of the builder before save.
-func (_u *ChatUpdate) defaults() {
+func (_u *MessageUpdate) defaults() {
 	if _, ok := _u.mutation.UpdatedAt(); !ok {
-		v := chat.UpdateDefaultUpdatedAt()
+		v := message.UpdateDefaultUpdatedAt()
 		_u.mutation.SetUpdatedAt(v)
 	}
 }
 
 // check runs all checks and user-defined validators on the builder.
-func (_u *ChatUpdate) check() error {
+func (_u *MessageUpdate) check() error {
 	if v, ok := _u.mutation.Sender(); ok {
-		if err := chat.SenderValidator(v); err != nil {
-			return &ValidationError{Name: "sender", err: fmt.Errorf(`ent: validator failed for field "Chat.sender": %w`, err)}
+		if err := message.SenderValidator(v); err != nil {
+			return &ValidationError{Name: "sender", err: fmt.Errorf(`ent: validator failed for field "Message.sender": %w`, err)}
 		}
 	}
 	if _u.mutation.ChatroomCleared() && len(_u.mutation.ChatroomIDs()) > 0 {
-		return errors.New(`ent: clearing a required unique edge "Chat.chatroom"`)
+		return errors.New(`ent: clearing a required unique edge "Message.chatroom"`)
 	}
 	return nil
 }
 
-func (_u *ChatUpdate) sqlSave(ctx context.Context) (_node int, err error) {
+func (_u *MessageUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	if err := _u.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(chat.Table, chat.Columns, sqlgraph.NewFieldSpec(chat.FieldID, field.TypeInt))
+	_spec := sqlgraph.NewUpdateSpec(message.Table, message.Columns, sqlgraph.NewFieldSpec(message.FieldID, field.TypeInt))
 	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -147,20 +147,20 @@ func (_u *ChatUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 		}
 	}
 	if value, ok := _u.mutation.Sender(); ok {
-		_spec.SetField(chat.FieldSender, field.TypeString, value)
+		_spec.SetField(message.FieldSender, field.TypeString, value)
 	}
 	if value, ok := _u.mutation.Message(); ok {
-		_spec.SetField(chat.FieldMessage, field.TypeString, value)
+		_spec.SetField(message.FieldMessage, field.TypeString, value)
 	}
 	if value, ok := _u.mutation.UpdatedAt(); ok {
-		_spec.SetField(chat.FieldUpdatedAt, field.TypeTime, value)
+		_spec.SetField(message.FieldUpdatedAt, field.TypeTime, value)
 	}
 	if _u.mutation.ChatroomCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   chat.ChatroomTable,
-			Columns: []string{chat.ChatroomColumn},
+			Table:   message.ChatroomTable,
+			Columns: []string{message.ChatroomColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(chatroom.FieldID, field.TypeInt),
@@ -172,8 +172,8 @@ func (_u *ChatUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   chat.ChatroomTable,
-			Columns: []string{chat.ChatroomColumn},
+			Table:   message.ChatroomTable,
+			Columns: []string{message.ChatroomColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(chatroom.FieldID, field.TypeInt),
@@ -186,7 +186,7 @@ func (_u *ChatUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	}
 	if _node, err = sqlgraph.UpdateNodes(ctx, _u.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
-			err = &NotFoundError{chat.Label}
+			err = &NotFoundError{message.Label}
 		} else if sqlgraph.IsConstraintError(err) {
 			err = &ConstraintError{msg: err.Error(), wrap: err}
 		}
@@ -196,22 +196,22 @@ func (_u *ChatUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	return _node, nil
 }
 
-// ChatUpdateOne is the builder for updating a single Chat entity.
-type ChatUpdateOne struct {
+// MessageUpdateOne is the builder for updating a single Message entity.
+type MessageUpdateOne struct {
 	config
 	fields   []string
 	hooks    []Hook
-	mutation *ChatMutation
+	mutation *MessageMutation
 }
 
 // SetSender sets the "sender" field.
-func (_u *ChatUpdateOne) SetSender(v string) *ChatUpdateOne {
+func (_u *MessageUpdateOne) SetSender(v string) *MessageUpdateOne {
 	_u.mutation.SetSender(v)
 	return _u
 }
 
 // SetNillableSender sets the "sender" field if the given value is not nil.
-func (_u *ChatUpdateOne) SetNillableSender(v *string) *ChatUpdateOne {
+func (_u *MessageUpdateOne) SetNillableSender(v *string) *MessageUpdateOne {
 	if v != nil {
 		_u.SetSender(*v)
 	}
@@ -219,13 +219,13 @@ func (_u *ChatUpdateOne) SetNillableSender(v *string) *ChatUpdateOne {
 }
 
 // SetMessage sets the "message" field.
-func (_u *ChatUpdateOne) SetMessage(v string) *ChatUpdateOne {
+func (_u *MessageUpdateOne) SetMessage(v string) *MessageUpdateOne {
 	_u.mutation.SetMessage(v)
 	return _u
 }
 
 // SetNillableMessage sets the "message" field if the given value is not nil.
-func (_u *ChatUpdateOne) SetNillableMessage(v *string) *ChatUpdateOne {
+func (_u *MessageUpdateOne) SetNillableMessage(v *string) *MessageUpdateOne {
 	if v != nil {
 		_u.SetMessage(*v)
 	}
@@ -233,54 +233,54 @@ func (_u *ChatUpdateOne) SetNillableMessage(v *string) *ChatUpdateOne {
 }
 
 // SetUpdatedAt sets the "updatedAt" field.
-func (_u *ChatUpdateOne) SetUpdatedAt(v time.Time) *ChatUpdateOne {
+func (_u *MessageUpdateOne) SetUpdatedAt(v time.Time) *MessageUpdateOne {
 	_u.mutation.SetUpdatedAt(v)
 	return _u
 }
 
-// SetChatroomID sets the "chatroom" edge to the ChatRoom entity by ID.
-func (_u *ChatUpdateOne) SetChatroomID(id int) *ChatUpdateOne {
+// SetChatroomID sets the "chatroom" edge to the Chatroom entity by ID.
+func (_u *MessageUpdateOne) SetChatroomID(id int) *MessageUpdateOne {
 	_u.mutation.SetChatroomID(id)
 	return _u
 }
 
-// SetChatroom sets the "chatroom" edge to the ChatRoom entity.
-func (_u *ChatUpdateOne) SetChatroom(v *ChatRoom) *ChatUpdateOne {
+// SetChatroom sets the "chatroom" edge to the Chatroom entity.
+func (_u *MessageUpdateOne) SetChatroom(v *Chatroom) *MessageUpdateOne {
 	return _u.SetChatroomID(v.ID)
 }
 
-// Mutation returns the ChatMutation object of the builder.
-func (_u *ChatUpdateOne) Mutation() *ChatMutation {
+// Mutation returns the MessageMutation object of the builder.
+func (_u *MessageUpdateOne) Mutation() *MessageMutation {
 	return _u.mutation
 }
 
-// ClearChatroom clears the "chatroom" edge to the ChatRoom entity.
-func (_u *ChatUpdateOne) ClearChatroom() *ChatUpdateOne {
+// ClearChatroom clears the "chatroom" edge to the Chatroom entity.
+func (_u *MessageUpdateOne) ClearChatroom() *MessageUpdateOne {
 	_u.mutation.ClearChatroom()
 	return _u
 }
 
-// Where appends a list predicates to the ChatUpdate builder.
-func (_u *ChatUpdateOne) Where(ps ...predicate.Chat) *ChatUpdateOne {
+// Where appends a list predicates to the MessageUpdate builder.
+func (_u *MessageUpdateOne) Where(ps ...predicate.Message) *MessageUpdateOne {
 	_u.mutation.Where(ps...)
 	return _u
 }
 
 // Select allows selecting one or more fields (columns) of the returned entity.
 // The default is selecting all fields defined in the entity schema.
-func (_u *ChatUpdateOne) Select(field string, fields ...string) *ChatUpdateOne {
+func (_u *MessageUpdateOne) Select(field string, fields ...string) *MessageUpdateOne {
 	_u.fields = append([]string{field}, fields...)
 	return _u
 }
 
-// Save executes the query and returns the updated Chat entity.
-func (_u *ChatUpdateOne) Save(ctx context.Context) (*Chat, error) {
+// Save executes the query and returns the updated Message entity.
+func (_u *MessageUpdateOne) Save(ctx context.Context) (*Message, error) {
 	_u.defaults()
 	return withHooks(ctx, _u.sqlSave, _u.mutation, _u.hooks)
 }
 
 // SaveX is like Save, but panics if an error occurs.
-func (_u *ChatUpdateOne) SaveX(ctx context.Context) *Chat {
+func (_u *MessageUpdateOne) SaveX(ctx context.Context) *Message {
 	node, err := _u.Save(ctx)
 	if err != nil {
 		panic(err)
@@ -289,57 +289,57 @@ func (_u *ChatUpdateOne) SaveX(ctx context.Context) *Chat {
 }
 
 // Exec executes the query on the entity.
-func (_u *ChatUpdateOne) Exec(ctx context.Context) error {
+func (_u *MessageUpdateOne) Exec(ctx context.Context) error {
 	_, err := _u.Save(ctx)
 	return err
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (_u *ChatUpdateOne) ExecX(ctx context.Context) {
+func (_u *MessageUpdateOne) ExecX(ctx context.Context) {
 	if err := _u.Exec(ctx); err != nil {
 		panic(err)
 	}
 }
 
 // defaults sets the default values of the builder before save.
-func (_u *ChatUpdateOne) defaults() {
+func (_u *MessageUpdateOne) defaults() {
 	if _, ok := _u.mutation.UpdatedAt(); !ok {
-		v := chat.UpdateDefaultUpdatedAt()
+		v := message.UpdateDefaultUpdatedAt()
 		_u.mutation.SetUpdatedAt(v)
 	}
 }
 
 // check runs all checks and user-defined validators on the builder.
-func (_u *ChatUpdateOne) check() error {
+func (_u *MessageUpdateOne) check() error {
 	if v, ok := _u.mutation.Sender(); ok {
-		if err := chat.SenderValidator(v); err != nil {
-			return &ValidationError{Name: "sender", err: fmt.Errorf(`ent: validator failed for field "Chat.sender": %w`, err)}
+		if err := message.SenderValidator(v); err != nil {
+			return &ValidationError{Name: "sender", err: fmt.Errorf(`ent: validator failed for field "Message.sender": %w`, err)}
 		}
 	}
 	if _u.mutation.ChatroomCleared() && len(_u.mutation.ChatroomIDs()) > 0 {
-		return errors.New(`ent: clearing a required unique edge "Chat.chatroom"`)
+		return errors.New(`ent: clearing a required unique edge "Message.chatroom"`)
 	}
 	return nil
 }
 
-func (_u *ChatUpdateOne) sqlSave(ctx context.Context) (_node *Chat, err error) {
+func (_u *MessageUpdateOne) sqlSave(ctx context.Context) (_node *Message, err error) {
 	if err := _u.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(chat.Table, chat.Columns, sqlgraph.NewFieldSpec(chat.FieldID, field.TypeInt))
+	_spec := sqlgraph.NewUpdateSpec(message.Table, message.Columns, sqlgraph.NewFieldSpec(message.FieldID, field.TypeInt))
 	id, ok := _u.mutation.ID()
 	if !ok {
-		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "Chat.id" for update`)}
+		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "Message.id" for update`)}
 	}
 	_spec.Node.ID.Value = id
 	if fields := _u.fields; len(fields) > 0 {
 		_spec.Node.Columns = make([]string, 0, len(fields))
-		_spec.Node.Columns = append(_spec.Node.Columns, chat.FieldID)
+		_spec.Node.Columns = append(_spec.Node.Columns, message.FieldID)
 		for _, f := range fields {
-			if !chat.ValidColumn(f) {
+			if !message.ValidColumn(f) {
 				return nil, &ValidationError{Name: f, err: fmt.Errorf("ent: invalid field %q for query", f)}
 			}
-			if f != chat.FieldID {
+			if f != message.FieldID {
 				_spec.Node.Columns = append(_spec.Node.Columns, f)
 			}
 		}
@@ -352,20 +352,20 @@ func (_u *ChatUpdateOne) sqlSave(ctx context.Context) (_node *Chat, err error) {
 		}
 	}
 	if value, ok := _u.mutation.Sender(); ok {
-		_spec.SetField(chat.FieldSender, field.TypeString, value)
+		_spec.SetField(message.FieldSender, field.TypeString, value)
 	}
 	if value, ok := _u.mutation.Message(); ok {
-		_spec.SetField(chat.FieldMessage, field.TypeString, value)
+		_spec.SetField(message.FieldMessage, field.TypeString, value)
 	}
 	if value, ok := _u.mutation.UpdatedAt(); ok {
-		_spec.SetField(chat.FieldUpdatedAt, field.TypeTime, value)
+		_spec.SetField(message.FieldUpdatedAt, field.TypeTime, value)
 	}
 	if _u.mutation.ChatroomCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   chat.ChatroomTable,
-			Columns: []string{chat.ChatroomColumn},
+			Table:   message.ChatroomTable,
+			Columns: []string{message.ChatroomColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(chatroom.FieldID, field.TypeInt),
@@ -377,8 +377,8 @@ func (_u *ChatUpdateOne) sqlSave(ctx context.Context) (_node *Chat, err error) {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   chat.ChatroomTable,
-			Columns: []string{chat.ChatroomColumn},
+			Table:   message.ChatroomTable,
+			Columns: []string{message.ChatroomColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(chatroom.FieldID, field.TypeInt),
@@ -389,12 +389,12 @@ func (_u *ChatUpdateOne) sqlSave(ctx context.Context) (_node *Chat, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	_node = &Chat{config: _u.config}
+	_node = &Message{config: _u.config}
 	_spec.Assign = _node.assignValues
 	_spec.ScanValues = _node.scanValues
 	if err = sqlgraph.UpdateNode(ctx, _u.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
-			err = &NotFoundError{chat.Label}
+			err = &NotFoundError{message.Label}
 		} else if sqlgraph.IsConstraintError(err) {
 			err = &ConstraintError{msg: err.Error(), wrap: err}
 		}

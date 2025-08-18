@@ -103,14 +103,14 @@ func (_c *UserCreate) AddPlanners(v ...*Planner) *UserCreate {
 	return _c.AddPlannerIDs(ids...)
 }
 
-// AddChatroomIDs adds the "chatrooms" edge to the ChatRoom entity by IDs.
+// AddChatroomIDs adds the "chatrooms" edge to the Chatroom entity by IDs.
 func (_c *UserCreate) AddChatroomIDs(ids ...int) *UserCreate {
 	_c.mutation.AddChatroomIDs(ids...)
 	return _c
 }
 
-// AddChatrooms adds the "chatrooms" edges to the ChatRoom entity.
-func (_c *UserCreate) AddChatrooms(v ...*ChatRoom) *UserCreate {
+// AddChatrooms adds the "chatrooms" edges to the Chatroom entity.
+func (_c *UserCreate) AddChatrooms(v ...*Chatroom) *UserCreate {
 	ids := make([]int, len(v))
 	for i := range v {
 		ids[i] = v[i].ID

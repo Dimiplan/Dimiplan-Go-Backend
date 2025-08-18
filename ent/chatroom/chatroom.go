@@ -11,11 +11,9 @@ import (
 
 const (
 	// Label holds the string label denoting the chatroom type in the database.
-	Label = "chat_room"
+	Label = "chatroom"
 	// FieldID holds the string denoting the id field in the database.
 	FieldID = "id"
-	// FieldType holds the string denoting the type field in the database.
-	FieldType = "type"
 	// FieldName holds the string denoting the name field in the database.
 	FieldName = "name"
 	// FieldIsProcessing holds the string denoting the isprocessing field in the database.
@@ -26,37 +24,36 @@ const (
 	FieldUpdatedAt = "updated_at"
 	// EdgeUser holds the string denoting the user edge name in mutations.
 	EdgeUser = "user"
-	// EdgeChats holds the string denoting the chats edge name in mutations.
-	EdgeChats = "chats"
+	// EdgeMessages holds the string denoting the messages edge name in mutations.
+	EdgeMessages = "messages"
 	// Table holds the table name of the chatroom in the database.
-	Table = "chat_rooms"
+	Table = "chatrooms"
 	// UserTable is the table that holds the user relation/edge.
-	UserTable = "chat_rooms"
+	UserTable = "chatrooms"
 	// UserInverseTable is the table name for the User entity.
 	// It exists in this package in order to avoid circular dependency with the "user" package.
 	UserInverseTable = "users"
 	// UserColumn is the table column denoting the user relation/edge.
 	UserColumn = "user_chatrooms"
-	// ChatsTable is the table that holds the chats relation/edge.
-	ChatsTable = "chats"
-	// ChatsInverseTable is the table name for the Chat entity.
-	// It exists in this package in order to avoid circular dependency with the "chat" package.
-	ChatsInverseTable = "chats"
-	// ChatsColumn is the table column denoting the chats relation/edge.
-	ChatsColumn = "chat_room_chats"
+	// MessagesTable is the table that holds the messages relation/edge.
+	MessagesTable = "messages"
+	// MessagesInverseTable is the table name for the Message entity.
+	// It exists in this package in order to avoid circular dependency with the "message" package.
+	MessagesInverseTable = "messages"
+	// MessagesColumn is the table column denoting the messages relation/edge.
+	MessagesColumn = "chatroom_messages"
 )
 
 // Columns holds all SQL columns for chatroom fields.
 var Columns = []string{
 	FieldID,
-	FieldType,
 	FieldName,
 	FieldIsProcessing,
 	FieldCreatedAt,
 	FieldUpdatedAt,
 }
 
-// ForeignKeys holds the SQL foreign-keys that are owned by the "chat_rooms"
+// ForeignKeys holds the SQL foreign-keys that are owned by the "chatrooms"
 // table and are not defined as standalone fields in the schema.
 var ForeignKeys = []string{
 	"user_chatrooms",
@@ -90,17 +87,12 @@ var (
 	UpdateDefaultUpdatedAt func() time.Time
 )
 
-// OrderOption defines the ordering options for the ChatRoom queries.
+// OrderOption defines the ordering options for the Chatroom queries.
 type OrderOption func(*sql.Selector)
 
 // ByID orders the results by the id field.
 func ByID(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldID, opts...).ToFunc()
-}
-
-// ByType orders the results by the type field.
-func ByType(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldType, opts...).ToFunc()
 }
 
 // ByName orders the results by the name field.
@@ -130,17 +122,17 @@ func ByUserField(field string, opts ...sql.OrderTermOption) OrderOption {
 	}
 }
 
-// ByChatsCount orders the results by chats count.
-func ByChatsCount(opts ...sql.OrderTermOption) OrderOption {
+// ByMessagesCount orders the results by messages count.
+func ByMessagesCount(opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborsCount(s, newChatsStep(), opts...)
+		sqlgraph.OrderByNeighborsCount(s, newMessagesStep(), opts...)
 	}
 }
 
-// ByChats orders the results by chats terms.
-func ByChats(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+// ByMessages orders the results by messages terms.
+func ByMessages(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborTerms(s, newChatsStep(), append([]sql.OrderTerm{term}, terms...)...)
+		sqlgraph.OrderByNeighborTerms(s, newMessagesStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
 }
 func newUserStep() *sqlgraph.Step {
@@ -150,10 +142,10 @@ func newUserStep() *sqlgraph.Step {
 		sqlgraph.Edge(sqlgraph.M2O, true, UserTable, UserColumn),
 	)
 }
-func newChatsStep() *sqlgraph.Step {
+func newMessagesStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
-		sqlgraph.To(ChatsInverseTable, FieldID),
-		sqlgraph.Edge(sqlgraph.O2M, false, ChatsTable, ChatsColumn),
+		sqlgraph.To(MessagesInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, MessagesTable, MessagesColumn),
 	)
 }

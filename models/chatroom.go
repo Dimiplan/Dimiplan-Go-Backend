@@ -1,6 +1,6 @@
 package models
 
-type ChatRoomID struct {
+type ChatroomID struct {
 	ID int `uri:"id"`
 }
 

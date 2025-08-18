@@ -18,11 +18,11 @@ func NewChatroomHandler(db *ent.Client) *ChatroomHandler {
 
 func (h *ChatroomHandler) ListChatrooms(c fiber.Ctx) error {
 	user := c.Locals("user").(*ent.User)
-	chatRooms, err := h.db.User.QueryChatrooms(user).All(c)
+	chatrooms, err := h.db.User.QueryChatrooms(user).All(c)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).Send(nil)
 	}
-	return c.JSON(fiber.Map{"chatrooms": chatRooms})
+	return c.JSON(fiber.Map{"chatrooms": chatrooms})
 }
 
 func (h *ChatroomHandler) CreateChatroom(c fiber.Ctx) error {
@@ -31,24 +31,24 @@ func (h *ChatroomHandler) CreateChatroom(c fiber.Ctx) error {
 	if err := c.Bind().All(data); err != nil {
 		return c.Status(fiber.StatusBadRequest).Send(nil)
 	}
-	chatRoom, err := h.db.Chatroom.Create().SetUser(user).SetName(data.Name).Save(c)
+	chatroom, err := h.db.Chatroom.Create().SetUser(user).SetName(data.Name).Save(c)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).Send(nil)
 	}
-	return c.JSON(fiber.Map{"chatroom_id": chatRoom.ID})
+	return c.JSON(fiber.Map{"chatroom_id": chatroom.ID})
 }
 
 func (h *ChatroomHandler) GetMessages(c fiber.Ctx) error {
 	user := c.Locals("user").(*ent.User)
-	data := new(models.ChatRoomID)
+	data := new(models.ChatroomID)
 	if err := c.Bind().All(data); err != nil {
 		return c.Status(fiber.StatusBadRequest).Send(nil)
 	}
-	chatRoom, err := h.db.User.QueryChatrooms(user).Where(chatroom.ID(data.ID)).Only(c)
+	chatroom, err := h.db.User.QueryChatrooms(user).Where(chatroom.ID(data.ID)).Only(c)
 	if err != nil {
 		return c.Status(fiber.StatusNotFound).Send(nil)
 	}
-	messages, err := chatRoom.QueryMessages().All(c)
+	messages, err := chatroom.QueryMessages().All(c)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).Send(nil)
 	}
@@ -61,30 +61,30 @@ func (h *ChatroomHandler) UpdateChatroom(c fiber.Ctx) error {
 	if err := c.Bind().All(data); err != nil {
 		return c.Status(fiber.StatusBadRequest).Send(nil)
 	}
-	chatRoom, err := h.db.User.QueryChatrooms(user).Where(chatroom.ID(data.ID)).Only(c)
+	chatroom, err := h.db.User.QueryChatrooms(user).Where(chatroom.ID(data.ID)).Only(c)
 	if err != nil {
 		return c.Status(fiber.StatusNotFound).Send(nil)
 	}
-	if err := c.Bind().Body(chatRoom); err != nil {
+	if err := c.Bind().Body(chatroom); err != nil {
 		return c.Status(fiber.StatusBadRequest).Send(nil)
 	}
-	if _, err := chatRoom.Update().SetName(data.Name).Save(c); err != nil {
+	if _, err := chatroom.Update().SetName(data.Name).Save(c); err != nil {
 		return c.Status(fiber.StatusInternalServerError).Send(nil)
 	}
-	return c.JSON(fiber.Map{"chatroom_id": chatRoom.ID})
+	return c.JSON(fiber.Map{"chatroom_id": chatroom.ID})
 }
 
 func (h *ChatroomHandler) RemoveChatroom(c fiber.Ctx) error {
 	user := c.Locals("user").(*ent.User)
-	data := new(models.ChatRoomID)
+	data := new(models.ChatroomID)
 	if err := c.Bind().All(data); err != nil {
 		return c.Status(fiber.StatusBadRequest).Send(nil)
 	}
-	chatRoom, err := h.db.User.QueryChatrooms(user).Where(chatroom.ID(data.ID)).Only(c)
+	chatroom, err := h.db.User.QueryChatrooms(user).Where(chatroom.ID(data.ID)).Only(c)
 	if err != nil {
 		return c.Status(fiber.StatusNotFound).Send(nil)
 	}
-	if err := h.db.Chatroom.DeleteOne(chatRoom).Exec(c); err != nil {
+	if err := h.db.Chatroom.DeleteOne(chatroom).Exec(c); err != nil {
 		return c.Status(fiber.StatusInternalServerError).Send(nil)
 	}
 	return c.Status(fiber.StatusNoContent).Send(nil)

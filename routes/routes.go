@@ -22,8 +22,7 @@ func Setup(app *fiber.App, cfg *config.Config, db *ent.Client) *fiber.App {
 
 	api := app.Group("/api")
 	api.Use(middleware.AuthMiddleware(db))
-	api.Get("/profile", userHandler.GetProfile)
-	api.Post("/logout", userHandler.Logout)
-	api.Get("/protected", userHandler.Protected)
+	api.Get("/user", userHandler.GetUser)
+	api.Patch("/user", userHandler.UpdateUser)
 	return app
 }

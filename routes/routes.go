@@ -14,15 +14,15 @@ func Setup(app *fiber.App, cfg *config.Config, db *ent.Client) *fiber.App {
 	userHandler := handlers.NewUserHandler(db)
 
 	auth := app.Group("/auth")
-	auth.Get("/google", authHandler.GoogleLogin)
-	auth.Get("/google/callback", authHandler.GoogleCallback)
-
-	admin := app.Group("/admin")
-	admin.Use(middleware.AuthMiddleware(db))
+	auth.Get("/login", authHandler.Login)
+	auth.Get("/callback", authHandler.Callback)
+	auth.Get("/logout", authHandler.Logout)
 
 	api := app.Group("/api")
 	api.Use(middleware.AuthMiddleware(db))
-	api.Get("/user", userHandler.GetUser)
-	api.Patch("/user", userHandler.UpdateUser)
+
+	user := api.Group("/user")
+	user.Get("/", userHandler.GetUser)
+	user.Patch("/", userHandler.UpdateUser)
 	return app
 }

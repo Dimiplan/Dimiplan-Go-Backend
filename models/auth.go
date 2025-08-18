@@ -7,3 +7,7 @@ type GoogleResponse struct {
 	Name       string `json:"name"`
 	ProfileURL string `json:"picture"`
 }
+
+type LoginRequestWithUid struct {
+	UID string `json:"uid"`
+}

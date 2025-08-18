@@ -4,6 +4,7 @@ import (
 	"dimiplan-backend/auth"
 	"dimiplan-backend/ent"
 	"dimiplan-backend/ent/user"
+	"dimiplan-backend/models"
 
 	"golang.org/x/oauth2"
 
@@ -23,15 +24,25 @@ func NewAuthHandler(oauth *oauth2.Config, db *ent.Client) *AuthHandler {
 	}
 }
 
-func (h *AuthHandler) GoogleLogin(c fiber.Ctx) error {
-	url := h.oauth.AuthCodeURL("state")
-	return c.Redirect().To(url)
+func (h *AuthHandler) Login(c fiber.Ctx) error {
+	userId := new(models.LoginRequestWithUid)
+	if err := c.Bind().Body(userId); err != nil {
+		return err
+	}
+	if userId.UID == "" {
+		url := h.oauth.AuthCodeURL("state")
+		return c.Redirect().To(url)
+	} else {
+		sess := session.FromContext(c)
+		sess.Set("id", userId.UID)
+		return c.Status(fiber.StatusNoContent).Send(nil)
+	}
 }
 
-func (h *AuthHandler) GoogleCallback(c fiber.Ctx) error {
-	token, error := h.oauth.Exchange(c, c.FormValue("code"))
-	if error != nil {
-		panic(error)
+func (h *AuthHandler) Callback(c fiber.Ctx) error {
+	token, err := h.oauth.Exchange(c, c.FormValue("code"))
+	if err != nil {
+		panic(err)
 	}
 	data := auth.GetUser(token.AccessToken)
 
@@ -44,10 +55,10 @@ func (h *AuthHandler) GoogleCallback(c fiber.Ctx) error {
 	} else if err != nil {
 		panic(err)
 	}
-	return c.Status(fiber.StatusOK).JSON(fiber.Map{"message": "Logged in successfully"})
+	return c.Redirect().To("/")
 }
 
 func (h *AuthHandler) Logout(c fiber.Ctx) error {
 	session.FromContext(c).Destroy()
-	return c.Status(fiber.StatusOK).JSON(fiber.Map{"message": "Logged out successfully"})
+	return c.Status(fiber.StatusNoContent).Send(nil)
 }

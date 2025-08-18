@@ -17,3 +17,19 @@ type RenamePlannerReq struct {
 type DeletePlannerReq struct {
 	ID int `uri:"id"`
 }
+
+type CreateTaskReq struct {
+	PlannerID int    `json:"planner_id"`
+	Title     string `json:"title"`
+	Priority  int    `json:"priority"`
+}
+
+type UpdateTaskReq struct {
+	ID       int    `uri:"id"`
+	Title    string `json:"title"`
+	Priority int    `json:"priority"`
+}
+
+type DeleteTaskReq struct {
+	ID int `uri:"id"`
+}

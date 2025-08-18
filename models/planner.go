@@ -19,9 +19,9 @@ type DeletePlannerReq struct {
 }
 
 type CreateTaskReq struct {
-	PlannerID int    `json:"planner_id"`
-	Title     string `json:"title"`
-	Priority  int    `json:"priority"`
+	ID       int    `json:"planner_id"`
+	Title    string `json:"title"`
+	Priority int    `json:"priority"`
 }
 
 type UpdateTaskReq struct {

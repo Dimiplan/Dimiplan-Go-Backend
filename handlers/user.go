@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"dimiplan-backend/ent"
-	"dimiplan-backend/ent/user"
 	"dimiplan-backend/models"
 
 	"github.com/gofiber/fiber/v3"
@@ -20,21 +19,13 @@ func NewUserHandler(db *ent.Client) *UserHandler {
 }
 
 func (h *UserHandler) GetUser(c fiber.Ctx) error {
-	uid := c.Locals("id").(string)
+	user := c.Locals("user").(*ent.User)
 
-	u, err := h.db.User.Query().Where(user.ID(uid)).Only(c)
-	if err != nil {
-		log.Errorf("Failed to retrieve user: %v", err)
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"error": "Internal Server Error",
-		})
-	}
-
-	return c.JSON(u)
+	return c.JSON(user)
 }
 
 func (h *UserHandler) UpdateUser(c fiber.Ctx) error {
-	uid := c.Locals("id").(string)
+	user := c.Locals("user").(*ent.User)
 
 	data := new(models.UpdateUserReq)
 
@@ -45,7 +36,7 @@ func (h *UserHandler) UpdateUser(c fiber.Ctx) error {
 		})
 	}
 
-	h.db.User.Update().Where(user.ID(uid)).SetName(*data.Name).Exec(c)
+	h.db.User.UpdateOne(user).SetName(*data.Name).Exec(c)
 
 	return c.JSON(fiber.Map{
 		"message": "User updated successfully",

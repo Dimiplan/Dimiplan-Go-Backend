@@ -44,7 +44,7 @@ func (h *ChatroomHandler) GetMessages(c fiber.Ctx) error {
 	if err := c.Bind().All(data); err != nil {
 		return c.Status(fiber.StatusBadRequest).Send(nil)
 	}
-	chatroom, err := h.db.User.QueryChatrooms(user).Where(chatroom.ID(data.ID)).Only(c)
+	chatroom, err := user.QueryChatrooms().Where(chatroom.ID(data.ID)).Only(c)
 	if err != nil {
 		return c.Status(fiber.StatusNotFound).Send(nil)
 	}
@@ -61,7 +61,7 @@ func (h *ChatroomHandler) UpdateChatroom(c fiber.Ctx) error {
 	if err := c.Bind().All(data); err != nil {
 		return c.Status(fiber.StatusBadRequest).Send(nil)
 	}
-	chatroom, err := h.db.User.QueryChatrooms(user).Where(chatroom.ID(data.ID)).Only(c)
+	chatroom, err := user.QueryChatrooms().Where(chatroom.ID(data.ID)).Only(c)
 	if err != nil {
 		return c.Status(fiber.StatusNotFound).Send(nil)
 	}
@@ -80,7 +80,7 @@ func (h *ChatroomHandler) RemoveChatroom(c fiber.Ctx) error {
 	if err := c.Bind().All(data); err != nil {
 		return c.Status(fiber.StatusBadRequest).Send(nil)
 	}
-	chatroom, err := h.db.User.QueryChatrooms(user).Where(chatroom.ID(data.ID)).Only(c)
+	chatroom, err := user.QueryChatrooms().Where(chatroom.ID(data.ID)).Only(c)
 	if err != nil {
 		return c.Status(fiber.StatusNotFound).Send(nil)
 	}

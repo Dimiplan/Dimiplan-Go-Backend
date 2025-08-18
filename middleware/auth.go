@@ -17,7 +17,7 @@ func AuthMiddleware(db *ent.Client) fiber.Handler {
 				"error": "Unauthorized",
 			})
 		}
-		user, err := db.User.Query().Where(user.ID(userID)).First(c)
+		user, err := db.User.Query().Where(user.ID(userID)).Only(c)
 		if err != nil || user == nil {
 			return c.Status(fiber.StatusForbidden).JSON(fiber.Map{
 				"error": "No User",
@@ -25,6 +25,7 @@ func AuthMiddleware(db *ent.Client) fiber.Handler {
 		}
 		fmt.Println(user)
 		c.Locals("uid", user.ID)
+		c.Locals("user", user)
 		return c.Next()
 	}
 }

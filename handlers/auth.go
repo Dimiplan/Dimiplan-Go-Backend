@@ -9,6 +9,7 @@ import (
 	"golang.org/x/oauth2"
 
 	"github.com/gofiber/fiber/v3"
+	"github.com/gofiber/fiber/v3/log"
 	"github.com/gofiber/fiber/v3/middleware/session"
 )
 
@@ -26,10 +27,8 @@ func NewAuthHandler(oauth *oauth2.Config, db *ent.Client) *AuthHandler {
 
 func (h *AuthHandler) Login(c fiber.Ctx) error {
 	userId := new(models.LoginRequestWithUid)
-	if err := c.Bind().Body(userId); err != nil {
-		return err
-	}
-	if userId.UID == "" {
+	err := c.Bind().Body(userId);
+	if err != nil || userId.UID == "" {
 		url := h.oauth.AuthCodeURL("state")
 		return c.Redirect().To(url)
 	} else {
@@ -42,9 +41,16 @@ func (h *AuthHandler) Login(c fiber.Ctx) error {
 func (h *AuthHandler) Callback(c fiber.Ctx) error {
 	token, err := h.oauth.Exchange(c, c.FormValue("code"))
 	if err != nil {
-		panic(err)
+		log.Error(err)
+		return c.Status(fiber.StatusBadRequest).Send(nil)
 	}
-	data := auth.GetUser(token.AccessToken)
+
+	err, data := auth.GetUser(token.AccessToken)
+
+	if err != nil {
+		log.Error(err)
+		return c.Status(fiber.StatusBadRequest).Send(nil)
+	}
 
 	sess := session.FromContext(c)
 	sess.Set("id", data.ID)
@@ -53,7 +59,8 @@ func (h *AuthHandler) Callback(c fiber.Ctx) error {
 	if user == nil {
 		h.db.User.Create().SetID(data.ID).SetEmail(data.Email).SetName(data.Name).SetProfileURL(data.ProfileURL).SaveX(c)
 	} else if err != nil {
-		panic(err)
+		log.Error(err)
+		return c.Status(fiber.StatusBadRequest).Send(nil)
 	}
 	return c.Redirect().To("/")
 }

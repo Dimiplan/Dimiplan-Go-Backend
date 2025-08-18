@@ -7,7 +7,7 @@ import (
 	"github.com/gofiber/fiber/v3/client"
 )
 
-func GetUser(token string) models.GoogleResponse {
+func GetUser(token string) (error, models.GoogleResponse) {
 	cc := client.New()
 	res, err := cc.Get("https://www.googleapis.com/oauth2/v1/userinfo", client.Config{
 		Header: map[string]string{
@@ -15,12 +15,12 @@ func GetUser(token string) models.GoogleResponse {
 		},
 	})
 	if err != nil {
-		panic(err)
+		return err, models.GoogleResponse{}
 	}
 	var data models.GoogleResponse
 	err = res.JSON(&data)
 	if err != nil {
-		panic(err)
+		return err, models.GoogleResponse{}
 	}
-	return data
+	return nil, data
 }

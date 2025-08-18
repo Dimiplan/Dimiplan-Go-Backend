@@ -55,7 +55,7 @@ func Load() *Config {
 		),
 		AIClient: openai.NewClient(
 			option.WithBaseURL("https://openrouter.ai/api/v1"),
-			option.WithAPIKey(getEnv("OPENAI_API_KEY")),
+			option.WithAPIKey(getEnv("OPENROUTER_API_KEY")),
 		),
 		PreAIModel: "openai/gpt-oss-120b",
 		AIModels: []string{
@@ -80,7 +80,7 @@ func getEnv(key string) string {
 	if value := os.Getenv(key); value != "" {
 		return value
 	}
-	panic("Environment variable not found")
+	panic(fmt.Sprintf("Environment variable %s not found", key))
 }
 
 func getEnvAsInt(key string) int {
@@ -89,5 +89,5 @@ func getEnvAsInt(key string) int {
 			return intValue
 		}
 	}
-	panic("Environment variable not found")
+	panic(fmt.Sprintf("Environment variable %s not found", key))
 }

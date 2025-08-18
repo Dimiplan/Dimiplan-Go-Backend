@@ -27,9 +27,9 @@ func Load() *Config {
 	godotenv.Load()
 
 	oauthConfig := &oauth2.Config{
-		ClientID:     getEnv("GOOGLE_CLIENT_ID", "your-client-id"),
-		ClientSecret: getEnv("GOOGLE_CLIENT_SECRET", "your-client-secret"),
-		RedirectURL:  getEnv("GOOGLE_REDIRECT_URL", "http://localhost:8080/auth/google/callback"),
+		ClientID:     getEnv("GOOGLE_CLIENT_ID"),
+		ClientSecret: getEnv("GOOGLE_CLIENT_SECRET"),
+		RedirectURL:  getEnv("GOOGLE_REDIRECT_URL"),
 		Scopes: []string{
 			"https://www.googleapis.com/auth/userinfo.email",
 			"https://www.googleapis.com/auth/userinfo.profile",
@@ -38,24 +38,24 @@ func Load() *Config {
 	}
 
 	redisConfig := &redis.Config{
-		Host:     getEnv("REDIS_HOST", "localhost"),
-		Port:     getEnvAsInt("REDIS_PORT", 6379),
-		Password: getEnv("REDIS_PASSWORD", ""),
+		Host:     getEnv("REDIS_HOST"),
+		Port:     getEnvAsInt("REDIS_PORT"),
+		Password: getEnv("REDIS_PASSWORD"),
 	}
 
 	return &Config{
-		Port:        getEnv("PORT", "8080"),
+		Port:        getEnv("PORT"),
 		OAuthConfig: oauthConfig,
 		RedisConfig: redisConfig,
 		DatabaseString: fmt.Sprintf("host=%s port=%d user=%s dbname=%s sslmode=disable",
-			getEnv("DB_HOST", "localhost"),
-			getEnvAsInt("DB_PORT", 5432),
-			getEnv("DB_USER", "postgres"),
-			getEnv("DB_NAME", "dimiplan"),
+			getEnv("DB_HOST"),
+			getEnvAsInt("DB_PORT"),
+			getEnv("DB_USER"),
+			getEnv("DB_NAME"),
 		),
 		AIClient: openai.NewClient(
 			option.WithBaseURL("https://openrouter.ai/api/v1"),
-			option.WithAPIKey(getEnv("OPENAI_API_KEY", "your-api-key")),
+			option.WithAPIKey(getEnv("OPENAI_API_KEY")),
 		),
 		PreAIModel: "openai/gpt-oss-120b",
 		AIModels: []string{
@@ -76,18 +76,18 @@ func Load() *Config {
 	}
 }
 
-func getEnv(key, defaultValue string) string {
+func getEnv(key string) string {
 	if value := os.Getenv(key); value != "" {
 		return value
 	}
-	return defaultValue
+	panic("Environment variable not found")
 }
 
-func getEnvAsInt(key string, defaultValue int) int {
+func getEnvAsInt(key string) int {
 	if value := os.Getenv(key); value != "" {
 		if intValue, err := strconv.Atoi(value); err == nil {
 			return intValue
 		}
 	}
-	return defaultValue
+	panic("Environment variable not found")
 }

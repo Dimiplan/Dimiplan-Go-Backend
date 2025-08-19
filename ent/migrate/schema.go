@@ -80,7 +80,7 @@ var (
 	// TasksColumns holds the columns for the "tasks" table.
 	TasksColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
-		{Name: "deadline", Type: field.TypeTime},
+		{Name: "deadline", Type: field.TypeTime, Nullable: true},
 		{Name: "title", Type: field.TypeString},
 		{Name: "priority", Type: field.TypeInt, Default: 1},
 		{Name: "created_at", Type: field.TypeTime},

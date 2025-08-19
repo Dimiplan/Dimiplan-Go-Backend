@@ -1,11 +1,11 @@
 module dimiplan-backend
 
-go 1.24.6
+go 1.25.0
 
 require (
 	entgo.io/ent v0.14.5
 	github.com/bytedance/sonic v1.14.0
-	github.com/gofiber/fiber/v3 v3.0.0-beta.5
+	github.com/gofiber/fiber/v3 v3.0.0-beta.5.0.20250819063757-6984b5d478ff
 	github.com/gofiber/storage/redis/v3 v3.4.0
 	github.com/joho/godotenv v1.5.1
 	github.com/lib/pq v1.10.9
@@ -33,7 +33,7 @@ require (
 	github.com/go-openapi/inflect v0.19.0 // indirect
 	github.com/gofiber/schema v1.6.0 // indirect
 	github.com/gofiber/storage/testhelpers/redis v0.0.0-20250812164415-e2a0ca90181a // indirect
-	github.com/gofiber/utils/v2 v2.0.0-beta.13 // indirect
+	github.com/gofiber/utils/v2 v2.0.0-rc.1 // indirect
 	github.com/google/go-cmp v0.7.0 // indirect
 	github.com/google/uuid v1.6.0 // indirect
 	github.com/hashicorp/hcl/v2 v2.18.1 // indirect
@@ -57,7 +57,7 @@ require (
 	github.com/tinylib/msgp v1.3.0 // indirect
 	github.com/twitchyliquid64/golang-asm v0.15.1 // indirect
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
-	github.com/valyala/fasthttp v1.64.0 // indirect
+	github.com/valyala/fasthttp v1.65.0 // indirect
 	github.com/x448/float16 v0.8.4 // indirect
 	github.com/zclconf/go-cty v1.14.4 // indirect
 	github.com/zclconf/go-cty-yaml v1.1.0 // indirect
@@ -66,7 +66,7 @@ require (
 	golang.org/x/arch v0.0.0-20210923205945-b76863e36670 // indirect
 	golang.org/x/crypto v0.41.0 // indirect
 	golang.org/x/mod v0.26.0 // indirect
-	golang.org/x/net v0.42.0 // indirect
+	golang.org/x/net v0.43.0 // indirect
 	golang.org/x/sys v0.35.0 // indirect
 	golang.org/x/text v0.28.0 // indirect
 )

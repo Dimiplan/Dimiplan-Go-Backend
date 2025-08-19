@@ -27,14 +27,14 @@ func NewAuthHandler(oauth *oauth2.Config, db *ent.Client) *AuthHandler {
 
 func (h *AuthHandler) Login(c fiber.Ctx) error {
 	userId := new(models.LoginRequestWithUid)
-	err := c.Bind().Body(userId);
+	err := c.Bind().Body(userId)
 	if err != nil || userId.UID == "" {
 		url := h.oauth.AuthCodeURL("state")
 		return c.Redirect().To(url)
 	} else {
 		sess := session.FromContext(c)
 		sess.Set("id", userId.UID)
-		return c.Status(fiber.StatusNoContent).Send(nil)
+		return c.SendStatus(fiber.StatusNoContent)
 	}
 }
 
@@ -42,14 +42,14 @@ func (h *AuthHandler) Callback(c fiber.Ctx) error {
 	token, err := h.oauth.Exchange(c, c.FormValue("code"))
 	if err != nil {
 		log.Error(err)
-		return c.Status(fiber.StatusBadRequest).Send(nil)
+		return c.SendStatus(fiber.StatusBadRequest)
 	}
 
 	err, data := auth.GetUser(token.AccessToken)
 
 	if err != nil {
 		log.Error(err)
-		return c.Status(fiber.StatusBadRequest).Send(nil)
+		return c.SendStatus(fiber.StatusBadRequest)
 	}
 
 	sess := session.FromContext(c)
@@ -60,12 +60,12 @@ func (h *AuthHandler) Callback(c fiber.Ctx) error {
 		h.db.User.Create().SetID(data.ID).SetEmail(data.Email).SetName(data.Name).SetProfileURL(data.ProfileURL).SaveX(c)
 	} else if err != nil {
 		log.Error(err)
-		return c.Status(fiber.StatusBadRequest).Send(nil)
+		return c.SendStatus(fiber.StatusBadRequest)
 	}
 	return c.Redirect().To("/")
 }
 
 func (h *AuthHandler) Logout(c fiber.Ctx) error {
 	session.FromContext(c).Destroy()
-	return c.Status(fiber.StatusNoContent).Send(nil)
+	return c.SendStatus(fiber.StatusNoContent)
 }

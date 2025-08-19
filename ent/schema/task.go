@@ -16,7 +16,7 @@ type Task struct {
 // Fields of the Task.
 func (Task) Fields() []ent.Field {
 	return []ent.Field{
-		field.Time("deadline").Nillable(),
+		field.Time("deadline").Optional(),
 		field.String("title").NotEmpty(),
 		field.Int("priority").Default(1), // 완료했다면 -1
 		field.Time("createdAt").

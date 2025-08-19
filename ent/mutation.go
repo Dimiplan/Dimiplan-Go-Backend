@@ -2005,7 +2005,7 @@ func (m *TaskMutation) Deadline() (r time.Time, exists bool) {
 // OldDeadline returns the old "deadline" field's value of the Task entity.
 // If the Task object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *TaskMutation) OldDeadline(ctx context.Context) (v *time.Time, err error) {
+func (m *TaskMutation) OldDeadline(ctx context.Context) (v time.Time, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldDeadline is only allowed on UpdateOne operations")
 	}
@@ -2019,9 +2019,22 @@ func (m *TaskMutation) OldDeadline(ctx context.Context) (v *time.Time, err error
 	return oldValue.Deadline, nil
 }
 
+// ClearDeadline clears the value of the "deadline" field.
+func (m *TaskMutation) ClearDeadline() {
+	m.deadline = nil
+	m.clearedFields[task.FieldDeadline] = struct{}{}
+}
+
+// DeadlineCleared returns if the "deadline" field was cleared in this mutation.
+func (m *TaskMutation) DeadlineCleared() bool {
+	_, ok := m.clearedFields[task.FieldDeadline]
+	return ok
+}
+
 // ResetDeadline resets all changes to the "deadline" field.
 func (m *TaskMutation) ResetDeadline() {
 	m.deadline = nil
+	delete(m.clearedFields, task.FieldDeadline)
 }
 
 // SetTitle sets the "title" field.
@@ -2402,7 +2415,11 @@ func (m *TaskMutation) AddField(name string, value ent.Value) error {
 // ClearedFields returns all nullable fields that were cleared during this
 // mutation.
 func (m *TaskMutation) ClearedFields() []string {
-	return nil
+	var fields []string
+	if m.FieldCleared(task.FieldDeadline) {
+		fields = append(fields, task.FieldDeadline)
+	}
+	return fields
 }
 
 // FieldCleared returns a boolean indicating if a field with the given name was
@@ -2415,6 +2432,11 @@ func (m *TaskMutation) FieldCleared(name string) bool {
 // ClearField clears the value of the field with the given name. It returns an
 // error if the field is not defined in the schema.
 func (m *TaskMutation) ClearField(name string) error {
+	switch name {
+	case task.FieldDeadline:
+		m.ClearDeadline()
+		return nil
+	}
 	return fmt.Errorf("unknown Task nullable field %s", name)
 }
 

@@ -1,8 +1,8 @@
 package server
 
 import (
-	"os"
 	"dimiplan-backend/config"
+	"os"
 
 	"github.com/bytedance/sonic"
 	"github.com/gofiber/fiber/v3"
@@ -35,11 +35,11 @@ func Setup(cfg *config.Config) *fiber.App {
 
 	app.Use(session.New(session.Config{
 		Storage:   storage,
-		KeyLookup: "cookie:dimiplan.sid",
+		Extractor: session.FromCookie("dimiplan.sid"),
 	}))
 
 	app.Use("/", static.New("/", static.Config{
-		FS: os.DirFS("dist"),
+		FS:       os.DirFS("dist"),
 		Compress: true,
 	}))
 

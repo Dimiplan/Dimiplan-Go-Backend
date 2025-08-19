@@ -19,7 +19,7 @@ type Task struct {
 	// ID of the ent.
 	ID int `json:"id,omitempty"`
 	// Deadline holds the value of the "deadline" field.
-	Deadline *time.Time `json:"deadline,omitempty"`
+	Deadline time.Time `json:"deadline,omitempty"`
 	// Title holds the value of the "title" field.
 	Title string `json:"title,omitempty"`
 	// Priority holds the value of the "priority" field.
@@ -93,8 +93,7 @@ func (_m *Task) assignValues(columns []string, values []any) error {
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field deadline", values[i])
 			} else if value.Valid {
-				_m.Deadline = new(time.Time)
-				*_m.Deadline = value.Time
+				_m.Deadline = value.Time
 			}
 		case task.FieldTitle:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -168,10 +167,8 @@ func (_m *Task) String() string {
 	var builder strings.Builder
 	builder.WriteString("Task(")
 	builder.WriteString(fmt.Sprintf("id=%v, ", _m.ID))
-	if v := _m.Deadline; v != nil {
-		builder.WriteString("deadline=")
-		builder.WriteString(v.Format(time.ANSIC))
-	}
+	builder.WriteString("deadline=")
+	builder.WriteString(_m.Deadline.Format(time.ANSIC))
 	builder.WriteString(", ")
 	builder.WriteString("title=")
 	builder.WriteString(_m.Title)

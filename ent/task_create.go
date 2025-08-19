@@ -27,6 +27,14 @@ func (_c *TaskCreate) SetDeadline(v time.Time) *TaskCreate {
 	return _c
 }
 
+// SetNillableDeadline sets the "deadline" field if the given value is not nil.
+func (_c *TaskCreate) SetNillableDeadline(v *time.Time) *TaskCreate {
+	if v != nil {
+		_c.SetDeadline(*v)
+	}
+	return _c
+}
+
 // SetTitle sets the "title" field.
 func (_c *TaskCreate) SetTitle(v string) *TaskCreate {
 	_c.mutation.SetTitle(v)
@@ -137,9 +145,6 @@ func (_c *TaskCreate) defaults() {
 
 // check runs all checks and user-defined validators on the builder.
 func (_c *TaskCreate) check() error {
-	if _, ok := _c.mutation.Deadline(); !ok {
-		return &ValidationError{Name: "deadline", err: errors.New(`ent: missing required field "Task.deadline"`)}
-	}
 	if _, ok := _c.mutation.Title(); !ok {
 		return &ValidationError{Name: "title", err: errors.New(`ent: missing required field "Task.title"`)}
 	}
@@ -188,7 +193,7 @@ func (_c *TaskCreate) createSpec() (*Task, *sqlgraph.CreateSpec) {
 	)
 	if value, ok := _c.mutation.Deadline(); ok {
 		_spec.SetField(task.FieldDeadline, field.TypeTime, value)
-		_node.Deadline = &value
+		_node.Deadline = value
 	}
 	if value, ok := _c.mutation.Title(); ok {
 		_spec.SetField(task.FieldTitle, field.TypeString, value)

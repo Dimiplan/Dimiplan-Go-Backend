@@ -43,6 +43,12 @@ func (_u *TaskUpdate) SetNillableDeadline(v *time.Time) *TaskUpdate {
 	return _u
 }
 
+// ClearDeadline clears the value of the "deadline" field.
+func (_u *TaskUpdate) ClearDeadline() *TaskUpdate {
+	_u.mutation.ClearDeadline()
+	return _u
+}
+
 // SetTitle sets the "title" field.
 func (_u *TaskUpdate) SetTitle(v string) *TaskUpdate {
 	_u.mutation.SetTitle(v)
@@ -170,6 +176,9 @@ func (_u *TaskUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	if value, ok := _u.mutation.Deadline(); ok {
 		_spec.SetField(task.FieldDeadline, field.TypeTime, value)
 	}
+	if _u.mutation.DeadlineCleared() {
+		_spec.ClearField(task.FieldDeadline, field.TypeTime)
+	}
 	if value, ok := _u.mutation.Title(); ok {
 		_spec.SetField(task.FieldTitle, field.TypeString, value)
 	}
@@ -242,6 +251,12 @@ func (_u *TaskUpdateOne) SetNillableDeadline(v *time.Time) *TaskUpdateOne {
 	if v != nil {
 		_u.SetDeadline(*v)
 	}
+	return _u
+}
+
+// ClearDeadline clears the value of the "deadline" field.
+func (_u *TaskUpdateOne) ClearDeadline() *TaskUpdateOne {
+	_u.mutation.ClearDeadline()
 	return _u
 }
 
@@ -401,6 +416,9 @@ func (_u *TaskUpdateOne) sqlSave(ctx context.Context) (_node *Task, err error) {
 	}
 	if value, ok := _u.mutation.Deadline(); ok {
 		_spec.SetField(task.FieldDeadline, field.TypeTime, value)
+	}
+	if _u.mutation.DeadlineCleared() {
+		_spec.ClearField(task.FieldDeadline, field.TypeTime)
 	}
 	if value, ok := _u.mutation.Title(); ok {
 		_spec.SetField(task.FieldTitle, field.TypeString, value)

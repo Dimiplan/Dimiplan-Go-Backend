@@ -120,6 +120,16 @@ func DeadlineLTE(v time.Time) predicate.Task {
 	return predicate.Task(sql.FieldLTE(FieldDeadline, v))
 }
 
+// DeadlineIsNil applies the IsNil predicate on the "deadline" field.
+func DeadlineIsNil() predicate.Task {
+	return predicate.Task(sql.FieldIsNull(FieldDeadline))
+}
+
+// DeadlineNotNil applies the NotNil predicate on the "deadline" field.
+func DeadlineNotNil() predicate.Task {
+	return predicate.Task(sql.FieldNotNull(FieldDeadline))
+}
+
 // TitleEQ applies the EQ predicate on the "title" field.
 func TitleEQ(v string) predicate.Task {
 	return predicate.Task(sql.FieldEQ(FieldTitle, v))

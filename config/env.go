@@ -40,7 +40,7 @@ func Load() *Config {
 	redisConfig := &redis.Config{
 		Host:     getEnv("REDIS_HOST"),
 		Port:     getEnvAsInt("REDIS_PORT"),
-		Password: getEnv("REDIS_PASSWORD"),
+		Password: "",
 	}
 
 	return &Config{

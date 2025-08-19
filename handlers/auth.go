@@ -57,7 +57,10 @@ func (h *AuthHandler) Callback(c fiber.Ctx) error {
 
 	user, err := h.db.User.Query().Where(user.ID(data.ID)).First(c)
 	if user == nil {
-		h.db.User.Create().SetID(data.ID).SetEmail(data.Email).SetName(data.Name).SetProfileURL(data.ProfileURL).SaveX(c)
+		if _, err := h.db.User.Create().SetID(data.ID).SetEmail(data.Email).SetName(data.Name).SetProfileURL(data.ProfileURL).Save(c); err != nil {
+			log.Error(err)
+			return c.SendStatus(fiber.StatusInternalServerError)
+		}
 	} else if err != nil {
 		log.Error(err)
 		return c.SendStatus(fiber.StatusBadRequest)

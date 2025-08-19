@@ -7,7 +7,9 @@ import (
 	"dimiplan-backend/models"
 	"slices"
 
+	"github.com/bytedance/sonic"
 	"github.com/gofiber/fiber/v3"
+	"github.com/gofiber/fiber/v3/log"
 	"github.com/openai/openai-go/v2"
 )
 
@@ -24,6 +26,7 @@ func NewAIHandler(cfg *config.Config, db *ent.Client) *AIHandler {
 }
 
 func (h *AIHandler) AIChat(c fiber.Ctx) error {
+	user := c.Locals("user").(*ent.User)
 	request := new(models.AIChatRequest)
 	if err := c.Bind().Body(request); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
@@ -38,18 +41,28 @@ func (h *AIHandler) AIChat(c fiber.Ctx) error {
 			return c.SendStatus(fiber.StatusInternalServerError)
 		}
 	} else {
-		response, err := h.cfg.AIClient.Chat.Completions.New(c, openai.ChatCompletionNewParams{
+		rawresponse, err := h.cfg.AIClient.Chat.Completions.New(c, openai.ChatCompletionNewParams{
 			Messages: []openai.ChatCompletionMessageParamUnion{
 				openai.SystemMessage("다음 프롬프트를 요약하여 채팅방 이름을 작성하세요:\n 결과는 {\"title\": \"제목\"}의 JSON 형식으로 반환"),
 				openai.UserMessage(request.Prompt),
 			},
 			Model: h.cfg.PreAIModel,
 		})
-		if err != nil || response.Choices[0].Message.Content == "" {
+		if err != nil || rawresponse.Choices[0].Message.Content == "" {
+			log.Error(err)
 			return c.SendStatus(fiber.StatusInternalServerError)
 		}
-		room, err = h.db.Chatroom.Create().SetName(response.Choices[0].Message.Content).Save(c)
+		response := new(struct {
+			title string
+		})
+		err = sonic.Unmarshal([]byte(rawresponse.Choices[0].Message.Content), &response)
 		if err != nil {
+			log.Error(err)
+			return c.SendStatus(fiber.StatusInternalServerError)
+		}
+		room, err = h.db.Chatroom.Create().SetUser(user).SetName(response.title).Save(c)
+		if err != nil {
+			log.Error(err)
 			return c.SendStatus(fiber.StatusInternalServerError)
 		}
 	}

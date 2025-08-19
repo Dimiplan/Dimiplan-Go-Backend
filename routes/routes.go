@@ -31,6 +31,7 @@ func Setup(app *fiber.App, cfg *config.Config, db *ent.Client) *fiber.App {
 		Get(userHandler.GetUser).
 		Patch(userHandler.UpdateUser)
 
+	api.Use("/ai/chatroom/:id", middleware.QueryChatroomMiddleware(db))
 	api.Route("/ai").
 		Post(aiHandler.AIChat).
 		Route("/chatroom").

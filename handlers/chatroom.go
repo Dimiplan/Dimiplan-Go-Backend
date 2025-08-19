@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"dimiplan-backend/ent"
-	"dimiplan-backend/ent/chatroom"
 	"dimiplan-backend/models"
 
 	"github.com/gofiber/fiber/v3"
@@ -39,18 +38,7 @@ func (h *ChatroomHandler) CreateChatroom(c fiber.Ctx) error {
 }
 
 func (h *ChatroomHandler) GetMessages(c fiber.Ctx) error {
-	user := c.Locals("user").(*ent.User)
-	data := new(models.ChatroomID)
-	if err := c.Bind().All(data); err != nil {
-		return c.SendStatus(fiber.StatusBadRequest)
-	}
-	chatroom, err := user.QueryChatrooms().Where(chatroom.ID(data.ID)).Only(c)
-	if err != nil {
-		if chatroom == nil {
-			return c.SendStatus(fiber.StatusNotFound)
-		}
-		return c.SendStatus(fiber.StatusInternalServerError)
-	}
+	chatroom := c.Locals("chatroom").(*ent.Chatroom)
 	messages, err := chatroom.QueryMessages().All(c)
 	if err != nil {
 		if messages == nil {
@@ -62,19 +50,9 @@ func (h *ChatroomHandler) GetMessages(c fiber.Ctx) error {
 }
 
 func (h *ChatroomHandler) UpdateChatroom(c fiber.Ctx) error {
-	user := c.Locals("user").(*ent.User)
+	chatroom := c.Locals("chatroom").(*ent.Chatroom)
 	data := new(models.UpdateChatroom)
 	if err := c.Bind().All(data); err != nil {
-		return c.SendStatus(fiber.StatusBadRequest)
-	}
-	chatroom, err := user.QueryChatrooms().Where(chatroom.ID(data.ID)).Only(c)
-	if err != nil {
-		if chatroom == nil {
-			return c.SendStatus(fiber.StatusNotFound)
-		}
-		return c.SendStatus(fiber.StatusInternalServerError)
-	}
-	if err := c.Bind().Body(chatroom); err != nil {
 		return c.SendStatus(fiber.StatusBadRequest)
 	}
 	if _, err := chatroom.Update().SetName(data.Name).Save(c); err != nil {
@@ -84,18 +62,7 @@ func (h *ChatroomHandler) UpdateChatroom(c fiber.Ctx) error {
 }
 
 func (h *ChatroomHandler) RemoveChatroom(c fiber.Ctx) error {
-	user := c.Locals("user").(*ent.User)
-	data := new(models.ChatroomID)
-	if err := c.Bind().All(data); err != nil {
-		return c.SendStatus(fiber.StatusBadRequest)
-	}
-	chatroom, err := user.QueryChatrooms().Where(chatroom.ID(data.ID)).Only(c)
-	if err != nil {
-		if chatroom == nil {
-			return c.SendStatus(fiber.StatusNotFound)
-		}
-		return c.SendStatus(fiber.StatusInternalServerError)
-	}
+	chatroom := c.Locals("chatroom").(*ent.Chatroom)
 	if err := h.db.Chatroom.DeleteOne(chatroom).Exec(c); err != nil {
 		return c.SendStatus(fiber.StatusInternalServerError)
 	}

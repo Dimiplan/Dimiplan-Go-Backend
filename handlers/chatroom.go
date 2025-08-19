@@ -58,7 +58,7 @@ func (h *ChatroomHandler) UpdateChatroom(c fiber.Ctx) error {
 	if _, err := chatroom.Update().SetName(data.Name).Save(c); err != nil {
 		return c.SendStatus(fiber.StatusInternalServerError)
 	}
-	return c.JSON(fiber.Map{"chatroom_id": chatroom.ID})
+	return c.SendStatus(fiber.StatusNoContent)
 }
 
 func (h *ChatroomHandler) RemoveChatroom(c fiber.Ctx) error {

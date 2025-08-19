@@ -14,22 +14,16 @@ func AuthMiddleware(db *ent.Client) fiber.Handler {
 		ID := session.FromContext(c).Get("id")
 		var userID string
 		if ID == nil {
-			return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
-				"error": "Unauthorized",
-			})
+			return c.SendStatus(fiber.StatusUnauthorized)
 		} else{
 			userID = ID.(string)
 		}
 		if userID == "" {
-			return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
-				"error": "Unauthorized",
-			})
+			return c.SendStatus(fiber.StatusUnauthorized)
 		}
 		user, err := db.User.Query().Where(user.ID(userID)).Only(c)
 		if err != nil || user == nil {
-			return c.Status(fiber.StatusForbidden).JSON(fiber.Map{
-				"error": "No User",
-			})
+			return c.SendStatus(fiber.StatusForbidden)
 		}
 		log.Info(user)
 		c.Locals("uid", user.ID)

@@ -39,7 +39,8 @@ func Setup(cfg *config.Config) *fiber.App {
 	}))
 
 	app.Use("/", static.New("/", static.Config{
-	    FS: os.DirFS("dist"),
+		FS: os.DirFS("dist"),
+		Compress: true,
 	}))
 
 	return app

@@ -35,7 +35,7 @@ func (h *AIHandler) AIChat(c fiber.Ctx) error {
 		var err error
 		room, err = h.db.Chatroom.Query().Where(chatroom.ID(request.Room)).Only(c)
 		if err != nil {
-			return c.Status(fiber.StatusInternalServerError).Send(nil)
+			return c.SendStatus(fiber.StatusInternalServerError)
 		}
 	} else {
 		response, err := h.cfg.AIClient.Chat.Completions.New(c, openai.ChatCompletionNewParams{
@@ -46,11 +46,11 @@ func (h *AIHandler) AIChat(c fiber.Ctx) error {
 			Model: h.cfg.PreAIModel,
 		})
 		if err != nil || response.Choices[0].Message.Content == "" {
-			return c.Status(fiber.StatusInternalServerError).Send(nil)
+			return c.SendStatus(fiber.StatusInternalServerError)
 		}
 		room, err = h.db.Chatroom.Create().SetName(response.Choices[0].Message.Content).Save(c)
 		if err != nil {
-			return c.Status(fiber.StatusInternalServerError).Send(nil)
+			return c.SendStatus(fiber.StatusInternalServerError)
 		}
 	}
 	if !slices.Contains(h.cfg.AIModels, request.Model) {
@@ -67,15 +67,15 @@ func (h *AIHandler) AIChat(c fiber.Ctx) error {
 		Model: h.cfg.PreAIModel,
 	})
 	if err != nil || response.Choices[0].Message.Content == "" {
-		return c.Status(fiber.StatusInternalServerError).Send(nil)
+		return c.SendStatus(fiber.StatusInternalServerError)
 	}
 	_, err = h.db.Message.Create().SetChatroom(room).SetSender("user").SetMessage(request.Prompt).Save(c)
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).Send(nil)
+		return c.SendStatus(fiber.StatusInternalServerError)
 	}
 	chat, err := h.db.Message.Create().SetChatroom(room).SetSender("ai").SetMessage(response.Choices[0].Message.Content).Save(c)
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).Send(nil)
+		return c.SendStatus(fiber.StatusInternalServerError)
 	}
 	return c.Status(fiber.StatusCreated).JSON(fiber.Map{
 		"message": chat,

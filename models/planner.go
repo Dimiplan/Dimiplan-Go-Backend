@@ -6,10 +6,5 @@ type CreatePlannerReq struct {
 }
 
 type RenamePlannerReq struct {
-	PlannerID int    `uri:"planner"`
-	Name      string `json:"name"`
-}
-
-type DeletePlannerReq struct {
-	PlannerID int `uri:"planner"`
+	Name string `json:"name"`
 }

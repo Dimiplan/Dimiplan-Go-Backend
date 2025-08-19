@@ -5,6 +5,9 @@ import (
 	"dimiplan-backend/ent"
 	"dimiplan-backend/handlers"
 	"dimiplan-backend/middleware"
+	"strings"
+
+	"slices"
 
 	"github.com/gofiber/fiber/v3"
 )
@@ -31,27 +34,34 @@ func Setup(app *fiber.App, cfg *config.Config, db *ent.Client) *fiber.App {
 	api.Route("/ai").
 		Post(aiHandler.AIChat).
 		Route("/chatroom").
-			Get(chatroomHandler.ListChatrooms).
-			Post(chatroomHandler.CreateChatroom).
-			Route("/:id").
-				Get(chatroomHandler.GetMessages).
-				Patch(chatroomHandler.UpdateChatroom).
-				Delete(chatroomHandler.RemoveChatroom)
+		Get(chatroomHandler.ListChatrooms).
+		Post(chatroomHandler.CreateChatroom).
+		Route("/:id").
+		Get(chatroomHandler.GetMessages).
+		Patch(chatroomHandler.UpdateChatroom).
+		Delete(chatroomHandler.RemoveChatroom)
 
+	api.Use("/planner/:planner", middleware.QueryPlannerMiddleware(db))
+	api.Use("/planner/:planner/:task", middleware.QueryTaskMiddleware(db))
 	api.Route("/planner").
 		Get(plannerHandler.GetPlanners).
 		Post(plannerHandler.CreatePlanner).
 		Route("/:planner").
-			Get(plannerHandler.GetTasks).
-			Post(plannerHandler.CreateTask).
-			Patch(plannerHandler.UpdatePlanner).
-			Delete(plannerHandler.DeletePlanner).
-			Route("/:task").
-				Patch(plannerHandler.UpdateTask).
-				Delete(plannerHandler.DeleteTask)
+		Get(plannerHandler.GetTasks).
+		Post(plannerHandler.CreateTask).
+		Patch(plannerHandler.UpdatePlanner).
+		Delete(plannerHandler.DeletePlanner).
+		Route("/:task").
+		Patch(plannerHandler.UpdateTask).
+		Delete(plannerHandler.DeleteTask)
 
 	app.Get("/*", func(c fiber.Ctx) error {
-	    return c.SendFile("dist/index.html")
+		if slices.Contains(strings.Split(c.Path(), "/"), "api") {
+			return c.SendStatus(fiber.StatusNotFound)
+		}
+		return c.SendFile("dist/index.html", fiber.SendFile{
+			Compress: true,
+		})
 	})
 
 	return app

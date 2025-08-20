@@ -6,7 +6,6 @@ import (
 
 	"github.com/gofiber/fiber/v3"
 	"github.com/gofiber/fiber/v3/middleware/session"
-	"github.com/gofiber/fiber/v3/log"
 )
 
 func AuthMiddleware(db *ent.Client) fiber.Handler {
@@ -14,18 +13,17 @@ func AuthMiddleware(db *ent.Client) fiber.Handler {
 		ID := session.FromContext(c).Get("id")
 		var userID string
 		if ID == nil {
-			return c.SendStatus(fiber.StatusUnauthorized)
-		} else{
+			return fiber.ErrUnauthorized
+		} else {
 			userID = ID.(string)
 		}
 		if userID == "" {
-			return c.SendStatus(fiber.StatusUnauthorized)
+			return fiber.ErrUnauthorized
 		}
 		user, err := db.User.Query().Where(user.ID(userID)).Only(c)
 		if err != nil || user == nil {
-			return c.SendStatus(fiber.StatusForbidden)
+			return fiber.ErrForbidden
 		}
-		log.Info(user)
 		c.Locals("uid", user.ID)
 		c.Locals("user", user)
 		return c.Next()

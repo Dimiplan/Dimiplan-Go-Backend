@@ -9,7 +9,6 @@ import (
 
 	"github.com/bytedance/sonic"
 	"github.com/gofiber/fiber/v3"
-	"github.com/gofiber/fiber/v3/log"
 	"github.com/openai/openai-go/v2"
 )
 
@@ -38,7 +37,7 @@ func (h *AIHandler) AIChat(c fiber.Ctx) error {
 		var err error
 		room, err = h.db.Chatroom.Query().Where(chatroom.ID(request.Room)).Only(c)
 		if err != nil {
-			return c.SendStatus(fiber.StatusInternalServerError)
+			return err
 		}
 	} else {
 		rawresponse, err := h.cfg.AIClient.Chat.Completions.New(c, openai.ChatCompletionNewParams{
@@ -49,27 +48,22 @@ func (h *AIHandler) AIChat(c fiber.Ctx) error {
 			Model: h.cfg.PreAIModel,
 		})
 		if err != nil || rawresponse.Choices[0].Message.Content == "" {
-			log.Error(err)
-			return c.SendStatus(fiber.StatusInternalServerError)
+			return err
 		}
 		response := new(struct {
-			title string
+			Title string `json:"title"`
 		})
 		err = sonic.Unmarshal([]byte(rawresponse.Choices[0].Message.Content), &response)
 		if err != nil {
-			log.Error(err)
-			return c.SendStatus(fiber.StatusInternalServerError)
+			return err
 		}
-		room, err = h.db.Chatroom.Create().SetUser(user).SetName(response.title).Save(c)
+		room, err = h.db.Chatroom.Create().SetUser(user).SetName(response.Title).Save(c)
 		if err != nil {
-			log.Error(err)
-			return c.SendStatus(fiber.StatusInternalServerError)
+			return err
 		}
 	}
 	if !slices.Contains(h.cfg.AIModels, request.Model) {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"error": "Invalid model",
-		})
+		return fiber.NewError(fiber.StatusBadRequest, "Invalid model")
 	}
 	response, err := h.cfg.AIClient.Chat.Completions.New(c, openai.ChatCompletionNewParams{
 		Messages: []openai.ChatCompletionMessageParamUnion{
@@ -80,15 +74,15 @@ func (h *AIHandler) AIChat(c fiber.Ctx) error {
 		Model: h.cfg.PreAIModel,
 	})
 	if err != nil || response.Choices[0].Message.Content == "" {
-		return c.SendStatus(fiber.StatusInternalServerError)
+		return err
 	}
 	_, err = h.db.Message.Create().SetChatroom(room).SetSender("user").SetMessage(request.Prompt).Save(c)
 	if err != nil {
-		return c.SendStatus(fiber.StatusInternalServerError)
+		return err
 	}
 	chat, err := h.db.Message.Create().SetChatroom(room).SetSender("ai").SetMessage(response.Choices[0].Message.Content).Save(c)
 	if err != nil {
-		return c.SendStatus(fiber.StatusInternalServerError)
+		return err
 	}
 	return c.Status(fiber.StatusCreated).JSON(fiber.Map{
 		"message": chat,

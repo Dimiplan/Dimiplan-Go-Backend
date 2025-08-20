@@ -6,7 +6,6 @@ import (
 	"strconv"
 
 	"github.com/gofiber/fiber/v3"
-	"github.com/gofiber/fiber/v3/log"
 )
 
 func QueryTaskMiddleware(db *ent.Client) fiber.Handler {
@@ -14,21 +13,14 @@ func QueryTaskMiddleware(db *ent.Client) fiber.Handler {
 		planner := c.Locals("planner").(*ent.Planner)
 		taskID, err := strconv.Atoi(c.Params("task"))
 		if err != nil {
-			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-				"error": "Invalid task ID",
-			})
+			return fiber.ErrBadRequest
 		}
 		task, err := planner.QueryTasks().Where(task.ID(taskID)).Only(c)
 		if err != nil {
-			log.Error(err)
 			if task == nil {
-				return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-					"error": "Task not found",
-				})
+				return fiber.ErrNotFound
 			}
-			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-				"error": "Failed to retrieve task",
-			})
+			return err
 		}
 		c.Locals("task", task)
 		return c.Next()

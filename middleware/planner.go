@@ -6,7 +6,6 @@ import (
 	"strconv"
 
 	"github.com/gofiber/fiber/v3"
-	"github.com/gofiber/fiber/v3/log"
 )
 
 func QueryPlannerMiddleware(db *ent.Client) fiber.Handler {
@@ -14,21 +13,14 @@ func QueryPlannerMiddleware(db *ent.Client) fiber.Handler {
 		user := c.Locals("user").(*ent.User)
 		plannerID, err := strconv.Atoi(c.Params("planner"))
 		if err != nil {
-			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-				"error": "Invalid planner ID",
-			})
+			return fiber.ErrBadRequest
 		}
 		planner, err := user.QueryPlanners().Where(planner.ID(plannerID)).Only(c)
 		if err != nil {
-			log.Error(err)
 			if planner == nil {
-				return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-					"error": "Planner not found",
-				})
+				return fiber.ErrNotFound
 			}
-			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-				"error": "Failed to retrieve planner",
-			})
+			return err
 		}
 		c.Locals("planner", planner)
 		return c.Next()

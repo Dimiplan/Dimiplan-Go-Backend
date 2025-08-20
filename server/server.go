@@ -2,12 +2,12 @@ package server
 
 import (
 	"dimiplan-backend/config"
+	"fmt"
 	"os"
 
 	"github.com/bytedance/sonic"
 	"github.com/gofiber/fiber/v3"
 	"github.com/gofiber/fiber/v3/middleware/compress"
-	"github.com/gofiber/fiber/v3/middleware/cors"
 	"github.com/gofiber/fiber/v3/middleware/helmet"
 	"github.com/gofiber/fiber/v3/middleware/logger"
 	"github.com/gofiber/fiber/v3/middleware/session"
@@ -23,25 +23,40 @@ func Setup(cfg *config.Config) *fiber.App {
 
 	app.Use(helmet.New())
 
-	app.Use(cors.New(cors.Config{
-		AllowOrigins:     []string{"http://localhost:3000", "http://localhost:8080"},
-		AllowCredentials: true,
-	}))
+	accessLog, err := os.OpenFile("./access.log", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
+	if err != nil {
+		panic(err)
+	}
 
-	app.Use(logger.New())
+	app.Use(logger.New(logger.Config{
+		Format:     "{time: \"${time}\", ip: \"${ip}\", method: \"${method}\", url: \"${url}\", status: \"${status}\", error: \"${error}\"}\n",
+		TimeFormat: "01-02 15:04:05",
+		TimeZone:   "Asia/Seoul",
+		Stream:     accessLog,
+	}))
 	app.Use(compress.New())
 
 	storage := redis.New(*cfg.RedisConfig)
 
 	app.Use(session.New(session.Config{
-		Storage:   storage,
-		Extractor: session.FromCookie("dimiplan.sid"),
+		Storage:        storage,
+		Extractor:      session.FromCookie("dimiplan.sid"),
+		CookieSecure:   true,
+		CookieHTTPOnly: true,
+		CookieSameSite: "lax",
 	}))
 
 	app.Use("/", static.New("/", static.Config{
 		FS:       os.DirFS("dist"),
 		Compress: true,
 	}))
+
+	app.Use(func(c fiber.Ctx) error {
+		if c.Protocol() == "http" {
+			return c.Redirect().To(fmt.Sprintf("https://%s%s", c.Hostname(), c.Path()))
+		}
+		return c.Next()
+	})
 
 	return app
 }

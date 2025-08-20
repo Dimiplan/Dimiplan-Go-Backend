@@ -6,7 +6,6 @@ import (
 	"strconv"
 
 	"github.com/gofiber/fiber/v3"
-	"github.com/gofiber/fiber/v3/log"
 )
 
 func QueryChatroomMiddleware(db *ent.Client) fiber.Handler {
@@ -14,21 +13,14 @@ func QueryChatroomMiddleware(db *ent.Client) fiber.Handler {
 		user := c.Locals("user").(*ent.User)
 		chatroomID, err := strconv.Atoi(c.Params("id"))
 		if err != nil {
-			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-				"error": "Invalid chatroom ID",
-			})
+			return fiber.ErrBadRequest
 		}
 		chatroom, err := user.QueryChatrooms().Where(chatroom.ID(chatroomID)).Only(c)
 		if err != nil {
-			log.Error(err)
 			if chatroom == nil {
-				return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-					"error": "Chatroom not found",
-				})
+				return fiber.ErrBadRequest
 			}
-			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-				"error": "Failed to retrieve chatroom",
-			})
+			return err
 		}
 		c.Locals("chatroom", chatroom)
 		return c.Next()

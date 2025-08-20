@@ -31,5 +31,7 @@ func main() {
 	log.Infof("Server starting on port %s", cfg.Port)
 	log.Fatal(app.Listen(":"+cfg.Port, fiber.ListenConfig{
 		EnablePrefork: true,
+		CertFile:      "./keys/cert.pem",
+		CertKeyFile:   "./keys/key.pem",
 	}))
 }

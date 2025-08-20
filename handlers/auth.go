@@ -42,14 +42,14 @@ func (h *AuthHandler) Callback(c fiber.Ctx) error {
 	token, err := h.oauth.Exchange(c, c.FormValue("code"))
 	if err != nil {
 		log.Error(err)
-		return c.SendStatus(fiber.StatusBadRequest)
+		return fiber.ErrBadRequest
 	}
 
 	err, data := auth.GetUser(token.AccessToken)
 
 	if err != nil {
 		log.Error(err)
-		return c.SendStatus(fiber.StatusBadRequest)
+		return fiber.ErrBadRequest
 	}
 
 	sess := session.FromContext(c)
@@ -58,12 +58,10 @@ func (h *AuthHandler) Callback(c fiber.Ctx) error {
 	user, err := h.db.User.Query().Where(user.ID(data.ID)).First(c)
 	if user == nil {
 		if _, err := h.db.User.Create().SetID(data.ID).SetEmail(data.Email).SetName(data.Name).SetProfileURL(data.ProfileURL).Save(c); err != nil {
-			log.Error(err)
-			return c.SendStatus(fiber.StatusInternalServerError)
+			return err
 		}
 	} else if err != nil {
-		log.Error(err)
-		return c.SendStatus(fiber.StatusBadRequest)
+		return err
 	}
 	return c.Redirect().To("/")
 }

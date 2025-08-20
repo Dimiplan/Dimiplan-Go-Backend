@@ -43,11 +43,14 @@ func (h *PlannerHandler) UpdateTask(c fiber.Ctx) error {
 		return fiber.ErrBadRequest
 	}
 
-	_, err := task.Update().
-		SetTitle(data.Title).
-		SetPriority(data.Priority).
-		Save(c)
-	if err != nil {
+	builder := task.Update()
+	if data.Title != "" {
+		builder = builder.SetTitle(data.Title)
+	}
+	if data.Priority != 0 {
+		builder = builder.SetPriority(data.Priority)
+	}
+	if _, err := builder.Save(c); err != nil {
 		return err
 	}
 	return c.SendStatus(fiber.StatusNoContent)

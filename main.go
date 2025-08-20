@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"log"
 
 	"dimiplan-backend/config"
 	"dimiplan-backend/ent"
@@ -10,6 +9,7 @@ import (
 	"dimiplan-backend/server"
 
 	"github.com/gofiber/fiber/v3"
+	"github.com/gofiber/fiber/v3/log"
 	_ "github.com/lib/pq"
 )
 
@@ -28,7 +28,7 @@ func main() {
 	app := server.Setup(cfg)
 	routes.Setup(app, cfg, client)
 
-	log.Printf("Server starting on port %s", cfg.Port)
+	log.Infof("Server starting on port %s", cfg.Port)
 	log.Fatal(app.Listen(":"+cfg.Port, fiber.ListenConfig{
 		EnablePrefork: true,
 	}))

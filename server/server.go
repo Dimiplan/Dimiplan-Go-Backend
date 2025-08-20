@@ -22,7 +22,12 @@ func Setup(cfg *config.Config) *fiber.App {
 	})
 
 	app.Use(helmet.New(helmet.Config{
-		ContentSecurityPolicy: "default-src 'self'; img-src 'self' data: https://*.googleusercontent.com; style-src 'self' 'unsafe-inline'; script-src 'self'",
+		CrossOriginResourcePolicy: "cross-origin",
+		ContentSecurityPolicy: `default-src 'self';
+		img-src 'self' data: https://*.googleusercontent.com;
+		style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net;
+		script-src 'self' 'unsafe-inline' https://static.cloudflareinsights.com https://*.cloudflare.com;
+		font-src 'self' https://fonts.gstatic.com https://cdn.jsdelivr.net`,
 	}))
 
 	accessLog, err := os.OpenFile("./access.log", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)

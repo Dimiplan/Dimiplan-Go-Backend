@@ -21,7 +21,9 @@ func Setup(cfg *config.Config) *fiber.App {
 		JSONDecoder: sonic.Unmarshal,
 	})
 
-	app.Use(helmet.New())
+	app.Use(helmet.New(helmet.Config{
+		ContentSecurityPolicy: "default-src 'self'; img-src 'self' data: https://*.googleusercontent.com; style-src 'self'; script-src 'self'",
+	}))
 
 	accessLog, err := os.OpenFile("./access.log", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
 	if err != nil {

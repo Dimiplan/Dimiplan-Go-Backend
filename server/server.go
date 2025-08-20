@@ -23,6 +23,7 @@ func Setup(cfg *config.Config) *fiber.App {
 
 	app.Use(helmet.New(helmet.Config{
 		CrossOriginResourcePolicy: "cross-origin",
+		CrossOriginEmbedderPolicy: "credentialless",
 		ContentSecurityPolicy: `default-src 'self';
 		img-src 'self' data: https://*.googleusercontent.com;
 		style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net;

@@ -6,12 +6,12 @@ import (
 
 	"github.com/gofiber/fiber/v3"
 	"github.com/swaggest/openapi-go"
-	"github.com/swaggest/openapi-go/openapi3"
+	"github.com/swaggest/openapi-go/openapi31"
 )
 
 type Wrapper struct {
 	router    fiber.Router
-	reflector openapi3.Reflector
+	reflector openapi31.Reflector
 }
 
 type Register struct {
@@ -20,8 +20,8 @@ type Register struct {
 }
 
 func NewWrapper(router fiber.Router) *Wrapper {
-	reflector := openapi3.Reflector{}
-	reflector.Spec = &openapi3.Spec{Openapi: "3.0.3"}
+	reflector := openapi31.Reflector{}
+	reflector.Spec = &openapi31.Spec{Openapi: "3.1.0"}
 	reflector.Spec.Info.
 		WithTitle("Dimiplan Backend").
 		WithVersion("2.0.0").

@@ -29,9 +29,6 @@ func (Message) Fields() []ent.Field {
 // Edges of the Message.
 func (Message) Edges() []ent.Edge {
 	return []ent.Edge{
-		edge.From("chatroom", Chatroom.Type).
-			Ref("messages").
-			Unique().   // 각 Message는 하나의 ChatRoom에만 속함 (N:1)
-			Required(), // ChatRoom 없는 Message 생성 금지 (FK NOT NULL)
+		edge.From("chatroom", Chatroom.Type).Ref("messages").Unique().Required(),
 	}
 }

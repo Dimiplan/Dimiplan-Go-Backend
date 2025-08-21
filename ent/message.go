@@ -5,6 +5,7 @@ package ent
 import (
 	"dimiplan-backend/ent/chatroom"
 	"dimiplan-backend/ent/message"
+	"encoding/json"
 	"fmt"
 	"strings"
 	"time"
@@ -17,18 +18,18 @@ import (
 type Message struct {
 	config `json:"-"`
 	// ID of the ent.
-	ID int `json:"id,omitempty"`
+	ID int `json:"id"`
 	// Sender holds the value of the "sender" field.
-	Sender string `json:"sender,omitempty"`
+	Sender string `json:"sender"`
 	// Message holds the value of the "message" field.
-	Message string `json:"message,omitempty"`
+	Message string `json:"message"`
 	// CreatedAt holds the value of the "createdAt" field.
-	CreatedAt time.Time `json:"createdAt,omitempty"`
+	CreatedAt time.Time `json:"createdAt"`
 	// UpdatedAt holds the value of the "updatedAt" field.
-	UpdatedAt time.Time `json:"updatedAt,omitempty"`
+	UpdatedAt time.Time `json:"updatedAt"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the MessageQuery when eager-loading is set.
-	Edges             MessageEdges `json:"edges"`
+	Edges             MessageEdges `json:"-"`
 	chatroom_messages *int
 	selectValues      sql.SelectValues
 }
@@ -172,6 +173,18 @@ func (_m *Message) String() string {
 	builder.WriteString(_m.UpdatedAt.Format(time.ANSIC))
 	builder.WriteByte(')')
 	return builder.String()
+}
+
+// MarshalJSON implements the json.Marshaler interface.
+func (_m *Message) MarshalJSON() ([]byte, error) {
+	type Alias Message
+	return json.Marshal(&struct {
+		*Alias
+		MessageEdges
+	}{
+		Alias:        (*Alias)(_m),
+		MessageEdges: _m.Edges,
+	})
 }
 
 // Messages is a parsable slice of Message.

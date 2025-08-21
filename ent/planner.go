@@ -5,6 +5,7 @@ package ent
 import (
 	"dimiplan-backend/ent/planner"
 	"dimiplan-backend/ent/user"
+	"encoding/json"
 	"fmt"
 	"strings"
 	"time"
@@ -17,18 +18,18 @@ import (
 type Planner struct {
 	config `json:"-"`
 	// ID of the ent.
-	ID int `json:"id,omitempty"`
+	ID int `json:"id"`
 	// Type holds the value of the "type" field.
-	Type string `json:"type,omitempty"`
+	Type string `json:"type"`
 	// Name holds the value of the "name" field.
-	Name string `json:"name,omitempty"`
+	Name string `json:"name"`
 	// CreatedAt holds the value of the "createdAt" field.
-	CreatedAt time.Time `json:"createdAt,omitempty"`
+	CreatedAt time.Time `json:"createdAt"`
 	// UpdatedAt holds the value of the "updatedAt" field.
-	UpdatedAt time.Time `json:"updatedAt,omitempty"`
+	UpdatedAt time.Time `json:"updatedAt"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the PlannerQuery when eager-loading is set.
-	Edges         PlannerEdges `json:"edges"`
+	Edges         PlannerEdges `json:"-"`
 	user_planners *string
 	selectValues  sql.SelectValues
 }
@@ -188,6 +189,18 @@ func (_m *Planner) String() string {
 	builder.WriteString(_m.UpdatedAt.Format(time.ANSIC))
 	builder.WriteByte(')')
 	return builder.String()
+}
+
+// MarshalJSON implements the json.Marshaler interface.
+func (_m *Planner) MarshalJSON() ([]byte, error) {
+	type Alias Planner
+	return json.Marshal(&struct {
+		*Alias
+		PlannerEdges
+	}{
+		Alias:        (*Alias)(_m),
+		PlannerEdges: _m.Edges,
+	})
 }
 
 // Planners is a parsable slice of Planner.

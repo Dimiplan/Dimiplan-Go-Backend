@@ -24,20 +24,15 @@ func NewAIHandler(cfg *config.Config, db *ent.Client) *AIHandler {
 	}
 }
 
-func (h *AIHandler) AIChat(c fiber.Ctx) error {
+func (h *AIHandler) AIChat(rawRequest interface{}, c fiber.Ctx) (interface{}, error) {
+	request := rawRequest.(*models.AIChatRequest)
 	user := c.Locals("user").(*ent.User)
-	request := new(models.AIChatRequest)
-	if err := c.Bind().Body(request); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"error": err.Error(),
-		})
-	}
 	var room *ent.Chatroom
 	if request.Room != 0 {
 		var err error
 		room, err = h.db.Chatroom.Query().Where(chatroom.ID(request.Room)).Only(c)
 		if err != nil {
-			return err
+			return nil, err
 		}
 	} else {
 		rawresponse, err := h.cfg.AIClient.Chat.Completions.New(c, openai.ChatCompletionNewParams{
@@ -48,22 +43,22 @@ func (h *AIHandler) AIChat(c fiber.Ctx) error {
 			Model: h.cfg.PreAIModel,
 		})
 		if err != nil || rawresponse.Choices[0].Message.Content == "" {
-			return err
+			return nil, err
 		}
 		response := new(struct {
 			Title string `json:"title"`
 		})
 		err = sonic.Unmarshal([]byte(rawresponse.Choices[0].Message.Content), &response)
 		if err != nil {
-			return err
+			return nil, err
 		}
 		room, err = h.db.Chatroom.Create().SetUser(user).SetName(response.Title).Save(c)
 		if err != nil {
-			return err
+			return nil, err
 		}
 	}
 	if !slices.Contains(h.cfg.AIModels, request.Model) {
-		return fiber.NewError(fiber.StatusBadRequest, "Invalid model")
+		return nil, fiber.NewError(fiber.StatusBadRequest, "Invalid model")
 	}
 	response, err := h.cfg.AIClient.Chat.Completions.New(c, openai.ChatCompletionNewParams{
 		Messages: []openai.ChatCompletionMessageParamUnion{
@@ -74,18 +69,18 @@ func (h *AIHandler) AIChat(c fiber.Ctx) error {
 		Model: h.cfg.PreAIModel,
 	})
 	if err != nil || response.Choices[0].Message.Content == "" {
-		return err
+		return nil, err
 	}
 	_, err = h.db.Message.Create().SetChatroom(room).SetSender("user").SetMessage(request.Prompt).Save(c)
 	if err != nil {
-		return err
+		return nil, err
 	}
 	chat, err := h.db.Message.Create().SetChatroom(room).SetSender("ai").SetMessage(response.Choices[0].Message.Content).Save(c)
 	if err != nil {
-		return err
+		return nil, err
 	}
-	return c.Status(fiber.StatusCreated).JSON(fiber.Map{
-		"message": chat,
-		"room_id": room.ID,
-	})
+	return models.AIChatResponse{
+		Message: chat,
+		RoomID:  room.ID,
+	}, nil
 }

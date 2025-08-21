@@ -30,11 +30,7 @@ func (Planner) Fields() []ent.Field {
 // Edges of the Planner.
 func (Planner) Edges() []ent.Edge {
 	return []ent.Edge{
-		edge.From("user", User.Type).
-			Ref("planners").
-			Unique().   // 각 Planner는 하나의 User에만 속함 (N:1)
-			Required(), // User 없는 Planner 생성 금지 (FK NOT NULL)
-
+		edge.From("user", User.Type).Ref("planners").Unique().Required(),
 		edge.To("tasks", Task.Type).Annotations(entsql.OnDelete(entsql.Cascade)),
 	}
 }

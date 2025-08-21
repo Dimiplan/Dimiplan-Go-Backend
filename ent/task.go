@@ -5,6 +5,7 @@ package ent
 import (
 	"dimiplan-backend/ent/planner"
 	"dimiplan-backend/ent/task"
+	"encoding/json"
 	"fmt"
 	"strings"
 	"time"
@@ -17,20 +18,20 @@ import (
 type Task struct {
 	config `json:"-"`
 	// ID of the ent.
-	ID int `json:"id,omitempty"`
+	ID int `json:"id"`
 	// Deadline holds the value of the "deadline" field.
-	Deadline time.Time `json:"deadline,omitempty"`
+	Deadline time.Time `json:"deadline"`
 	// Title holds the value of the "title" field.
-	Title string `json:"title,omitempty"`
+	Title string `json:"title"`
 	// Priority holds the value of the "priority" field.
-	Priority int `json:"priority,omitempty"`
+	Priority int `json:"priority"`
 	// CreatedAt holds the value of the "createdAt" field.
-	CreatedAt time.Time `json:"createdAt,omitempty"`
+	CreatedAt time.Time `json:"createdAt"`
 	// UpdatedAt holds the value of the "updatedAt" field.
-	UpdatedAt time.Time `json:"updatedAt,omitempty"`
+	UpdatedAt time.Time `json:"updatedAt"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the TaskQuery when eager-loading is set.
-	Edges         TaskEdges `json:"edges"`
+	Edges         TaskEdges `json:"-"`
 	planner_tasks *int
 	selectValues  sql.SelectValues
 }
@@ -183,6 +184,18 @@ func (_m *Task) String() string {
 	builder.WriteString(_m.UpdatedAt.Format(time.ANSIC))
 	builder.WriteByte(')')
 	return builder.String()
+}
+
+// MarshalJSON implements the json.Marshaler interface.
+func (_m *Task) MarshalJSON() ([]byte, error) {
+	type Alias Task
+	return json.Marshal(&struct {
+		*Alias
+		TaskEdges
+	}{
+		Alias:     (*Alias)(_m),
+		TaskEdges: _m.Edges,
+	})
 }
 
 // Tasks is a parsable slice of Task.

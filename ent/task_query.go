@@ -299,7 +299,7 @@ func (_q *TaskQuery) WithPlanner(opts ...func(*PlannerQuery)) *TaskQuery {
 // Example:
 //
 //	var v []struct {
-//		Deadline time.Time `json:"deadline,omitempty"`
+//		Deadline time.Time `json:"deadline"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
@@ -322,7 +322,7 @@ func (_q *TaskQuery) GroupBy(field string, fields ...string) *TaskGroupBy {
 // Example:
 //
 //	var v []struct {
-//		Deadline time.Time `json:"deadline,omitempty"`
+//		Deadline time.Time `json:"deadline"`
 //	}
 //
 //	client.Task.Query().

@@ -336,7 +336,7 @@ func (_q *PlannerQuery) WithTasks(opts ...func(*TaskQuery)) *PlannerQuery {
 // Example:
 //
 //	var v []struct {
-//		Type string `json:"type,omitempty"`
+//		Type string `json:"type"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
@@ -359,7 +359,7 @@ func (_q *PlannerQuery) GroupBy(field string, fields ...string) *PlannerGroupBy 
 // Example:
 //
 //	var v []struct {
-//		Type string `json:"type,omitempty"`
+//		Type string `json:"type"`
 //	}
 //
 //	client.Planner.Query().

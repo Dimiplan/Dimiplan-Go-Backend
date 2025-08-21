@@ -5,6 +5,10 @@ import (
 	"dimiplan-backend/ent"
 	"dimiplan-backend/handlers"
 	"dimiplan-backend/middleware"
+	"dimiplan-backend/models"
+	"dimiplan-backend/openapi"
+	"fmt"
+	"os"
 	"strings"
 
 	"slices"
@@ -25,36 +29,46 @@ func Setup(app *fiber.App, cfg *config.Config, db *ent.Client) *fiber.App {
 	auth.Get("/logout", authHandler.Logout)
 
 	api := app.Group("/api")
+	apiWrapper := openapi.NewWrapper(api)
 	api.Use(middleware.AuthMiddleware(db))
 
-	api.Route("/user").
-		Get(userHandler.GetUser).
-		Patch(userHandler.UpdateUser)
+	apiWrapper.Route("/user").
+		Get(userHandler.GetUser, nil, ent.User{}, 200).
+		Patch(userHandler.UpdateUser, models.UpdateUserRequest{}, ent.User{}, 204)
 
 	api.Use("/ai/chatroom/:id", middleware.QueryChatroomMiddleware(db))
-	api.Route("/ai").
-		Post(aiHandler.AIChat).
+	apiWrapper.Route("/ai").
+		Post(aiHandler.AIChat, models.AIChatRequest{}, models.AIChatResponse{}, 200).
 		Route("/chatroom").
-		Get(chatroomHandler.ListChatrooms).
-		Post(chatroomHandler.CreateChatroom).
+		Get(chatroomHandler.ListChatrooms, nil, models.ListChatroomsResponse{}, 200).
+		Post(chatroomHandler.CreateChatroom, models.CreateChatroomRequest{}, models.CreateChatroomResponse{}, 201).
 		Route("/:id").
-		Get(chatroomHandler.GetMessages).
-		Patch(chatroomHandler.UpdateChatroom).
-		Delete(chatroomHandler.RemoveChatroom)
+		Get(chatroomHandler.GetMessages, models.GetMessagesRequest{}, models.GetMessagesResponse{}, 200).
+		Patch(chatroomHandler.UpdateChatroom, models.UpdateChatroomRequest{}, nil, 204).
+		Delete(chatroomHandler.RemoveChatroom, models.RemoveChatroomRequest{}, nil, 204)
 
 	api.Use("/planner/:planner", middleware.QueryPlannerMiddleware(db))
 	api.Use("/planner/:planner/:task", middleware.QueryTaskMiddleware(db))
-	api.Route("/planner").
-		Get(plannerHandler.GetPlanners).
-		Post(plannerHandler.CreatePlanner).
+
+	apiWrapper.Route("/planner").
+		Get(plannerHandler.GetPlanners, nil, models.GetPlannersResponse{}, 200).
+		Post(plannerHandler.CreatePlanner, models.CreatePlannerRequest{}, nil, 201).
 		Route("/:planner").
-		Get(plannerHandler.GetTasks).
-		Post(plannerHandler.CreateTask).
-		Patch(plannerHandler.UpdatePlanner).
-		Delete(plannerHandler.DeletePlanner).
+		Get(plannerHandler.GetTasks, models.GetTasksRequest{}, models.GetTasksResponse{}, 200).
+		Post(plannerHandler.CreateTask, models.CreateTaskRequest{}, nil, 201).
+		Patch(plannerHandler.UpdatePlanner, models.RenamePlannerRequest{}, nil, 204).
+		Delete(plannerHandler.DeletePlanner, models.DeletePlannerRequest{}, nil, 204).
 		Route("/:task").
-		Patch(plannerHandler.UpdateTask).
-		Delete(plannerHandler.DeleteTask)
+		Patch(plannerHandler.UpdateTask, models.UpdateTaskRequest{}, nil, 204).
+		Delete(plannerHandler.DeleteTask, models.DeleteTaskRequest{}, nil, 204)
+
+	file, err := os.OpenFile("./openapi.yaml", os.O_RDWR|os.O_CREATE, 0644)
+	if err != nil {
+		panic(err)
+	}
+	defer file.Close()
+
+	fmt.Fprint(file, apiWrapper.APIDocs())
 
 	app.Get("/*", func(c fiber.Ctx) error {
 		if slices.Contains(strings.Split(c.Path(), "/"), "api") {

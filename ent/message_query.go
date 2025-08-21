@@ -299,7 +299,7 @@ func (_q *MessageQuery) WithChatroom(opts ...func(*ChatroomQuery)) *MessageQuery
 // Example:
 //
 //	var v []struct {
-//		Sender string `json:"sender,omitempty"`
+//		Sender string `json:"sender"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
@@ -322,7 +322,7 @@ func (_q *MessageQuery) GroupBy(field string, fields ...string) *MessageGroupBy 
 // Example:
 //
 //	var v []struct {
-//		Sender string `json:"sender,omitempty"`
+//		Sender string `json:"sender"`
 //	}
 //
 //	client.Message.Query().

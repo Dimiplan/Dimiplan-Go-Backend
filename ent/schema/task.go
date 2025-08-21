@@ -18,7 +18,7 @@ func (Task) Fields() []ent.Field {
 	return []ent.Field{
 		field.Time("deadline").Optional(),
 		field.String("title").NotEmpty(),
-		field.Int("priority").Default(1), // 완료했다면 -1
+		field.Int("priority").Default(1),
 		field.Time("createdAt").
 			Default(time.Now).Immutable(),
 		field.Time("updatedAt").
@@ -30,9 +30,6 @@ func (Task) Fields() []ent.Field {
 // Edges of the Task.
 func (Task) Edges() []ent.Edge {
 	return []ent.Edge{
-		edge.From("planner", Planner.Type).
-			Ref("tasks").
-			Unique().   // 각 Task는 하나의 Planner에만 속함 (N:1)
-			Required(), // Planner 없는 Task 생성 금지 (FK NOT NULL)
+		edge.From("planner", Planner.Type).Ref("tasks").Unique().Required(),
 	}
 }

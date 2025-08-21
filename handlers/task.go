@@ -7,59 +7,52 @@ import (
 	"github.com/gofiber/fiber/v3"
 )
 
-func (h *PlannerHandler) GetTasks(c fiber.Ctx) error {
+func (h *PlannerHandler) GetTasks(rawRequest interface{}, c fiber.Ctx) (interface{}, error) {
 	planner := c.Locals("planner").(*ent.Planner)
 
 	tasks, err := planner.QueryTasks().All(c)
 	if err != nil {
-		return err
+		return nil, err
 	}
-	return c.JSON(tasks)
+	return models.GetTasksResponse{Tasks: tasks}, nil
 }
 
-func (h *PlannerHandler) CreateTask(c fiber.Ctx) error {
+func (h *PlannerHandler) CreateTask(rawRequest interface{}, c fiber.Ctx) (interface{}, error) {
 	planner := c.Locals("planner").(*ent.Planner)
 
-	data := new(models.CreateTaskReq)
-	if err := c.Bind().All(data); err != nil {
-		return fiber.ErrBadRequest
-	}
+	request := rawRequest.(*models.CreateTaskRequest)
 	_, err := h.db.Task.Create().
-		SetTitle(data.Title).
-		SetPriority(data.Priority).
+		SetTitle(request.Title).
+		SetPriority(request.Priority).
 		SetPlanner(planner).
 		Save(c)
 
 	if err != nil {
-		return err
+		return nil, err
 	}
-	return c.SendStatus(fiber.StatusCreated)
+	return nil, nil
 }
 
-func (h *PlannerHandler) UpdateTask(c fiber.Ctx) error {
+func (h *PlannerHandler) UpdateTask(rawRequest interface{}, c fiber.Ctx) (interface{}, error) {
 	task := c.Locals("task").(*ent.Task)
-	data := new(models.UpdateTaskReq)
-	if err := c.Bind().All(data); err != nil {
-		return fiber.ErrBadRequest
-	}
-
+	request := rawRequest.(*models.UpdateTaskRequest)
 	builder := task.Update()
-	if data.Title != "" {
-		builder = builder.SetTitle(data.Title)
+	if request.Title != "" {
+		builder = builder.SetTitle(request.Title)
 	}
-	if data.Priority != 0 {
-		builder = builder.SetPriority(data.Priority)
+	if request.Priority != 0 {
+		builder = builder.SetPriority(request.Priority)
 	}
 	if _, err := builder.Save(c); err != nil {
-		return err
+		return nil, err
 	}
-	return c.SendStatus(fiber.StatusNoContent)
+	return nil, nil
 }
 
-func (h *PlannerHandler) DeleteTask(c fiber.Ctx) error {
+func (h *PlannerHandler) DeleteTask(rawRequest interface{}, c fiber.Ctx) (interface{}, error) {
 	task := c.Locals("task").(*ent.Task)
 	if err := h.db.Task.DeleteOne(task).Exec(c); err != nil {
-		return err
+		return nil, err
 	}
-	return c.SendStatus(fiber.StatusNoContent)
+	return nil, nil
 }

@@ -17,55 +17,52 @@ func NewPlannerHandler(db *ent.Client) *PlannerHandler {
 	}
 }
 
-func (h *PlannerHandler) GetPlanners(c fiber.Ctx) error {
+func (h *PlannerHandler) GetPlanners(rawRequest interface{}, c fiber.Ctx) (interface{}, error) {
 	user := c.Locals("user").(*ent.User)
 
 	if planners, err := user.QueryPlanners().All(c); err != nil {
-		return err
+		return nil, err
 	} else {
-		return c.JSON(planners)
+		return models.GetPlannersResponse{Planners: planners}, nil
 	}
 }
 
-func (h *PlannerHandler) CreatePlanner(c fiber.Ctx) error {
+func (h *PlannerHandler) CreatePlanner(rawRequest interface{}, c fiber.Ctx) (interface{}, error) {
 	user := c.Locals("user").(*ent.User)
 
-	data := new(models.CreatePlannerReq)
-	if err := c.Bind().Body(data); err != nil {
-		return fiber.ErrBadRequest
-	}
+	request := rawRequest.(*models.CreatePlannerRequest)
 
-	planner, err := h.db.Planner.Create().
-		SetType(data.Type).
-		SetName(data.Name).
+	_, err := h.db.Planner.Create().
+		SetType(request.Type).
+		SetName(request.Name).
 		SetUser(user).
 		Save(c)
 
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	return c.Status(fiber.StatusCreated).JSON(planner)
+	return nil, nil
 }
 
-func (h *PlannerHandler) UpdatePlanner(c fiber.Ctx) error {
+func (h *PlannerHandler) UpdatePlanner(rawRequest interface{}, c fiber.Ctx) (interface{}, error) {
 	planner := c.Locals("planner").(*ent.Planner)
 
-	data := new(models.RenamePlannerReq)
+	request := rawRequest.(*models.RenamePlannerRequest)
 
-	if err := c.Bind().Body(data); err != nil {
-		return fiber.ErrBadRequest
+	if err := c.Bind().Body(request); err != nil {
+		return nil, fiber.ErrBadRequest
 	}
 
-	planner.Update().SetName(data.Name).Exec(c)
-	return c.SendStatus(fiber.StatusNoContent)
+	planner.Update().SetName(request.Name).Exec(c)
+	return nil, nil
 }
 
-func (h *PlannerHandler) DeletePlanner(c fiber.Ctx) error {
+func (h *PlannerHandler) DeletePlanner(rawRequest interface{}, c fiber.Ctx) (interface{}, error) {
 	planner := c.Locals("planner").(*ent.Planner)
 
 	if err := h.db.Planner.DeleteOne(planner).Exec(c); err != nil {
-		return err
+		return nil, err
 	}
-	return c.SendStatus(fiber.StatusNoContent)
+	return nil, nil
 }

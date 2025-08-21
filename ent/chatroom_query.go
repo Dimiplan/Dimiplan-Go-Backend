@@ -336,7 +336,7 @@ func (_q *ChatroomQuery) WithMessages(opts ...func(*MessageQuery)) *ChatroomQuer
 // Example:
 //
 //	var v []struct {
-//		Name string `json:"name,omitempty"`
+//		Name string `json:"name"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
@@ -359,7 +359,7 @@ func (_q *ChatroomQuery) GroupBy(field string, fields ...string) *ChatroomGroupB
 // Example:
 //
 //	var v []struct {
-//		Name string `json:"name,omitempty"`
+//		Name string `json:"name"`
 //	}
 //
 //	client.Chatroom.Query().

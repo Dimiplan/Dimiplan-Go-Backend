@@ -4,6 +4,7 @@ package ent
 
 import (
 	"dimiplan-backend/ent/user"
+	"encoding/json"
 	"fmt"
 	"strings"
 	"time"
@@ -16,22 +17,22 @@ import (
 type User struct {
 	config `json:"-"`
 	// ID of the ent.
-	ID string `json:"id,omitempty"`
+	ID string `json:"id"`
 	// Name holds the value of the "name" field.
-	Name string `json:"name,omitempty"`
+	Name string `json:"name"`
 	// Email holds the value of the "email" field.
-	Email string `json:"email,omitempty"`
+	Email string `json:"email"`
 	// ProfileURL holds the value of the "profileURL" field.
-	ProfileURL string `json:"profileURL,omitempty"`
+	ProfileURL string `json:"profileURL"`
 	// Plan holds the value of the "plan" field.
-	Plan string `json:"plan,omitempty"`
+	Plan string `json:"plan"`
 	// CreatedAt holds the value of the "createdAt" field.
-	CreatedAt time.Time `json:"createdAt,omitempty"`
+	CreatedAt time.Time `json:"createdAt"`
 	// UpdatedAt holds the value of the "updatedAt" field.
-	UpdatedAt time.Time `json:"updatedAt,omitempty"`
+	UpdatedAt time.Time `json:"updatedAt"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the UserQuery when eager-loading is set.
-	Edges        UserEdges `json:"edges"`
+	Edges        UserEdges `json:"-"`
 	selectValues sql.SelectValues
 }
 
@@ -195,6 +196,18 @@ func (_m *User) String() string {
 	builder.WriteString(_m.UpdatedAt.Format(time.ANSIC))
 	builder.WriteByte(')')
 	return builder.String()
+}
+
+// MarshalJSON implements the json.Marshaler interface.
+func (_m *User) MarshalJSON() ([]byte, error) {
+	type Alias User
+	return json.Marshal(&struct {
+		*Alias
+		UserEdges
+	}{
+		Alias:     (*Alias)(_m),
+		UserEdges: _m.Edges,
+	})
 }
 
 // Users is a parsable slice of User.

@@ -1,5 +1,5 @@
 package models
 
-type UpdateUserReq struct {
+type UpdateUserRequest struct {
 	Name *string `json:"name"`
 }

@@ -15,56 +15,50 @@ func NewChatroomHandler(db *ent.Client) *ChatroomHandler {
 	return &ChatroomHandler{db: db}
 }
 
-func (h *ChatroomHandler) ListChatrooms(c fiber.Ctx) error {
+func (h *ChatroomHandler) ListChatrooms(request interface{}, c fiber.Ctx) (interface{}, error) {
 	user := c.Locals("user").(*ent.User)
 	chatrooms, err := h.db.User.QueryChatrooms(user).All(c)
 	if err != nil {
-		return err
+		return nil, err
 	}
-	return c.JSON(fiber.Map{"chatrooms": chatrooms})
+	return models.ListChatroomsResponse{Chatrooms: chatrooms}, nil
 }
 
-func (h *ChatroomHandler) CreateChatroom(c fiber.Ctx) error {
+func (h *ChatroomHandler) CreateChatroom(rawRequest interface{}, c fiber.Ctx) (interface{}, error) {
 	user := c.Locals("user").(*ent.User)
-	data := new(ent.Chatroom)
-	if err := c.Bind().All(data); err != nil {
-		return fiber.ErrBadRequest
-	}
-	chatroom, err := h.db.Chatroom.Create().SetUser(user).SetName(data.Name).Save(c)
+	request := rawRequest.(models.CreateChatroomRequest)
+	chatroom, err := h.db.Chatroom.Create().SetUser(user).SetName(request.Name).Save(c)
 	if err != nil {
-		return err
+		return nil, err
 	}
-	return c.JSON(fiber.Map{"chatroom_id": chatroom.ID})
+	return models.CreateChatroomResponse{ID: chatroom.ID}, nil
 }
 
-func (h *ChatroomHandler) GetMessages(c fiber.Ctx) error {
+func (h *ChatroomHandler) GetMessages(rawRequest interface{}, c fiber.Ctx) (interface{}, error) {
 	chatroom := c.Locals("chatroom").(*ent.Chatroom)
 	messages, err := chatroom.QueryMessages().All(c)
 	if err != nil {
 		if messages == nil {
-			return c.SendStatus(fiber.StatusNoContent)
+			return nil, fiber.NewError(fiber.StatusNoContent)
 		}
-		return err
+		return nil, err
 	}
-	return c.JSON(fiber.Map{"messages": messages})
+	return models.GetMessagesResponse{Messages: messages}, nil
 }
 
-func (h *ChatroomHandler) UpdateChatroom(c fiber.Ctx) error {
+func (h *ChatroomHandler) UpdateChatroom(rawRequest interface{}, c fiber.Ctx) (interface{}, error) {
 	chatroom := c.Locals("chatroom").(*ent.Chatroom)
-	data := new(models.UpdateChatroom)
-	if err := c.Bind().All(data); err != nil {
-		return fiber.ErrBadRequest
-	}
+	data := rawRequest.(models.UpdateChatroomRequest)
 	if _, err := chatroom.Update().SetName(data.Name).Save(c); err != nil {
-		return err
+		return nil, err
 	}
-	return c.SendStatus(fiber.StatusNoContent)
+	return nil, nil
 }
 
-func (h *ChatroomHandler) RemoveChatroom(c fiber.Ctx) error {
+func (h *ChatroomHandler) RemoveChatroom(rawRequest interface{}, c fiber.Ctx) (interface{}, error) {
 	chatroom := c.Locals("chatroom").(*ent.Chatroom)
 	if err := h.db.Chatroom.DeleteOne(chatroom).Exec(c); err != nil {
-		return err
+		return nil, err
 	}
-	return c.SendStatus(fiber.StatusNoContent)
+	return nil, nil
 }

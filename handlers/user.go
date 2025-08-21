@@ -17,22 +17,17 @@ func NewUserHandler(db *ent.Client) *UserHandler {
 	}
 }
 
-func (h *UserHandler) GetUser(c fiber.Ctx) error {
+func (h *UserHandler) GetUser(request interface{}, c fiber.Ctx) (interface{}, error) {
 	user := c.Locals("user").(*ent.User)
 
-	return c.JSON(user)
+	return *user, nil
 }
 
-func (h *UserHandler) UpdateUser(c fiber.Ctx) error {
+func (h *UserHandler) UpdateUser(rawRequest interface{}, c fiber.Ctx) (interface{}, error) {
 	user := c.Locals("user").(*ent.User)
+	request := rawRequest.(*models.UpdateUserRequest)
 
-	data := new(models.UpdateUserReq)
+	h.db.User.UpdateOne(user).SetName(*request.Name).Exec(c)
 
-	if err := c.Bind().Body(data); err != nil {
-		return fiber.ErrBadRequest
-	}
-
-	h.db.User.UpdateOne(user).SetName(*data.Name).Exec(c)
-
-	return c.SendStatus(fiber.StatusNoContent)
+	return nil, nil
 }

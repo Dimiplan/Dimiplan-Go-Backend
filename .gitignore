@@ -34,3 +34,5 @@ dist/
 *.log
 tmp/
 keys/
+openapi.yaml
+redoc-static.html

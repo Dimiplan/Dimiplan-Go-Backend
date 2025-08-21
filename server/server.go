@@ -26,7 +26,7 @@ func Setup(cfg *config.Config) *fiber.App {
 		CrossOriginEmbedderPolicy: "credentialless",
 		ContentSecurityPolicy: `default-src 'self';
 		img-src 'self' data: https://*.googleusercontent.com;
-		style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net;
+		style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://fonts.googleapis.com;
 		script-src 'self' 'unsafe-inline' https://static.cloudflareinsights.com https://*.cloudflare.com;
 		font-src 'self' https://fonts.gstatic.com https://cdn.jsdelivr.net`,
 	}))

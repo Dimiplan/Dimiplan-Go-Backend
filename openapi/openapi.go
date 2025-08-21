@@ -91,7 +91,7 @@ func (r *Register) Post(handler func(request interface{}, c fiber.Ctx) (interfac
 	r.wrapper.router.Post(r.path, func(c fiber.Ctx) error {
 		if request != nil {
 			if err := c.Bind().All(request); err != nil {
-				return fiber.ErrBadRequest
+				return fiber.NewError(fiber.StatusBadRequest, err.Error())
 			}
 		}
 		value, err := handler(request, c)

@@ -31,16 +31,16 @@ func Setup(cfg *config.Config) *fiber.App {
 		font-src 'self' https://fonts.gstatic.com https://cdn.jsdelivr.net`,
 	}))
 
-	accessLog, err := os.OpenFile("./access.log", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
-	if err != nil {
-		panic(err)
-	}
+	//	accessLog, err := os.OpenFile("./access.log", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
+	//	if err != nil {
+	//		panic(err)
+	//	}
 
 	app.Use(logger.New(logger.Config{
 		Format:     "{time: \"${time}\", ip: \"${ip}\", method: \"${method}\", url: \"${url}\", status: \"${status}\", error: \"${error}\"}\n",
 		TimeFormat: "01-02 15:04:05",
 		TimeZone:   "Asia/Seoul",
-		Stream:     accessLog,
+		//		Stream:     accessLog,
 	}))
 	app.Use(compress.New())
 

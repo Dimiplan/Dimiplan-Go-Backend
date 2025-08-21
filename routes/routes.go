@@ -34,33 +34,33 @@ func Setup(app *fiber.App, cfg *config.Config, db *ent.Client) *fiber.App {
 
 	apiWrapper.Route("/user").
 		Get(userHandler.GetUser, nil, ent.User{}, 200).
-		Patch(userHandler.UpdateUser, models.UpdateUserRequest{}, ent.User{}, 204)
+		Patch(userHandler.UpdateUser, new(models.UpdateUserRequest), ent.User{}, 204)
 
 	api.Use("/ai/chatroom/:id", middleware.QueryChatroomMiddleware(db))
 	apiWrapper.Route("/ai").
-		Post(aiHandler.AIChat, models.AIChatRequest{}, models.AIChatResponse{}, 200).
+		Post(aiHandler.AIChat, new(models.AIChatRequest), models.AIChatResponse{}, 200).
 		Route("/chatroom").
 		Get(chatroomHandler.ListChatrooms, nil, models.ListChatroomsResponse{}, 200).
-		Post(chatroomHandler.CreateChatroom, models.CreateChatroomRequest{}, models.CreateChatroomResponse{}, 201).
+		Post(chatroomHandler.CreateChatroom, new(models.CreateChatroomRequest), models.CreateChatroomResponse{}, 201).
 		Route("/:id").
-		Get(chatroomHandler.GetMessages, models.GetMessagesRequest{}, models.GetMessagesResponse{}, 200).
-		Patch(chatroomHandler.UpdateChatroom, models.UpdateChatroomRequest{}, nil, 204).
-		Delete(chatroomHandler.RemoveChatroom, models.RemoveChatroomRequest{}, nil, 204)
+		Get(chatroomHandler.GetMessages, new(models.GetMessagesRequest), models.GetMessagesResponse{}, 200).
+		Patch(chatroomHandler.UpdateChatroom, new(models.UpdateChatroomRequest), ent.Chatroom{}, 204).
+		Delete(chatroomHandler.RemoveChatroom, new(models.RemoveChatroomRequest), ent.Chatroom{}, 204)
 
 	api.Use("/planner/:planner", middleware.QueryPlannerMiddleware(db))
 	api.Use("/planner/:planner/:task", middleware.QueryTaskMiddleware(db))
 
 	apiWrapper.Route("/planner").
 		Get(plannerHandler.GetPlanners, nil, models.GetPlannersResponse{}, 200).
-		Post(plannerHandler.CreatePlanner, models.CreatePlannerRequest{}, nil, 201).
+		Post(plannerHandler.CreatePlanner, new(models.CreatePlannerRequest), nil, 201).
 		Route("/:planner").
-		Get(plannerHandler.GetTasks, models.GetTasksRequest{}, models.GetTasksResponse{}, 200).
-		Post(plannerHandler.CreateTask, models.CreateTaskRequest{}, nil, 201).
-		Patch(plannerHandler.UpdatePlanner, models.RenamePlannerRequest{}, nil, 204).
-		Delete(plannerHandler.DeletePlanner, models.DeletePlannerRequest{}, nil, 204).
+		Get(plannerHandler.GetTasks, new(models.GetTasksRequest), models.GetTasksResponse{}, 200).
+		Post(plannerHandler.CreateTask, new(models.CreateTaskRequest), nil, 201).
+		Patch(plannerHandler.UpdatePlanner, new(models.RenamePlannerRequest), nil, 204).
+		Delete(plannerHandler.DeletePlanner, new(models.DeletePlannerRequest), nil, 204).
 		Route("/:task").
-		Patch(plannerHandler.UpdateTask, models.UpdateTaskRequest{}, nil, 204).
-		Delete(plannerHandler.DeleteTask, models.DeleteTaskRequest{}, nil, 204)
+		Patch(plannerHandler.UpdateTask, new(models.UpdateTaskRequest), nil, 204).
+		Delete(plannerHandler.DeleteTask, new(models.DeleteTaskRequest), nil, 204)
 
 	file, err := os.OpenFile("./openapi.yaml", os.O_RDWR|os.O_CREATE, 0644)
 	if err != nil {

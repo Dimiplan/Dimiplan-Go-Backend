@@ -4,6 +4,7 @@ import (
 	"dimiplan-backend/config"
 	"fmt"
 	"os"
+	"time"
 
 	"github.com/bytedance/sonic"
 	"github.com/gofiber/fiber/v3"
@@ -55,8 +56,10 @@ func Setup(cfg *config.Config) *fiber.App {
 	}))
 
 	app.Use("/", static.New("/", static.Config{
-		FS:       os.DirFS("dist"),
-		Compress: true,
+		FS:            os.DirFS("dist"),
+		Compress:      true,
+		CacheDuration: time.Hour * 24,
+		MaxAge:        60 * 60 * 12,
 	}))
 
 	app.Use(func(c fiber.Ctx) error {

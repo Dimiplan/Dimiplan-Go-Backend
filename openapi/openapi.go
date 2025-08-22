@@ -31,12 +31,15 @@ func HasBody(request interface{}) bool {
 }
 
 func NewWrapper(router fiber.Router) *Wrapper {
-	reflector := openapi31.Reflector{}
-	reflector.Spec = &openapi31.Spec{Openapi: "3.1.0"}
-	reflector.Spec.Info.
-		WithTitle("Dimiplan Backend").
-		WithVersion("2.0.0").
-		WithDescription("Dimiplan Backend Rewritten in Go + Fiber")
+	var reflector openapi31.Reflector
+	if !fiber.IsChild() {
+		reflector := openapi31.Reflector{}
+		reflector.Spec = &openapi31.Spec{Openapi: "3.1.0"}
+		reflector.Spec.Info.
+			WithTitle("Dimiplan Backend").
+			WithVersion("2.0.0").
+			WithDescription("Dimiplan Backend Rewritten in Go + Fiber")
+	}
 	return &Wrapper{router: router, reflector: reflector}
 }
 
@@ -58,17 +61,18 @@ func (r *Register) Route(path string) *Register {
 }
 
 func (r *Register) Get(handler func(request interface{}, c fiber.Ctx) (interface{}, error), request interface{}, response interface{}, status int) *Register {
-	// Convert Fiber path format (:param) to OpenAPI format ({param})
-	re := regexp.MustCompile(`:([^/]+)`)
-	openAPIPath := re.ReplaceAllString(r.path, "{$1}")
+	if !fiber.IsChild() {
+		re := regexp.MustCompile(`:([^/]+)`)
+		openAPIPath := re.ReplaceAllString(r.path, "{$1}")
 
-	op, err := r.wrapper.reflector.NewOperationContext(fiber.MethodGet, openAPIPath)
-	if err != nil {
-		panic(err)
+		op, err := r.wrapper.reflector.NewOperationContext(fiber.MethodGet, openAPIPath)
+		if err != nil {
+			panic(err)
+		}
+		op.AddReqStructure(request)
+		op.AddRespStructure(response, func(cu *openapi.ContentUnit) { cu.HTTPStatus = status })
+		r.wrapper.reflector.AddOperation(op)
 	}
-	op.AddReqStructure(request)
-	op.AddRespStructure(response, func(cu *openapi.ContentUnit) { cu.HTTPStatus = status })
-	r.wrapper.reflector.AddOperation(op)
 	r.wrapper.router.Get(r.path, func(c fiber.Ctx) error {
 		value, err := handler(request, c)
 		if value == nil || response == nil {
@@ -83,17 +87,18 @@ func (r *Register) Get(handler func(request interface{}, c fiber.Ctx) (interface
 }
 
 func (r *Register) Post(handler func(request interface{}, c fiber.Ctx) (interface{}, error), request interface{}, response interface{}, status int) *Register {
-	// Convert Fiber path format (:param) to OpenAPI format ({param})
-	re := regexp.MustCompile(`:([^/]+)`)
-	openAPIPath := re.ReplaceAllString(r.path, "{$1}")
+	if !fiber.IsChild() {
+		re := regexp.MustCompile(`:([^/]+)`)
+		openAPIPath := re.ReplaceAllString(r.path, "{$1}")
 
-	op, err := r.wrapper.reflector.NewOperationContext(fiber.MethodPost, openAPIPath)
-	if err != nil {
-		panic(err)
+		op, err := r.wrapper.reflector.NewOperationContext(fiber.MethodPost, openAPIPath)
+		if err != nil {
+			panic(err)
+		}
+		op.AddReqStructure(request)
+		op.AddRespStructure(response, func(cu *openapi.ContentUnit) { cu.HTTPStatus = status })
+		r.wrapper.reflector.AddOperation(op)
 	}
-	op.AddReqStructure(request)
-	op.AddRespStructure(response, func(cu *openapi.ContentUnit) { cu.HTTPStatus = status })
-	r.wrapper.reflector.AddOperation(op)
 	if !HasBody(request) {
 		request = nil
 	}
@@ -116,17 +121,18 @@ func (r *Register) Post(handler func(request interface{}, c fiber.Ctx) (interfac
 }
 
 func (r *Register) Patch(handler func(request interface{}, c fiber.Ctx) (interface{}, error), request interface{}, response interface{}, status int) *Register {
-	// Convert Fiber path format (:param) to OpenAPI format ({param})
-	re := regexp.MustCompile(`:([^/]+)`)
-	openAPIPath := re.ReplaceAllString(r.path, "{$1}")
+	if !fiber.IsChild() {
+		re := regexp.MustCompile(`:([^/]+)`)
+		openAPIPath := re.ReplaceAllString(r.path, "{$1}")
 
-	op, err := r.wrapper.reflector.NewOperationContext(fiber.MethodPatch, openAPIPath)
-	if err != nil {
-		panic(err)
+		op, err := r.wrapper.reflector.NewOperationContext(fiber.MethodPatch, openAPIPath)
+		if err != nil {
+			panic(err)
+		}
+		op.AddReqStructure(request)
+		op.AddRespStructure(response, func(cu *openapi.ContentUnit) { cu.HTTPStatus = status })
+		r.wrapper.reflector.AddOperation(op)
 	}
-	op.AddReqStructure(request)
-	op.AddRespStructure(response, func(cu *openapi.ContentUnit) { cu.HTTPStatus = status })
-	r.wrapper.reflector.AddOperation(op)
 	if !HasBody(request) {
 		request = nil
 	}
@@ -149,17 +155,18 @@ func (r *Register) Patch(handler func(request interface{}, c fiber.Ctx) (interfa
 }
 
 func (r *Register) Delete(handler func(request interface{}, c fiber.Ctx) (interface{}, error), request interface{}, response interface{}, status int) *Register {
-	// Convert Fiber path format (:param) to OpenAPI format ({param})
-	re := regexp.MustCompile(`:([^/]+)`)
-	openAPIPath := re.ReplaceAllString(r.path, "{$1}")
+	if !fiber.IsChild() {
+		re := regexp.MustCompile(`:([^/]+)`)
+		openAPIPath := re.ReplaceAllString(r.path, "{$1}")
 
-	op, err := r.wrapper.reflector.NewOperationContext(fiber.MethodDelete, openAPIPath)
-	if err != nil {
-		panic(err)
+		op, err := r.wrapper.reflector.NewOperationContext(fiber.MethodDelete, openAPIPath)
+		if err != nil {
+			panic(err)
+		}
+		op.AddReqStructure(request)
+		op.AddRespStructure(response, func(cu *openapi.ContentUnit) { cu.HTTPStatus = status })
+		r.wrapper.reflector.AddOperation(op)
 	}
-	op.AddReqStructure(request)
-	op.AddRespStructure(response, func(cu *openapi.ContentUnit) { cu.HTTPStatus = status })
-	r.wrapper.reflector.AddOperation(op)
 	if !HasBody(request) {
 		request = nil
 	}

@@ -62,14 +62,16 @@ func Setup(app *fiber.App, cfg *config.Config, db *ent.Client) *fiber.App {
 		Patch(plannerHandler.UpdateTask, new(models.UpdateTaskRequest), nil, 204).
 		Delete(plannerHandler.DeleteTask, new(models.DeleteTaskRequest), nil, 204)
 
-	os.Remove("./openapi.yaml")
-	file, err := os.OpenFile("./openapi.yaml", os.O_WRONLY|os.O_CREATE, 0644)
-	if err != nil {
-		panic(err)
-	}
-	defer file.Close()
+	if !fiber.IsChild() {
+		os.Remove("./openapi.yaml")
+		file, err := os.OpenFile("./openapi.yaml", os.O_WRONLY|os.O_CREATE, 0644)
+		if err != nil {
+			panic(err)
+		}
+		defer file.Close()
 
-	fmt.Fprint(file, apiWrapper.APIDocs())
+		fmt.Fprint(file, apiWrapper.APIDocs())
+	}
 
 	app.Get("/*", func(c fiber.Ctx) error {
 		if slices.Contains(strings.Split(c.Path(), "/"), "api") {

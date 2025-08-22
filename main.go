@@ -21,8 +21,10 @@ func main() {
 	}
 	defer client.Close()
 
-	if err := client.Schema.Create(context.Background()); err != nil {
-		log.Fatalf("failed creating schema resources: %v", err)
+	if !fiber.IsChild() {
+		if err := client.Schema.Create(context.Background()); err != nil {
+			log.Fatalf("failed creating schema resources: %v", err)
+		}
 	}
 
 	app := server.Setup(cfg)
@@ -30,8 +32,8 @@ func main() {
 
 	log.Infof("Server starting on port %s", cfg.Port)
 	log.Fatal(app.Listen(":"+cfg.Port, fiber.ListenConfig{
-		// EnablePrefork: true,
-		CertFile:    "./keys/cert.pem",
-		CertKeyFile: "./keys/key.pem",
+		EnablePrefork: true,
+		CertFile:      "./keys/cert.pem",
+		CertKeyFile:   "./keys/key.pem",
 	}))
 }

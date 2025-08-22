@@ -24,9 +24,9 @@ type Planner struct {
 	// Name holds the value of the "name" field.
 	Name string `json:"name"`
 	// CreatedAt holds the value of the "createdAt" field.
-	CreatedAt time.Time `json:"createdAt"`
+	CreatedAt time.Time `json:"-"`
 	// UpdatedAt holds the value of the "updatedAt" field.
-	UpdatedAt time.Time `json:"updatedAt"`
+	UpdatedAt time.Time `json:"-"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the PlannerQuery when eager-loading is set.
 	Edges         PlannerEdges `json:"-"`

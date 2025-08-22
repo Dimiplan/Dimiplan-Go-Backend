@@ -24,9 +24,9 @@ type Message struct {
 	// Message holds the value of the "message" field.
 	Message string `json:"message"`
 	// CreatedAt holds the value of the "createdAt" field.
-	CreatedAt time.Time `json:"createdAt"`
+	CreatedAt time.Time `json:"-"`
 	// UpdatedAt holds the value of the "updatedAt" field.
-	UpdatedAt time.Time `json:"updatedAt"`
+	UpdatedAt time.Time `json:"-"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the MessageQuery when eager-loading is set.
 	Edges             MessageEdges `json:"-"`

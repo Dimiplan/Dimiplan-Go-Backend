@@ -42,7 +42,6 @@ type ChatroomMutation struct {
 	typ             string
 	id              *int
 	name            *string
-	isProcessing    *bool
 	createdAt       *time.Time
 	updatedAt       *time.Time
 	clearedFields   map[string]struct{}
@@ -188,42 +187,6 @@ func (m *ChatroomMutation) OldName(ctx context.Context) (v string, err error) {
 // ResetName resets all changes to the "name" field.
 func (m *ChatroomMutation) ResetName() {
 	m.name = nil
-}
-
-// SetIsProcessing sets the "isProcessing" field.
-func (m *ChatroomMutation) SetIsProcessing(b bool) {
-	m.isProcessing = &b
-}
-
-// IsProcessing returns the value of the "isProcessing" field in the mutation.
-func (m *ChatroomMutation) IsProcessing() (r bool, exists bool) {
-	v := m.isProcessing
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldIsProcessing returns the old "isProcessing" field's value of the Chatroom entity.
-// If the Chatroom object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *ChatroomMutation) OldIsProcessing(ctx context.Context) (v bool, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldIsProcessing is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldIsProcessing requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldIsProcessing: %w", err)
-	}
-	return oldValue.IsProcessing, nil
-}
-
-// ResetIsProcessing resets all changes to the "isProcessing" field.
-func (m *ChatroomMutation) ResetIsProcessing() {
-	m.isProcessing = nil
 }
 
 // SetCreatedAt sets the "createdAt" field.
@@ -425,12 +388,9 @@ func (m *ChatroomMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *ChatroomMutation) Fields() []string {
-	fields := make([]string, 0, 4)
+	fields := make([]string, 0, 3)
 	if m.name != nil {
 		fields = append(fields, chatroom.FieldName)
-	}
-	if m.isProcessing != nil {
-		fields = append(fields, chatroom.FieldIsProcessing)
 	}
 	if m.createdAt != nil {
 		fields = append(fields, chatroom.FieldCreatedAt)
@@ -448,8 +408,6 @@ func (m *ChatroomMutation) Field(name string) (ent.Value, bool) {
 	switch name {
 	case chatroom.FieldName:
 		return m.Name()
-	case chatroom.FieldIsProcessing:
-		return m.IsProcessing()
 	case chatroom.FieldCreatedAt:
 		return m.CreatedAt()
 	case chatroom.FieldUpdatedAt:
@@ -465,8 +423,6 @@ func (m *ChatroomMutation) OldField(ctx context.Context, name string) (ent.Value
 	switch name {
 	case chatroom.FieldName:
 		return m.OldName(ctx)
-	case chatroom.FieldIsProcessing:
-		return m.OldIsProcessing(ctx)
 	case chatroom.FieldCreatedAt:
 		return m.OldCreatedAt(ctx)
 	case chatroom.FieldUpdatedAt:
@@ -486,13 +442,6 @@ func (m *ChatroomMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetName(v)
-		return nil
-	case chatroom.FieldIsProcessing:
-		v, ok := value.(bool)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetIsProcessing(v)
 		return nil
 	case chatroom.FieldCreatedAt:
 		v, ok := value.(time.Time)
@@ -559,9 +508,6 @@ func (m *ChatroomMutation) ResetField(name string) error {
 	switch name {
 	case chatroom.FieldName:
 		m.ResetName()
-		return nil
-	case chatroom.FieldIsProcessing:
-		m.ResetIsProcessing()
 		return nil
 	case chatroom.FieldCreatedAt:
 		m.ResetCreatedAt()

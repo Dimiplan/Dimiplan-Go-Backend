@@ -16,8 +16,6 @@ const (
 	FieldID = "id"
 	// FieldName holds the string denoting the name field in the database.
 	FieldName = "name"
-	// FieldIsProcessing holds the string denoting the isprocessing field in the database.
-	FieldIsProcessing = "is_processing"
 	// FieldCreatedAt holds the string denoting the createdat field in the database.
 	FieldCreatedAt = "created_at"
 	// FieldUpdatedAt holds the string denoting the updatedat field in the database.
@@ -48,7 +46,6 @@ const (
 var Columns = []string{
 	FieldID,
 	FieldName,
-	FieldIsProcessing,
 	FieldCreatedAt,
 	FieldUpdatedAt,
 }
@@ -77,8 +74,6 @@ func ValidColumn(column string) bool {
 var (
 	// NameValidator is a validator for the "name" field. It is called by the builders before save.
 	NameValidator func(string) error
-	// DefaultIsProcessing holds the default value on creation for the "isProcessing" field.
-	DefaultIsProcessing bool
 	// DefaultCreatedAt holds the default value on creation for the "createdAt" field.
 	DefaultCreatedAt func() time.Time
 	// DefaultUpdatedAt holds the default value on creation for the "updatedAt" field.
@@ -98,11 +93,6 @@ func ByID(opts ...sql.OrderTermOption) OrderOption {
 // ByName orders the results by the name field.
 func ByName(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldName, opts...).ToFunc()
-}
-
-// ByIsProcessing orders the results by the isProcessing field.
-func ByIsProcessing(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldIsProcessing, opts...).ToFunc()
 }
 
 // ByCreatedAt orders the results by the createdAt field.

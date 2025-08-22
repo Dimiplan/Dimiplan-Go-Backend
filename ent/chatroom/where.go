@@ -60,11 +60,6 @@ func Name(v string) predicate.Chatroom {
 	return predicate.Chatroom(sql.FieldEQ(FieldName, v))
 }
 
-// IsProcessing applies equality check predicate on the "isProcessing" field. It's identical to IsProcessingEQ.
-func IsProcessing(v bool) predicate.Chatroom {
-	return predicate.Chatroom(sql.FieldEQ(FieldIsProcessing, v))
-}
-
 // CreatedAt applies equality check predicate on the "createdAt" field. It's identical to CreatedAtEQ.
 func CreatedAt(v time.Time) predicate.Chatroom {
 	return predicate.Chatroom(sql.FieldEQ(FieldCreatedAt, v))
@@ -138,16 +133,6 @@ func NameEqualFold(v string) predicate.Chatroom {
 // NameContainsFold applies the ContainsFold predicate on the "name" field.
 func NameContainsFold(v string) predicate.Chatroom {
 	return predicate.Chatroom(sql.FieldContainsFold(FieldName, v))
-}
-
-// IsProcessingEQ applies the EQ predicate on the "isProcessing" field.
-func IsProcessingEQ(v bool) predicate.Chatroom {
-	return predicate.Chatroom(sql.FieldEQ(FieldIsProcessing, v))
-}
-
-// IsProcessingNEQ applies the NEQ predicate on the "isProcessing" field.
-func IsProcessingNEQ(v bool) predicate.Chatroom {
-	return predicate.Chatroom(sql.FieldNEQ(FieldIsProcessing, v))
 }
 
 // CreatedAtEQ applies the EQ predicate on the "createdAt" field.

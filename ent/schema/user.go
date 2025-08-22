@@ -7,6 +7,7 @@ import (
 	"entgo.io/ent/dialect/entsql"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
+	"entgo.io/ent/schema/index"
 )
 
 // User holds the schema definition for the User entity.
@@ -35,5 +36,15 @@ func (User) Edges() []ent.Edge {
 	return []ent.Edge{
 		edge.To("planners", Planner.Type).Annotations(entsql.OnDelete(entsql.Cascade)),
 		edge.To("chatrooms", Chatroom.Type).Annotations(entsql.OnDelete(entsql.Cascade)),
+	}
+}
+
+func (User) Indexes() []ent.Index {
+	return []ent.Index{
+		index.Fields("id"),
+		index.Fields("name"),
+		index.Fields("email"),
+		index.Fields("profileURL"),
+		index.Fields("plan"),
 	}
 }

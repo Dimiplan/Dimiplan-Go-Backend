@@ -12,7 +12,6 @@ var (
 	ChatroomsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
 		{Name: "name", Type: field.TypeString},
-		{Name: "is_processing", Type: field.TypeBool, Default: false},
 		{Name: "created_at", Type: field.TypeTime},
 		{Name: "updated_at", Type: field.TypeTime},
 		{Name: "user_chatrooms", Type: field.TypeString},
@@ -25,9 +24,21 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "chatrooms_users_chatrooms",
-				Columns:    []*schema.Column{ChatroomsColumns[5]},
+				Columns:    []*schema.Column{ChatroomsColumns[4]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.Cascade,
+			},
+		},
+		Indexes: []*schema.Index{
+			{
+				Name:    "chatroom_user_chatrooms",
+				Unique:  true,
+				Columns: []*schema.Column{ChatroomsColumns[4]},
+			},
+			{
+				Name:    "chatroom_name",
+				Unique:  false,
+				Columns: []*schema.Column{ChatroomsColumns[1]},
 			},
 		},
 	}
@@ -53,6 +64,23 @@ var (
 				OnDelete:   schema.Cascade,
 			},
 		},
+		Indexes: []*schema.Index{
+			{
+				Name:    "message_sender",
+				Unique:  false,
+				Columns: []*schema.Column{MessagesColumns[1]},
+			},
+			{
+				Name:    "message_message",
+				Unique:  false,
+				Columns: []*schema.Column{MessagesColumns[2]},
+			},
+			{
+				Name:    "message_chatroom_messages",
+				Unique:  false,
+				Columns: []*schema.Column{MessagesColumns[5]},
+			},
+		},
 	}
 	// PlannersColumns holds the columns for the "planners" table.
 	PlannersColumns = []*schema.Column{
@@ -74,6 +102,23 @@ var (
 				Columns:    []*schema.Column{PlannersColumns[5]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.Cascade,
+			},
+		},
+		Indexes: []*schema.Index{
+			{
+				Name:    "planner_name",
+				Unique:  false,
+				Columns: []*schema.Column{PlannersColumns[2]},
+			},
+			{
+				Name:    "planner_type",
+				Unique:  false,
+				Columns: []*schema.Column{PlannersColumns[1]},
+			},
+			{
+				Name:    "planner_user_planners",
+				Unique:  false,
+				Columns: []*schema.Column{PlannersColumns[5]},
 			},
 		},
 	}
@@ -100,6 +145,23 @@ var (
 				OnDelete:   schema.Cascade,
 			},
 		},
+		Indexes: []*schema.Index{
+			{
+				Name:    "task_title",
+				Unique:  false,
+				Columns: []*schema.Column{TasksColumns[2]},
+			},
+			{
+				Name:    "task_priority",
+				Unique:  false,
+				Columns: []*schema.Column{TasksColumns[3]},
+			},
+			{
+				Name:    "task_planner_tasks",
+				Unique:  false,
+				Columns: []*schema.Column{TasksColumns[6]},
+			},
+		},
 	}
 	// UsersColumns holds the columns for the "users" table.
 	UsersColumns = []*schema.Column{
@@ -116,6 +178,33 @@ var (
 		Name:       "users",
 		Columns:    UsersColumns,
 		PrimaryKey: []*schema.Column{UsersColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "user_id",
+				Unique:  false,
+				Columns: []*schema.Column{UsersColumns[0]},
+			},
+			{
+				Name:    "user_name",
+				Unique:  false,
+				Columns: []*schema.Column{UsersColumns[1]},
+			},
+			{
+				Name:    "user_email",
+				Unique:  false,
+				Columns: []*schema.Column{UsersColumns[2]},
+			},
+			{
+				Name:    "user_profile_url",
+				Unique:  false,
+				Columns: []*schema.Column{UsersColumns[3]},
+			},
+			{
+				Name:    "user_plan",
+				Unique:  false,
+				Columns: []*schema.Column{UsersColumns[4]},
+			},
+		},
 	}
 	// Tables holds all the tables in the schema.
 	Tables = []*schema.Table{

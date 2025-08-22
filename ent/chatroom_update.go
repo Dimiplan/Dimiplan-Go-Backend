@@ -44,20 +44,6 @@ func (_u *ChatroomUpdate) SetNillableName(v *string) *ChatroomUpdate {
 	return _u
 }
 
-// SetIsProcessing sets the "isProcessing" field.
-func (_u *ChatroomUpdate) SetIsProcessing(v bool) *ChatroomUpdate {
-	_u.mutation.SetIsProcessing(v)
-	return _u
-}
-
-// SetNillableIsProcessing sets the "isProcessing" field if the given value is not nil.
-func (_u *ChatroomUpdate) SetNillableIsProcessing(v *bool) *ChatroomUpdate {
-	if v != nil {
-		_u.SetIsProcessing(*v)
-	}
-	return _u
-}
-
 // SetUpdatedAt sets the "updatedAt" field.
 func (_u *ChatroomUpdate) SetUpdatedAt(v time.Time) *ChatroomUpdate {
 	_u.mutation.SetUpdatedAt(v)
@@ -186,9 +172,6 @@ func (_u *ChatroomUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	if value, ok := _u.mutation.Name(); ok {
 		_spec.SetField(chatroom.FieldName, field.TypeString, value)
 	}
-	if value, ok := _u.mutation.IsProcessing(); ok {
-		_spec.SetField(chatroom.FieldIsProcessing, field.TypeBool, value)
-	}
 	if value, ok := _u.mutation.UpdatedAt(); ok {
 		_spec.SetField(chatroom.FieldUpdatedAt, field.TypeTime, value)
 	}
@@ -296,20 +279,6 @@ func (_u *ChatroomUpdateOne) SetName(v string) *ChatroomUpdateOne {
 func (_u *ChatroomUpdateOne) SetNillableName(v *string) *ChatroomUpdateOne {
 	if v != nil {
 		_u.SetName(*v)
-	}
-	return _u
-}
-
-// SetIsProcessing sets the "isProcessing" field.
-func (_u *ChatroomUpdateOne) SetIsProcessing(v bool) *ChatroomUpdateOne {
-	_u.mutation.SetIsProcessing(v)
-	return _u
-}
-
-// SetNillableIsProcessing sets the "isProcessing" field if the given value is not nil.
-func (_u *ChatroomUpdateOne) SetNillableIsProcessing(v *bool) *ChatroomUpdateOne {
-	if v != nil {
-		_u.SetIsProcessing(*v)
 	}
 	return _u
 }
@@ -471,9 +440,6 @@ func (_u *ChatroomUpdateOne) sqlSave(ctx context.Context) (_node *Chatroom, err 
 	}
 	if value, ok := _u.mutation.Name(); ok {
 		_spec.SetField(chatroom.FieldName, field.TypeString, value)
-	}
-	if value, ok := _u.mutation.IsProcessing(); ok {
-		_spec.SetField(chatroom.FieldIsProcessing, field.TypeBool, value)
 	}
 	if value, ok := _u.mutation.UpdatedAt(); ok {
 		_spec.SetField(chatroom.FieldUpdatedAt, field.TypeTime, value)

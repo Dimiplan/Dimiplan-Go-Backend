@@ -28,20 +28,6 @@ func (_c *ChatroomCreate) SetName(v string) *ChatroomCreate {
 	return _c
 }
 
-// SetIsProcessing sets the "isProcessing" field.
-func (_c *ChatroomCreate) SetIsProcessing(v bool) *ChatroomCreate {
-	_c.mutation.SetIsProcessing(v)
-	return _c
-}
-
-// SetNillableIsProcessing sets the "isProcessing" field if the given value is not nil.
-func (_c *ChatroomCreate) SetNillableIsProcessing(v *bool) *ChatroomCreate {
-	if v != nil {
-		_c.SetIsProcessing(*v)
-	}
-	return _c
-}
-
 // SetCreatedAt sets the "createdAt" field.
 func (_c *ChatroomCreate) SetCreatedAt(v time.Time) *ChatroomCreate {
 	_c.mutation.SetCreatedAt(v)
@@ -131,10 +117,6 @@ func (_c *ChatroomCreate) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (_c *ChatroomCreate) defaults() {
-	if _, ok := _c.mutation.IsProcessing(); !ok {
-		v := chatroom.DefaultIsProcessing
-		_c.mutation.SetIsProcessing(v)
-	}
 	if _, ok := _c.mutation.CreatedAt(); !ok {
 		v := chatroom.DefaultCreatedAt()
 		_c.mutation.SetCreatedAt(v)
@@ -154,9 +136,6 @@ func (_c *ChatroomCreate) check() error {
 		if err := chatroom.NameValidator(v); err != nil {
 			return &ValidationError{Name: "name", err: fmt.Errorf(`ent: validator failed for field "Chatroom.name": %w`, err)}
 		}
-	}
-	if _, ok := _c.mutation.IsProcessing(); !ok {
-		return &ValidationError{Name: "isProcessing", err: errors.New(`ent: missing required field "Chatroom.isProcessing"`)}
 	}
 	if _, ok := _c.mutation.CreatedAt(); !ok {
 		return &ValidationError{Name: "createdAt", err: errors.New(`ent: missing required field "Chatroom.createdAt"`)}
@@ -196,10 +175,6 @@ func (_c *ChatroomCreate) createSpec() (*Chatroom, *sqlgraph.CreateSpec) {
 	if value, ok := _c.mutation.Name(); ok {
 		_spec.SetField(chatroom.FieldName, field.TypeString, value)
 		_node.Name = value
-	}
-	if value, ok := _c.mutation.IsProcessing(); ok {
-		_spec.SetField(chatroom.FieldIsProcessing, field.TypeBool, value)
-		_node.IsProcessing = value
 	}
 	if value, ok := _c.mutation.CreatedAt(); ok {
 		_spec.SetField(chatroom.FieldCreatedAt, field.TypeTime, value)

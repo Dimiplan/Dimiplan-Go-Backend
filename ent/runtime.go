@@ -22,16 +22,12 @@ func init() {
 	chatroomDescName := chatroomFields[0].Descriptor()
 	// chatroom.NameValidator is a validator for the "name" field. It is called by the builders before save.
 	chatroom.NameValidator = chatroomDescName.Validators[0].(func(string) error)
-	// chatroomDescIsProcessing is the schema descriptor for isProcessing field.
-	chatroomDescIsProcessing := chatroomFields[1].Descriptor()
-	// chatroom.DefaultIsProcessing holds the default value on creation for the isProcessing field.
-	chatroom.DefaultIsProcessing = chatroomDescIsProcessing.Default.(bool)
 	// chatroomDescCreatedAt is the schema descriptor for createdAt field.
-	chatroomDescCreatedAt := chatroomFields[2].Descriptor()
+	chatroomDescCreatedAt := chatroomFields[1].Descriptor()
 	// chatroom.DefaultCreatedAt holds the default value on creation for the createdAt field.
 	chatroom.DefaultCreatedAt = chatroomDescCreatedAt.Default.(func() time.Time)
 	// chatroomDescUpdatedAt is the schema descriptor for updatedAt field.
-	chatroomDescUpdatedAt := chatroomFields[3].Descriptor()
+	chatroomDescUpdatedAt := chatroomFields[2].Descriptor()
 	// chatroom.DefaultUpdatedAt holds the default value on creation for the updatedAt field.
 	chatroom.DefaultUpdatedAt = chatroomDescUpdatedAt.Default.(func() time.Time)
 	// chatroom.UpdateDefaultUpdatedAt holds the default value on update for the updatedAt field.

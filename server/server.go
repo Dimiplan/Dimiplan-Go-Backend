@@ -29,7 +29,7 @@ func Setup(cfg *config.Config) (*fiber.App, *redis.Storage) {
 		img-src 'self' data: https://*.googleusercontent.com;
 		style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://fonts.googleapis.com https://unpkg.com;
 		script-src 'self' 'unsafe-inline' https://static.cloudflareinsights.com https://*.cloudflare.com https://unpkg.com;
-		font-src 'self' https://fonts.gstatic.com https://cdn.jsdelivr.net`,
+		font-src 'self' https://fonts.gstatic.com https://cdn.jsdelivr.net https://unpkg.com`,
 	}))
 
 	//	accessLog, err := os.OpenFile("./access.log", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)

@@ -38,7 +38,7 @@ func Setup(cfg *config.Config) *fiber.App {
 	//	}
 
 	app.Use(logger.New(logger.Config{
-		Format:     "{time: \"${time}\", ip: \"${ip}\", method: \"${method}\", url: \"${url}\", status: \"${status}\", error: \"${error}\"}\n",
+		// Format:     "{time: \"${time}\", ip: \"${ip}\", method: \"${method}\", url: \"${url}\", status: \"${status}\", error: \"${error}\"}\n",
 		TimeFormat: "01-02 15:04:05",
 		TimeZone:   "Asia/Seoul",
 		//		Stream:     accessLog,

@@ -8,6 +8,7 @@ import (
 
 	"dimiplan-backend/config"
 	"dimiplan-backend/ent"
+	"dimiplan-backend/ent/migrate"
 	"dimiplan-backend/routes"
 	"dimiplan-backend/server"
 
@@ -24,7 +25,7 @@ func main() {
 	}
 
 	if !fiber.IsChild() {
-		if err := client.Schema.Create(context.Background()); err != nil {
+		if err := client.Schema.Create(context.Background(), migrate.WithDropIndex(true), migrate.WithDropColumn(true)); err != nil {
 			log.Fatalf("failed creating schema resources: %v", err)
 		}
 	}

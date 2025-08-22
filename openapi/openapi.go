@@ -20,8 +20,8 @@ type Register struct {
 }
 
 func HasBody(request interface{}) bool {
-	for i := 0; i < reflect.TypeOf(request).NumField(); i++ {
-		field := reflect.TypeOf(request).Field(i)
+	for i := 0; i < reflect.TypeOf(request).Elem().NumField(); i++ {
+		field := reflect.TypeOf(request).Elem().Field(i)
 		tag := field.Tag.Get("json")
 		if tag != "" {
 			return true

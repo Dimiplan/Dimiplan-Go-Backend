@@ -44,8 +44,8 @@ func Setup(app *fiber.App, cfg *config.Config, db *ent.Client) *fiber.App {
 		Post(chatroomHandler.CreateChatroom, new(models.CreateChatroomRequest), models.CreateChatroomResponse{}, 201).
 		Route("/:id").
 		Get(chatroomHandler.GetMessages, new(models.GetMessagesRequest), models.GetMessagesResponse{}, 200).
-		Patch(chatroomHandler.UpdateChatroom, new(models.UpdateChatroomRequest), ent.Chatroom{}, 204).
-		Delete(chatroomHandler.RemoveChatroom, new(models.RemoveChatroomRequest), ent.Chatroom{}, 204)
+		Patch(chatroomHandler.UpdateChatroom, new(models.UpdateChatroomRequest), nil, 204).
+		Delete(chatroomHandler.RemoveChatroom, new(models.RemoveChatroomRequest), nil, 204)
 
 	api.Use("/planner/:planner", middleware.QueryPlannerMiddleware(db))
 	api.Use("/planner/:planner/:task", middleware.QueryTaskMiddleware(db))
@@ -62,7 +62,8 @@ func Setup(app *fiber.App, cfg *config.Config, db *ent.Client) *fiber.App {
 		Patch(plannerHandler.UpdateTask, new(models.UpdateTaskRequest), nil, 204).
 		Delete(plannerHandler.DeleteTask, new(models.DeleteTaskRequest), nil, 204)
 
-	file, err := os.OpenFile("./openapi.yaml", os.O_RDWR|os.O_CREATE, 0644)
+	os.Remove("./openapi.yaml")
+	file, err := os.OpenFile("./openapi.yaml", os.O_WRONLY|os.O_CREATE, 0644)
 	if err != nil {
 		panic(err)
 	}

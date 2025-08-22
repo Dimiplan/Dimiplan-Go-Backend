@@ -60,8 +60,8 @@ func (r *Register) Get(handler func(request interface{}, c fiber.Ctx) (interface
 	r.wrapper.reflector.AddOperation(op)
 	r.wrapper.router.Get(r.path, func(c fiber.Ctx) error {
 		if request != nil {
-			if err := c.Bind().All(request); err != nil {
-				return fiber.ErrBadRequest
+			if err := c.Bind().Body(request); err != nil {
+				return fiber.NewError(fiber.StatusBadRequest, err.Error())
 			}
 		}
 		value, err := handler(request, c)
@@ -90,7 +90,7 @@ func (r *Register) Post(handler func(request interface{}, c fiber.Ctx) (interfac
 	r.wrapper.reflector.AddOperation(op)
 	r.wrapper.router.Post(r.path, func(c fiber.Ctx) error {
 		if request != nil {
-			if err := c.Bind().All(request); err != nil {
+			if err := c.Bind().Body(request); err != nil {
 				return fiber.NewError(fiber.StatusBadRequest, err.Error())
 			}
 		}
@@ -120,8 +120,8 @@ func (r *Register) Patch(handler func(request interface{}, c fiber.Ctx) (interfa
 	r.wrapper.reflector.AddOperation(op)
 	r.wrapper.router.Patch(r.path, func(c fiber.Ctx) error {
 		if request != nil {
-			if err := c.Bind().All(request); err != nil {
-				return fiber.ErrBadRequest
+			if err := c.Bind().Body(request); err != nil {
+				return fiber.NewError(fiber.StatusBadRequest, err.Error())
 			}
 		}
 		value, err := handler(request, c)
@@ -150,8 +150,8 @@ func (r *Register) Delete(handler func(request interface{}, c fiber.Ctx) (interf
 	r.wrapper.reflector.AddOperation(op)
 	r.wrapper.router.Delete(r.path, func(c fiber.Ctx) error {
 		if request != nil {
-			if err := c.Bind().All(request); err != nil {
-				return fiber.ErrBadRequest
+			if err := c.Bind().Body(request); err != nil {
+				return fiber.NewError(fiber.StatusBadRequest, err.Error())
 			}
 		}
 		value, err := handler(request, c)

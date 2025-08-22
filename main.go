@@ -2,9 +2,6 @@ package main
 
 import (
 	"context"
-	"os"
-	"os/signal"
-	"syscall"
 
 	"dimiplan-backend/config"
 	"dimiplan-backend/ent"
@@ -40,11 +37,10 @@ func main() {
 		CertKeyFile:   "./keys/key.pem",
 	}))
 
-	c := make(chan os.Signal, 1)
-	signal.Notify(c, os.Interrupt, syscall.SIGTERM)
-	<-c
-	log.Info("Shutting down server...")
-	client.Close()
-	redis.Close()
-	app.Shutdown()
+	defer func() {
+		log.Info("Shutting down server...")
+		client.Close()
+		redis.Close()
+		app.Shutdown()
+	}()
 }

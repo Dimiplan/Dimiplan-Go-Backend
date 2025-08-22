@@ -74,7 +74,7 @@ func (r *Register) Get(handler func(request interface{}, c fiber.Ctx) (interface
 		if value == nil || response == nil {
 			c.SendStatus(status)
 		}
-		if err != nil || reflect.TypeOf(value) != reflect.TypeOf(response) {
+		if err != nil {
 			return err
 		}
 		return c.Status(status).JSON(value)
@@ -107,7 +107,7 @@ func (r *Register) Post(handler func(request interface{}, c fiber.Ctx) (interfac
 		if value == nil || response == nil {
 			c.SendStatus(status)
 		}
-		if err != nil || reflect.TypeOf(value) != reflect.TypeOf(response) {
+		if err != nil {
 			return err
 		}
 		return c.Status(status).JSON(value)
@@ -140,7 +140,7 @@ func (r *Register) Patch(handler func(request interface{}, c fiber.Ctx) (interfa
 		if value == nil || response == nil {
 			c.SendStatus(status)
 		}
-		if err != nil || reflect.TypeOf(value) != reflect.TypeOf(response) {
+		if err != nil {
 			return err
 		}
 		return c.Status(status).JSON(value)
@@ -173,7 +173,7 @@ func (r *Register) Delete(handler func(request interface{}, c fiber.Ctx) (interf
 		if value == nil || response == nil {
 			c.SendStatus(status)
 		}
-		if err != nil || reflect.TypeOf(value) != reflect.TypeOf(response) {
+		if err != nil {
 			return err
 		}
 		return c.Status(status).JSON(value)

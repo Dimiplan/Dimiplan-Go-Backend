@@ -19,6 +19,17 @@ type Register struct {
 	path    string
 }
 
+func HasBody(request interface{}) bool {
+	for i := 0; i < reflect.TypeOf(request).NumField(); i++ {
+		field := reflect.TypeOf(request).Field(i)
+		tag := field.Tag.Get("json")
+		if tag != "" {
+			return true
+		}
+	}
+	return false
+}
+
 func NewWrapper(router fiber.Router) *Wrapper {
 	reflector := openapi31.Reflector{}
 	reflector.Spec = &openapi31.Spec{Openapi: "3.1.0"}
@@ -83,6 +94,9 @@ func (r *Register) Post(handler func(request interface{}, c fiber.Ctx) (interfac
 	op.AddReqStructure(request)
 	op.AddRespStructure(response, func(cu *openapi.ContentUnit) { cu.HTTPStatus = status })
 	r.wrapper.reflector.AddOperation(op)
+	if !HasBody(request) {
+		request = nil
+	}
 	r.wrapper.router.Post(r.path, func(c fiber.Ctx) error {
 		if request != nil {
 			if err := c.Bind().Body(request); err != nil {
@@ -113,6 +127,9 @@ func (r *Register) Patch(handler func(request interface{}, c fiber.Ctx) (interfa
 	op.AddReqStructure(request)
 	op.AddRespStructure(response, func(cu *openapi.ContentUnit) { cu.HTTPStatus = status })
 	r.wrapper.reflector.AddOperation(op)
+	if !HasBody(request) {
+		request = nil
+	}
 	r.wrapper.router.Patch(r.path, func(c fiber.Ctx) error {
 		if request != nil {
 			if err := c.Bind().Body(request); err != nil {
@@ -143,6 +160,9 @@ func (r *Register) Delete(handler func(request interface{}, c fiber.Ctx) (interf
 	op.AddReqStructure(request)
 	op.AddRespStructure(response, func(cu *openapi.ContentUnit) { cu.HTTPStatus = status })
 	r.wrapper.reflector.AddOperation(op)
+	if !HasBody(request) {
+		request = nil
+	}
 	r.wrapper.router.Delete(r.path, func(c fiber.Ctx) error {
 		if request != nil {
 			if err := c.Bind().Body(request); err != nil {

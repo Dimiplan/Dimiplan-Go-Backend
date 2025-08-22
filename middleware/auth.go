@@ -24,7 +24,6 @@ func AuthMiddleware(db *ent.Client) fiber.Handler {
 		if err != nil || user == nil {
 			return fiber.ErrForbidden
 		}
-		c.Locals("uid", user.ID)
 		c.Locals("user", user)
 		return c.Next()
 	}

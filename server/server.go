@@ -53,6 +53,7 @@ func Setup(cfg *config.Config) *fiber.App {
 		CookieSecure:   true,
 		CookieHTTPOnly: true,
 		CookieSameSite: "lax",
+		IdleTimeout:    time.Hour * 24,
 	}))
 
 	app.Use("/", static.New("/", static.Config{

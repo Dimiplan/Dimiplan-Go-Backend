@@ -37,7 +37,7 @@ func (Chatroom) Edges() []ent.Edge {
 
 func (Chatroom) Indexes() []ent.Index {
 	return []ent.Index{
-		index.Edges("user").Unique(),
+		index.Edges("user"),
 		index.Fields("name"),
 	}
 }

@@ -16,7 +16,7 @@ import (
 	"github.com/gofiber/storage/redis/v3"
 )
 
-func Setup(cfg *config.Config) *fiber.App {
+func Setup(cfg *config.Config) (*fiber.App, *redis.Storage) {
 	app := fiber.New(fiber.Config{
 		JSONEncoder: sonic.Marshal,
 		JSONDecoder: sonic.Unmarshal,
@@ -70,5 +70,5 @@ func Setup(cfg *config.Config) *fiber.App {
 		return c.Next()
 	})
 
-	return app
+	return app, storage
 }

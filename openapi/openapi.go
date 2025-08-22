@@ -59,11 +59,6 @@ func (r *Register) Get(handler func(request interface{}, c fiber.Ctx) (interface
 	op.AddRespStructure(response, func(cu *openapi.ContentUnit) { cu.HTTPStatus = status })
 	r.wrapper.reflector.AddOperation(op)
 	r.wrapper.router.Get(r.path, func(c fiber.Ctx) error {
-		if request != nil {
-			if err := c.Bind().Body(request); err != nil {
-				return fiber.NewError(fiber.StatusBadRequest, err.Error())
-			}
-		}
 		value, err := handler(request, c)
 		if value == nil || response == nil {
 			c.SendStatus(status)

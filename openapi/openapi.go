@@ -60,7 +60,7 @@ func (r *Register) Route(path string) *Register {
 	return r
 }
 
-func (r *Register) Get(handler func(request interface{}, c fiber.Ctx) (interface{}, error), request interface{}, response interface{}, status int) *Register {
+func (r *Register) Get(handler func(request interface{}, c fiber.Ctx) (interface{}, error), requestFactory func() interface{}, response interface{}, status int) *Register {
 	if !fiber.IsChild() {
 		re := regexp.MustCompile(`:([^/]+)`)
 		openAPIPath := re.ReplaceAllString(r.path, "{$1}")
@@ -69,11 +69,17 @@ func (r *Register) Get(handler func(request interface{}, c fiber.Ctx) (interface
 		if err != nil {
 			panic(err)
 		}
-		op.AddReqStructure(request)
+		if requestFactory != nil {
+			op.AddReqStructure(requestFactory())
+		}
 		op.AddRespStructure(response, func(cu *openapi.ContentUnit) { cu.HTTPStatus = status })
 		r.wrapper.reflector.AddOperation(op)
 	}
 	r.wrapper.router.Get(r.path, func(c fiber.Ctx) error {
+		var request interface{}
+		if requestFactory != nil {
+			request = requestFactory()
+		}
 		value, err := handler(request, c)
 		if err != nil {
 			return err
@@ -86,7 +92,7 @@ func (r *Register) Get(handler func(request interface{}, c fiber.Ctx) (interface
 	return r
 }
 
-func (r *Register) Post(handler func(request interface{}, c fiber.Ctx) (interface{}, error), request interface{}, response interface{}, status int) *Register {
+func (r *Register) Post(handler func(request interface{}, c fiber.Ctx) (interface{}, error), requestFactory func() interface{}, response interface{}, status int) *Register {
 	if !fiber.IsChild() {
 		re := regexp.MustCompile(`:([^/]+)`)
 		openAPIPath := re.ReplaceAllString(r.path, "{$1}")
@@ -95,17 +101,24 @@ func (r *Register) Post(handler func(request interface{}, c fiber.Ctx) (interfac
 		if err != nil {
 			panic(err)
 		}
-		op.AddReqStructure(request)
+		if requestFactory != nil {
+			sampleRequest := requestFactory()
+			op.AddReqStructure(sampleRequest)
+		}
 		op.AddRespStructure(response, func(cu *openapi.ContentUnit) { cu.HTTPStatus = status })
 		r.wrapper.reflector.AddOperation(op)
 	}
-	if !HasBody(request) {
-		request = nil
-	}
 	r.wrapper.router.Post(r.path, func(c fiber.Ctx) error {
-		if request != nil {
-			if err := c.Bind().Body(request); err != nil {
-				return fiber.NewError(fiber.StatusBadRequest, err.Error())
+		var request interface{}
+		if requestFactory != nil {
+			request = requestFactory()
+			if !HasBody(&request) {
+				request = nil
+			}
+			if request != nil {
+				if err := c.Bind().Body(request); err != nil {
+					return fiber.NewError(fiber.StatusBadRequest, err.Error())
+				}
 			}
 		}
 		value, err := handler(request, c)
@@ -120,7 +133,7 @@ func (r *Register) Post(handler func(request interface{}, c fiber.Ctx) (interfac
 	return r
 }
 
-func (r *Register) Patch(handler func(request interface{}, c fiber.Ctx) (interface{}, error), request interface{}, response interface{}, status int) *Register {
+func (r *Register) Patch(handler func(request interface{}, c fiber.Ctx) (interface{}, error), requestFactory func() interface{}, response interface{}, status int) *Register {
 	if !fiber.IsChild() {
 		re := regexp.MustCompile(`:([^/]+)`)
 		openAPIPath := re.ReplaceAllString(r.path, "{$1}")
@@ -129,17 +142,24 @@ func (r *Register) Patch(handler func(request interface{}, c fiber.Ctx) (interfa
 		if err != nil {
 			panic(err)
 		}
-		op.AddReqStructure(request)
+		if requestFactory != nil {
+			sampleRequest := requestFactory()
+			op.AddReqStructure(sampleRequest)
+		}
 		op.AddRespStructure(response, func(cu *openapi.ContentUnit) { cu.HTTPStatus = status })
 		r.wrapper.reflector.AddOperation(op)
 	}
-	if !HasBody(request) {
-		request = nil
-	}
 	r.wrapper.router.Patch(r.path, func(c fiber.Ctx) error {
-		if request != nil {
-			if err := c.Bind().Body(request); err != nil {
-				return fiber.NewError(fiber.StatusBadRequest, err.Error())
+		var request interface{}
+		if requestFactory != nil {
+			request = requestFactory()
+			if !HasBody(&request) {
+				request = nil
+			}
+			if request != nil {
+				if err := c.Bind().Body(request); err != nil {
+					return fiber.NewError(fiber.StatusBadRequest, err.Error())
+				}
 			}
 		}
 		value, err := handler(request, c)
@@ -154,7 +174,7 @@ func (r *Register) Patch(handler func(request interface{}, c fiber.Ctx) (interfa
 	return r
 }
 
-func (r *Register) Delete(handler func(request interface{}, c fiber.Ctx) (interface{}, error), request interface{}, response interface{}, status int) *Register {
+func (r *Register) Delete(handler func(request interface{}, c fiber.Ctx) (interface{}, error), requestFactory func() interface{}, response interface{}, status int) *Register {
 	if !fiber.IsChild() {
 		re := regexp.MustCompile(`:([^/]+)`)
 		openAPIPath := re.ReplaceAllString(r.path, "{$1}")
@@ -163,17 +183,24 @@ func (r *Register) Delete(handler func(request interface{}, c fiber.Ctx) (interf
 		if err != nil {
 			panic(err)
 		}
-		op.AddReqStructure(request)
+		if requestFactory != nil {
+			sampleRequest := requestFactory()
+			op.AddReqStructure(sampleRequest)
+		}
 		op.AddRespStructure(response, func(cu *openapi.ContentUnit) { cu.HTTPStatus = status })
 		r.wrapper.reflector.AddOperation(op)
 	}
-	if !HasBody(request) {
-		request = nil
-	}
 	r.wrapper.router.Delete(r.path, func(c fiber.Ctx) error {
-		if request != nil {
-			if err := c.Bind().Body(request); err != nil {
-				return fiber.NewError(fiber.StatusBadRequest, err.Error())
+		var request interface{}
+		if requestFactory != nil {
+			request = requestFactory()
+			if !HasBody(&request) {
+				request = nil
+			}
+			if request != nil {
+				if err := c.Bind().Body(request); err != nil {
+					return fiber.NewError(fiber.StatusBadRequest, err.Error())
+				}
 			}
 		}
 		value, err := handler(request, c)

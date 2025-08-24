@@ -75,7 +75,7 @@ func (r *Register) Get(handler func(request interface{}, c fiber.Ctx) (interface
 	}
 	r.wrapper.router.Get(r.path, func(c fiber.Ctx) error {
 		value, err := handler(request, c)
-		if value == nil || response == nil {
+		if value == nil {
 			return c.SendStatus(status)
 		}
 		if err != nil {
@@ -109,7 +109,7 @@ func (r *Register) Post(handler func(request interface{}, c fiber.Ctx) (interfac
 			}
 		}
 		value, err := handler(request, c)
-		if value == nil || response == nil {
+		if value == nil {
 			return c.SendStatus(status)
 		}
 		if err != nil {
@@ -143,7 +143,7 @@ func (r *Register) Patch(handler func(request interface{}, c fiber.Ctx) (interfa
 			}
 		}
 		value, err := handler(request, c)
-		if value == nil || response == nil {
+		if value == nil {
 			return c.SendStatus(status)
 		}
 		if err != nil {
@@ -177,7 +177,7 @@ func (r *Register) Delete(handler func(request interface{}, c fiber.Ctx) (interf
 			}
 		}
 		value, err := handler(request, c)
-		if value == nil || response == nil {
+		if value == nil {
 			return c.SendStatus(status)
 		}
 		if err != nil {

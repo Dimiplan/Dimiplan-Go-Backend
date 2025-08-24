@@ -60,7 +60,7 @@ func Load() *Config {
 		PreAIModel: "openai/gpt-oss-120b",
 		AIModels: []string{
 			"anthropic/claude-3.5-haiku",
-			"deepseek/deepseek-prover-v2",
+			"deepseek/deepseek-chat-v3.1",
 			"deepseek/deepseek-r1-0528",
 			"google/gemini-2.5-flash",
 			"meta-llama/llama-4-maverick",

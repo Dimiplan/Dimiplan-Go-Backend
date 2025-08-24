@@ -56,18 +56,20 @@ func (h *AIHandler) AIChat(rawRequest interface{}, c fiber.Ctx) (interface{}, er
 		return nil, err
 	}
 
-	_, err = h.db.Message.Create().SetChatroom(room).SetSender("user").SetMessage(request.Prompt).Save(c)
-	if err != nil {
-		return nil, err
-	}
+	_, err = h.db.Message.Create().
+		SetChatroomID(room.ID).
+		SetSender("user").
+		SetMessage(request.Prompt).
+		Save(c)
 
-	chat, err := h.db.Message.Create().SetChatroom(room).SetSender("ai").SetMessage(message).Save(c)
-	if err != nil {
-		return nil, err
-	}
+	aMsg, err := h.db.Message.Create().
+		SetChatroomID(room.ID).
+		SetSender("ai").
+		SetMessage(message).
+		Save(c)
 
 	return models.AIChatResponse{
-		Message: chat,
+		Message: aMsg,
 		RoomID:  room.ID,
 	}, nil
 }

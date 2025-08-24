@@ -50,15 +50,15 @@ func (_u *ChatroomUpdate) SetUpdatedAt(v time.Time) *ChatroomUpdate {
 	return _u
 }
 
-// SetUserID sets the "user" edge to the User entity by ID.
-func (_u *ChatroomUpdate) SetUserID(id string) *ChatroomUpdate {
-	_u.mutation.SetUserID(id)
+// SetOwnerID sets the "owner" edge to the User entity by ID.
+func (_u *ChatroomUpdate) SetOwnerID(id string) *ChatroomUpdate {
+	_u.mutation.SetOwnerID(id)
 	return _u
 }
 
-// SetUser sets the "user" edge to the User entity.
-func (_u *ChatroomUpdate) SetUser(v *User) *ChatroomUpdate {
-	return _u.SetUserID(v.ID)
+// SetOwner sets the "owner" edge to the User entity.
+func (_u *ChatroomUpdate) SetOwner(v *User) *ChatroomUpdate {
+	return _u.SetOwnerID(v.ID)
 }
 
 // AddMessageIDs adds the "messages" edge to the Message entity by IDs.
@@ -81,9 +81,9 @@ func (_u *ChatroomUpdate) Mutation() *ChatroomMutation {
 	return _u.mutation
 }
 
-// ClearUser clears the "user" edge to the User entity.
-func (_u *ChatroomUpdate) ClearUser() *ChatroomUpdate {
-	_u.mutation.ClearUser()
+// ClearOwner clears the "owner" edge to the User entity.
+func (_u *ChatroomUpdate) ClearOwner() *ChatroomUpdate {
+	_u.mutation.ClearOwner()
 	return _u
 }
 
@@ -151,8 +151,8 @@ func (_u *ChatroomUpdate) check() error {
 			return &ValidationError{Name: "name", err: fmt.Errorf(`ent: validator failed for field "Chatroom.name": %w`, err)}
 		}
 	}
-	if _u.mutation.UserCleared() && len(_u.mutation.UserIDs()) > 0 {
-		return errors.New(`ent: clearing a required unique edge "Chatroom.user"`)
+	if _u.mutation.OwnerCleared() && len(_u.mutation.OwnerIDs()) > 0 {
+		return errors.New(`ent: clearing a required unique edge "Chatroom.owner"`)
 	}
 	return nil
 }
@@ -175,12 +175,12 @@ func (_u *ChatroomUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	if value, ok := _u.mutation.UpdatedAt(); ok {
 		_spec.SetField(chatroom.FieldUpdatedAt, field.TypeTime, value)
 	}
-	if _u.mutation.UserCleared() {
+	if _u.mutation.OwnerCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   chatroom.UserTable,
-			Columns: []string{chatroom.UserColumn},
+			Table:   chatroom.OwnerTable,
+			Columns: []string{chatroom.OwnerColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeString),
@@ -188,12 +188,12 @@ func (_u *ChatroomUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := _u.mutation.UserIDs(); len(nodes) > 0 {
+	if nodes := _u.mutation.OwnerIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   chatroom.UserTable,
-			Columns: []string{chatroom.UserColumn},
+			Table:   chatroom.OwnerTable,
+			Columns: []string{chatroom.OwnerColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeString),
@@ -289,15 +289,15 @@ func (_u *ChatroomUpdateOne) SetUpdatedAt(v time.Time) *ChatroomUpdateOne {
 	return _u
 }
 
-// SetUserID sets the "user" edge to the User entity by ID.
-func (_u *ChatroomUpdateOne) SetUserID(id string) *ChatroomUpdateOne {
-	_u.mutation.SetUserID(id)
+// SetOwnerID sets the "owner" edge to the User entity by ID.
+func (_u *ChatroomUpdateOne) SetOwnerID(id string) *ChatroomUpdateOne {
+	_u.mutation.SetOwnerID(id)
 	return _u
 }
 
-// SetUser sets the "user" edge to the User entity.
-func (_u *ChatroomUpdateOne) SetUser(v *User) *ChatroomUpdateOne {
-	return _u.SetUserID(v.ID)
+// SetOwner sets the "owner" edge to the User entity.
+func (_u *ChatroomUpdateOne) SetOwner(v *User) *ChatroomUpdateOne {
+	return _u.SetOwnerID(v.ID)
 }
 
 // AddMessageIDs adds the "messages" edge to the Message entity by IDs.
@@ -320,9 +320,9 @@ func (_u *ChatroomUpdateOne) Mutation() *ChatroomMutation {
 	return _u.mutation
 }
 
-// ClearUser clears the "user" edge to the User entity.
-func (_u *ChatroomUpdateOne) ClearUser() *ChatroomUpdateOne {
-	_u.mutation.ClearUser()
+// ClearOwner clears the "owner" edge to the User entity.
+func (_u *ChatroomUpdateOne) ClearOwner() *ChatroomUpdateOne {
+	_u.mutation.ClearOwner()
 	return _u
 }
 
@@ -403,8 +403,8 @@ func (_u *ChatroomUpdateOne) check() error {
 			return &ValidationError{Name: "name", err: fmt.Errorf(`ent: validator failed for field "Chatroom.name": %w`, err)}
 		}
 	}
-	if _u.mutation.UserCleared() && len(_u.mutation.UserIDs()) > 0 {
-		return errors.New(`ent: clearing a required unique edge "Chatroom.user"`)
+	if _u.mutation.OwnerCleared() && len(_u.mutation.OwnerIDs()) > 0 {
+		return errors.New(`ent: clearing a required unique edge "Chatroom.owner"`)
 	}
 	return nil
 }
@@ -444,12 +444,12 @@ func (_u *ChatroomUpdateOne) sqlSave(ctx context.Context) (_node *Chatroom, err 
 	if value, ok := _u.mutation.UpdatedAt(); ok {
 		_spec.SetField(chatroom.FieldUpdatedAt, field.TypeTime, value)
 	}
-	if _u.mutation.UserCleared() {
+	if _u.mutation.OwnerCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   chatroom.UserTable,
-			Columns: []string{chatroom.UserColumn},
+			Table:   chatroom.OwnerTable,
+			Columns: []string{chatroom.OwnerColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeString),
@@ -457,12 +457,12 @@ func (_u *ChatroomUpdateOne) sqlSave(ctx context.Context) (_node *Chatroom, err 
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := _u.mutation.UserIDs(); len(nodes) > 0 {
+	if nodes := _u.mutation.OwnerIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   chatroom.UserTable,
-			Columns: []string{chatroom.UserColumn},
+			Table:   chatroom.OwnerTable,
+			Columns: []string{chatroom.OwnerColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeString),

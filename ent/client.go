@@ -346,15 +346,15 @@ func (c *ChatroomClient) GetX(ctx context.Context, id int) *Chatroom {
 	return obj
 }
 
-// QueryUser queries the user edge of a Chatroom.
-func (c *ChatroomClient) QueryUser(_m *Chatroom) *UserQuery {
+// QueryOwner queries the owner edge of a Chatroom.
+func (c *ChatroomClient) QueryOwner(_m *Chatroom) *UserQuery {
 	query := (&UserClient{config: c.config}).Query()
 	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
 		id := _m.ID
 		step := sqlgraph.NewStep(
 			sqlgraph.From(chatroom.Table, chatroom.FieldID, id),
 			sqlgraph.To(user.Table, user.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, chatroom.UserTable, chatroom.UserColumn),
+			sqlgraph.Edge(sqlgraph.M2O, true, chatroom.OwnerTable, chatroom.OwnerColumn),
 		)
 		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
 		return fromV, nil
@@ -990,15 +990,15 @@ func (c *UserClient) QueryPlanners(_m *User) *PlannerQuery {
 	return query
 }
 
-// QueryChatrooms queries the chatrooms edge of a User.
-func (c *UserClient) QueryChatrooms(_m *User) *ChatroomQuery {
+// QueryOwnedChatrooms queries the owned_chatrooms edge of a User.
+func (c *UserClient) QueryOwnedChatrooms(_m *User) *ChatroomQuery {
 	query := (&ChatroomClient{config: c.config}).Query()
 	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
 		id := _m.ID
 		step := sqlgraph.NewStep(
 			sqlgraph.From(user.Table, user.FieldID, id),
 			sqlgraph.To(chatroom.Table, chatroom.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, user.ChatroomsTable, user.ChatroomsColumn),
+			sqlgraph.Edge(sqlgraph.O2M, false, user.OwnedChatroomsTable, user.OwnedChatroomsColumn),
 		)
 		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
 		return fromV, nil

@@ -56,15 +56,15 @@ func (_c *ChatroomCreate) SetNillableUpdatedAt(v *time.Time) *ChatroomCreate {
 	return _c
 }
 
-// SetUserID sets the "user" edge to the User entity by ID.
-func (_c *ChatroomCreate) SetUserID(id string) *ChatroomCreate {
-	_c.mutation.SetUserID(id)
+// SetOwnerID sets the "owner" edge to the User entity by ID.
+func (_c *ChatroomCreate) SetOwnerID(id string) *ChatroomCreate {
+	_c.mutation.SetOwnerID(id)
 	return _c
 }
 
-// SetUser sets the "user" edge to the User entity.
-func (_c *ChatroomCreate) SetUser(v *User) *ChatroomCreate {
-	return _c.SetUserID(v.ID)
+// SetOwner sets the "owner" edge to the User entity.
+func (_c *ChatroomCreate) SetOwner(v *User) *ChatroomCreate {
+	return _c.SetOwnerID(v.ID)
 }
 
 // AddMessageIDs adds the "messages" edge to the Message entity by IDs.
@@ -143,8 +143,8 @@ func (_c *ChatroomCreate) check() error {
 	if _, ok := _c.mutation.UpdatedAt(); !ok {
 		return &ValidationError{Name: "updatedAt", err: errors.New(`ent: missing required field "Chatroom.updatedAt"`)}
 	}
-	if len(_c.mutation.UserIDs()) == 0 {
-		return &ValidationError{Name: "user", err: errors.New(`ent: missing required edge "Chatroom.user"`)}
+	if len(_c.mutation.OwnerIDs()) == 0 {
+		return &ValidationError{Name: "owner", err: errors.New(`ent: missing required edge "Chatroom.owner"`)}
 	}
 	return nil
 }
@@ -184,12 +184,12 @@ func (_c *ChatroomCreate) createSpec() (*Chatroom, *sqlgraph.CreateSpec) {
 		_spec.SetField(chatroom.FieldUpdatedAt, field.TypeTime, value)
 		_node.UpdatedAt = value
 	}
-	if nodes := _c.mutation.UserIDs(); len(nodes) > 0 {
+	if nodes := _c.mutation.OwnerIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   chatroom.UserTable,
-			Columns: []string{chatroom.UserColumn},
+			Table:   chatroom.OwnerTable,
+			Columns: []string{chatroom.OwnerColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeString),
@@ -198,7 +198,7 @@ func (_c *ChatroomCreate) createSpec() (*Chatroom, *sqlgraph.CreateSpec) {
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
-		_node.user_chatrooms = &nodes[0]
+		_node.user_owned_chatrooms = &nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	if nodes := _c.mutation.MessagesIDs(); len(nodes) > 0 {

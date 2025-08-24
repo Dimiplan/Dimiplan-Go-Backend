@@ -35,13 +35,12 @@ func (User) Fields() []ent.Field {
 func (User) Edges() []ent.Edge {
 	return []ent.Edge{
 		edge.To("planners", Planner.Type).Annotations(entsql.OnDelete(entsql.Cascade)),
-		edge.To("chatrooms", Chatroom.Type).Annotations(entsql.OnDelete(entsql.Cascade)),
+		edge.To("owned_chatrooms", Chatroom.Type),
 	}
 }
 
 func (User) Indexes() []ent.Index {
 	return []ent.Index{
-		index.Fields("id"),
 		index.Fields("name"),
 		index.Fields("email"),
 		index.Fields("profileURL"),

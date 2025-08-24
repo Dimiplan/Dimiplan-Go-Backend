@@ -45,8 +45,8 @@ type ChatroomMutation struct {
 	createdAt       *time.Time
 	updatedAt       *time.Time
 	clearedFields   map[string]struct{}
-	user            *string
-	cleareduser     bool
+	owner           *string
+	clearedowner    bool
 	messages        map[int]struct{}
 	removedmessages map[int]struct{}
 	clearedmessages bool
@@ -261,43 +261,43 @@ func (m *ChatroomMutation) ResetUpdatedAt() {
 	m.updatedAt = nil
 }
 
-// SetUserID sets the "user" edge to the User entity by id.
-func (m *ChatroomMutation) SetUserID(id string) {
-	m.user = &id
+// SetOwnerID sets the "owner" edge to the User entity by id.
+func (m *ChatroomMutation) SetOwnerID(id string) {
+	m.owner = &id
 }
 
-// ClearUser clears the "user" edge to the User entity.
-func (m *ChatroomMutation) ClearUser() {
-	m.cleareduser = true
+// ClearOwner clears the "owner" edge to the User entity.
+func (m *ChatroomMutation) ClearOwner() {
+	m.clearedowner = true
 }
 
-// UserCleared reports if the "user" edge to the User entity was cleared.
-func (m *ChatroomMutation) UserCleared() bool {
-	return m.cleareduser
+// OwnerCleared reports if the "owner" edge to the User entity was cleared.
+func (m *ChatroomMutation) OwnerCleared() bool {
+	return m.clearedowner
 }
 
-// UserID returns the "user" edge ID in the mutation.
-func (m *ChatroomMutation) UserID() (id string, exists bool) {
-	if m.user != nil {
-		return *m.user, true
+// OwnerID returns the "owner" edge ID in the mutation.
+func (m *ChatroomMutation) OwnerID() (id string, exists bool) {
+	if m.owner != nil {
+		return *m.owner, true
 	}
 	return
 }
 
-// UserIDs returns the "user" edge IDs in the mutation.
+// OwnerIDs returns the "owner" edge IDs in the mutation.
 // Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
-// UserID instead. It exists only for internal usage by the builders.
-func (m *ChatroomMutation) UserIDs() (ids []string) {
-	if id := m.user; id != nil {
+// OwnerID instead. It exists only for internal usage by the builders.
+func (m *ChatroomMutation) OwnerIDs() (ids []string) {
+	if id := m.owner; id != nil {
 		ids = append(ids, *id)
 	}
 	return
 }
 
-// ResetUser resets all changes to the "user" edge.
-func (m *ChatroomMutation) ResetUser() {
-	m.user = nil
-	m.cleareduser = false
+// ResetOwner resets all changes to the "owner" edge.
+func (m *ChatroomMutation) ResetOwner() {
+	m.owner = nil
+	m.clearedowner = false
 }
 
 // AddMessageIDs adds the "messages" edge to the Message entity by ids.
@@ -522,8 +522,8 @@ func (m *ChatroomMutation) ResetField(name string) error {
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *ChatroomMutation) AddedEdges() []string {
 	edges := make([]string, 0, 2)
-	if m.user != nil {
-		edges = append(edges, chatroom.EdgeUser)
+	if m.owner != nil {
+		edges = append(edges, chatroom.EdgeOwner)
 	}
 	if m.messages != nil {
 		edges = append(edges, chatroom.EdgeMessages)
@@ -535,8 +535,8 @@ func (m *ChatroomMutation) AddedEdges() []string {
 // name in this mutation.
 func (m *ChatroomMutation) AddedIDs(name string) []ent.Value {
 	switch name {
-	case chatroom.EdgeUser:
-		if id := m.user; id != nil {
+	case chatroom.EdgeOwner:
+		if id := m.owner; id != nil {
 			return []ent.Value{*id}
 		}
 	case chatroom.EdgeMessages:
@@ -575,8 +575,8 @@ func (m *ChatroomMutation) RemovedIDs(name string) []ent.Value {
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *ChatroomMutation) ClearedEdges() []string {
 	edges := make([]string, 0, 2)
-	if m.cleareduser {
-		edges = append(edges, chatroom.EdgeUser)
+	if m.clearedowner {
+		edges = append(edges, chatroom.EdgeOwner)
 	}
 	if m.clearedmessages {
 		edges = append(edges, chatroom.EdgeMessages)
@@ -588,8 +588,8 @@ func (m *ChatroomMutation) ClearedEdges() []string {
 // was cleared in this mutation.
 func (m *ChatroomMutation) EdgeCleared(name string) bool {
 	switch name {
-	case chatroom.EdgeUser:
-		return m.cleareduser
+	case chatroom.EdgeOwner:
+		return m.clearedowner
 	case chatroom.EdgeMessages:
 		return m.clearedmessages
 	}
@@ -600,8 +600,8 @@ func (m *ChatroomMutation) EdgeCleared(name string) bool {
 // if that edge is not defined in the schema.
 func (m *ChatroomMutation) ClearEdge(name string) error {
 	switch name {
-	case chatroom.EdgeUser:
-		m.ClearUser()
+	case chatroom.EdgeOwner:
+		m.ClearOwner()
 		return nil
 	}
 	return fmt.Errorf("unknown Chatroom unique edge %s", name)
@@ -611,8 +611,8 @@ func (m *ChatroomMutation) ClearEdge(name string) error {
 // It returns an error if the edge is not defined in the schema.
 func (m *ChatroomMutation) ResetEdge(name string) error {
 	switch name {
-	case chatroom.EdgeUser:
-		m.ResetUser()
+	case chatroom.EdgeOwner:
+		m.ResetOwner()
 		return nil
 	case chatroom.EdgeMessages:
 		m.ResetMessages()
@@ -2486,25 +2486,25 @@ func (m *TaskMutation) ResetEdge(name string) error {
 // UserMutation represents an operation that mutates the User nodes in the graph.
 type UserMutation struct {
 	config
-	op               Op
-	typ              string
-	id               *string
-	name             *string
-	email            *string
-	profileURL       *string
-	plan             *string
-	createdAt        *time.Time
-	updatedAt        *time.Time
-	clearedFields    map[string]struct{}
-	planners         map[int]struct{}
-	removedplanners  map[int]struct{}
-	clearedplanners  bool
-	chatrooms        map[int]struct{}
-	removedchatrooms map[int]struct{}
-	clearedchatrooms bool
-	done             bool
-	oldValue         func(context.Context) (*User, error)
-	predicates       []predicate.User
+	op                     Op
+	typ                    string
+	id                     *string
+	name                   *string
+	email                  *string
+	profileURL             *string
+	plan                   *string
+	createdAt              *time.Time
+	updatedAt              *time.Time
+	clearedFields          map[string]struct{}
+	planners               map[int]struct{}
+	removedplanners        map[int]struct{}
+	clearedplanners        bool
+	owned_chatrooms        map[int]struct{}
+	removedowned_chatrooms map[int]struct{}
+	clearedowned_chatrooms bool
+	done                   bool
+	oldValue               func(context.Context) (*User, error)
+	predicates             []predicate.User
 }
 
 var _ ent.Mutation = (*UserMutation)(nil)
@@ -2881,58 +2881,58 @@ func (m *UserMutation) ResetPlanners() {
 	m.removedplanners = nil
 }
 
-// AddChatroomIDs adds the "chatrooms" edge to the Chatroom entity by ids.
-func (m *UserMutation) AddChatroomIDs(ids ...int) {
-	if m.chatrooms == nil {
-		m.chatrooms = make(map[int]struct{})
+// AddOwnedChatroomIDs adds the "owned_chatrooms" edge to the Chatroom entity by ids.
+func (m *UserMutation) AddOwnedChatroomIDs(ids ...int) {
+	if m.owned_chatrooms == nil {
+		m.owned_chatrooms = make(map[int]struct{})
 	}
 	for i := range ids {
-		m.chatrooms[ids[i]] = struct{}{}
+		m.owned_chatrooms[ids[i]] = struct{}{}
 	}
 }
 
-// ClearChatrooms clears the "chatrooms" edge to the Chatroom entity.
-func (m *UserMutation) ClearChatrooms() {
-	m.clearedchatrooms = true
+// ClearOwnedChatrooms clears the "owned_chatrooms" edge to the Chatroom entity.
+func (m *UserMutation) ClearOwnedChatrooms() {
+	m.clearedowned_chatrooms = true
 }
 
-// ChatroomsCleared reports if the "chatrooms" edge to the Chatroom entity was cleared.
-func (m *UserMutation) ChatroomsCleared() bool {
-	return m.clearedchatrooms
+// OwnedChatroomsCleared reports if the "owned_chatrooms" edge to the Chatroom entity was cleared.
+func (m *UserMutation) OwnedChatroomsCleared() bool {
+	return m.clearedowned_chatrooms
 }
 
-// RemoveChatroomIDs removes the "chatrooms" edge to the Chatroom entity by IDs.
-func (m *UserMutation) RemoveChatroomIDs(ids ...int) {
-	if m.removedchatrooms == nil {
-		m.removedchatrooms = make(map[int]struct{})
+// RemoveOwnedChatroomIDs removes the "owned_chatrooms" edge to the Chatroom entity by IDs.
+func (m *UserMutation) RemoveOwnedChatroomIDs(ids ...int) {
+	if m.removedowned_chatrooms == nil {
+		m.removedowned_chatrooms = make(map[int]struct{})
 	}
 	for i := range ids {
-		delete(m.chatrooms, ids[i])
-		m.removedchatrooms[ids[i]] = struct{}{}
+		delete(m.owned_chatrooms, ids[i])
+		m.removedowned_chatrooms[ids[i]] = struct{}{}
 	}
 }
 
-// RemovedChatrooms returns the removed IDs of the "chatrooms" edge to the Chatroom entity.
-func (m *UserMutation) RemovedChatroomsIDs() (ids []int) {
-	for id := range m.removedchatrooms {
+// RemovedOwnedChatrooms returns the removed IDs of the "owned_chatrooms" edge to the Chatroom entity.
+func (m *UserMutation) RemovedOwnedChatroomsIDs() (ids []int) {
+	for id := range m.removedowned_chatrooms {
 		ids = append(ids, id)
 	}
 	return
 }
 
-// ChatroomsIDs returns the "chatrooms" edge IDs in the mutation.
-func (m *UserMutation) ChatroomsIDs() (ids []int) {
-	for id := range m.chatrooms {
+// OwnedChatroomsIDs returns the "owned_chatrooms" edge IDs in the mutation.
+func (m *UserMutation) OwnedChatroomsIDs() (ids []int) {
+	for id := range m.owned_chatrooms {
 		ids = append(ids, id)
 	}
 	return
 }
 
-// ResetChatrooms resets all changes to the "chatrooms" edge.
-func (m *UserMutation) ResetChatrooms() {
-	m.chatrooms = nil
-	m.clearedchatrooms = false
-	m.removedchatrooms = nil
+// ResetOwnedChatrooms resets all changes to the "owned_chatrooms" edge.
+func (m *UserMutation) ResetOwnedChatrooms() {
+	m.owned_chatrooms = nil
+	m.clearedowned_chatrooms = false
+	m.removedowned_chatrooms = nil
 }
 
 // Where appends a list predicates to the UserMutation builder.
@@ -3157,8 +3157,8 @@ func (m *UserMutation) AddedEdges() []string {
 	if m.planners != nil {
 		edges = append(edges, user.EdgePlanners)
 	}
-	if m.chatrooms != nil {
-		edges = append(edges, user.EdgeChatrooms)
+	if m.owned_chatrooms != nil {
+		edges = append(edges, user.EdgeOwnedChatrooms)
 	}
 	return edges
 }
@@ -3173,9 +3173,9 @@ func (m *UserMutation) AddedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
-	case user.EdgeChatrooms:
-		ids := make([]ent.Value, 0, len(m.chatrooms))
-		for id := range m.chatrooms {
+	case user.EdgeOwnedChatrooms:
+		ids := make([]ent.Value, 0, len(m.owned_chatrooms))
+		for id := range m.owned_chatrooms {
 			ids = append(ids, id)
 		}
 		return ids
@@ -3189,8 +3189,8 @@ func (m *UserMutation) RemovedEdges() []string {
 	if m.removedplanners != nil {
 		edges = append(edges, user.EdgePlanners)
 	}
-	if m.removedchatrooms != nil {
-		edges = append(edges, user.EdgeChatrooms)
+	if m.removedowned_chatrooms != nil {
+		edges = append(edges, user.EdgeOwnedChatrooms)
 	}
 	return edges
 }
@@ -3205,9 +3205,9 @@ func (m *UserMutation) RemovedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
-	case user.EdgeChatrooms:
-		ids := make([]ent.Value, 0, len(m.removedchatrooms))
-		for id := range m.removedchatrooms {
+	case user.EdgeOwnedChatrooms:
+		ids := make([]ent.Value, 0, len(m.removedowned_chatrooms))
+		for id := range m.removedowned_chatrooms {
 			ids = append(ids, id)
 		}
 		return ids
@@ -3221,8 +3221,8 @@ func (m *UserMutation) ClearedEdges() []string {
 	if m.clearedplanners {
 		edges = append(edges, user.EdgePlanners)
 	}
-	if m.clearedchatrooms {
-		edges = append(edges, user.EdgeChatrooms)
+	if m.clearedowned_chatrooms {
+		edges = append(edges, user.EdgeOwnedChatrooms)
 	}
 	return edges
 }
@@ -3233,8 +3233,8 @@ func (m *UserMutation) EdgeCleared(name string) bool {
 	switch name {
 	case user.EdgePlanners:
 		return m.clearedplanners
-	case user.EdgeChatrooms:
-		return m.clearedchatrooms
+	case user.EdgeOwnedChatrooms:
+		return m.clearedowned_chatrooms
 	}
 	return false
 }
@@ -3254,8 +3254,8 @@ func (m *UserMutation) ResetEdge(name string) error {
 	case user.EdgePlanners:
 		m.ResetPlanners()
 		return nil
-	case user.EdgeChatrooms:
-		m.ResetChatrooms()
+	case user.EdgeOwnedChatrooms:
+		m.ResetOwnedChatrooms()
 		return nil
 	}
 	return fmt.Errorf("unknown User edge %s", name)

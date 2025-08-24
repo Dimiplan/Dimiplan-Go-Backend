@@ -103,19 +103,19 @@ func (_c *UserCreate) AddPlanners(v ...*Planner) *UserCreate {
 	return _c.AddPlannerIDs(ids...)
 }
 
-// AddChatroomIDs adds the "chatrooms" edge to the Chatroom entity by IDs.
-func (_c *UserCreate) AddChatroomIDs(ids ...int) *UserCreate {
-	_c.mutation.AddChatroomIDs(ids...)
+// AddOwnedChatroomIDs adds the "owned_chatrooms" edge to the Chatroom entity by IDs.
+func (_c *UserCreate) AddOwnedChatroomIDs(ids ...int) *UserCreate {
+	_c.mutation.AddOwnedChatroomIDs(ids...)
 	return _c
 }
 
-// AddChatrooms adds the "chatrooms" edges to the Chatroom entity.
-func (_c *UserCreate) AddChatrooms(v ...*Chatroom) *UserCreate {
+// AddOwnedChatrooms adds the "owned_chatrooms" edges to the Chatroom entity.
+func (_c *UserCreate) AddOwnedChatrooms(v ...*Chatroom) *UserCreate {
 	ids := make([]int, len(v))
 	for i := range v {
 		ids[i] = v[i].ID
 	}
-	return _c.AddChatroomIDs(ids...)
+	return _c.AddOwnedChatroomIDs(ids...)
 }
 
 // Mutation returns the UserMutation object of the builder.
@@ -277,12 +277,12 @@ func (_c *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
-	if nodes := _c.mutation.ChatroomsIDs(); len(nodes) > 0 {
+	if nodes := _c.mutation.OwnedChatroomsIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   user.ChatroomsTable,
-			Columns: []string{user.ChatroomsColumn},
+			Table:   user.OwnedChatroomsTable,
+			Columns: []string{user.OwnedChatroomsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(chatroom.FieldID, field.TypeInt),

@@ -107,19 +107,19 @@ func (_u *UserUpdate) AddPlanners(v ...*Planner) *UserUpdate {
 	return _u.AddPlannerIDs(ids...)
 }
 
-// AddChatroomIDs adds the "chatrooms" edge to the Chatroom entity by IDs.
-func (_u *UserUpdate) AddChatroomIDs(ids ...int) *UserUpdate {
-	_u.mutation.AddChatroomIDs(ids...)
+// AddOwnedChatroomIDs adds the "owned_chatrooms" edge to the Chatroom entity by IDs.
+func (_u *UserUpdate) AddOwnedChatroomIDs(ids ...int) *UserUpdate {
+	_u.mutation.AddOwnedChatroomIDs(ids...)
 	return _u
 }
 
-// AddChatrooms adds the "chatrooms" edges to the Chatroom entity.
-func (_u *UserUpdate) AddChatrooms(v ...*Chatroom) *UserUpdate {
+// AddOwnedChatrooms adds the "owned_chatrooms" edges to the Chatroom entity.
+func (_u *UserUpdate) AddOwnedChatrooms(v ...*Chatroom) *UserUpdate {
 	ids := make([]int, len(v))
 	for i := range v {
 		ids[i] = v[i].ID
 	}
-	return _u.AddChatroomIDs(ids...)
+	return _u.AddOwnedChatroomIDs(ids...)
 }
 
 // Mutation returns the UserMutation object of the builder.
@@ -148,25 +148,25 @@ func (_u *UserUpdate) RemovePlanners(v ...*Planner) *UserUpdate {
 	return _u.RemovePlannerIDs(ids...)
 }
 
-// ClearChatrooms clears all "chatrooms" edges to the Chatroom entity.
-func (_u *UserUpdate) ClearChatrooms() *UserUpdate {
-	_u.mutation.ClearChatrooms()
+// ClearOwnedChatrooms clears all "owned_chatrooms" edges to the Chatroom entity.
+func (_u *UserUpdate) ClearOwnedChatrooms() *UserUpdate {
+	_u.mutation.ClearOwnedChatrooms()
 	return _u
 }
 
-// RemoveChatroomIDs removes the "chatrooms" edge to Chatroom entities by IDs.
-func (_u *UserUpdate) RemoveChatroomIDs(ids ...int) *UserUpdate {
-	_u.mutation.RemoveChatroomIDs(ids...)
+// RemoveOwnedChatroomIDs removes the "owned_chatrooms" edge to Chatroom entities by IDs.
+func (_u *UserUpdate) RemoveOwnedChatroomIDs(ids ...int) *UserUpdate {
+	_u.mutation.RemoveOwnedChatroomIDs(ids...)
 	return _u
 }
 
-// RemoveChatrooms removes "chatrooms" edges to Chatroom entities.
-func (_u *UserUpdate) RemoveChatrooms(v ...*Chatroom) *UserUpdate {
+// RemoveOwnedChatrooms removes "owned_chatrooms" edges to Chatroom entities.
+func (_u *UserUpdate) RemoveOwnedChatrooms(v ...*Chatroom) *UserUpdate {
 	ids := make([]int, len(v))
 	for i := range v {
 		ids[i] = v[i].ID
 	}
-	return _u.RemoveChatroomIDs(ids...)
+	return _u.RemoveOwnedChatroomIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -292,12 +292,12 @@ func (_u *UserUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if _u.mutation.ChatroomsCleared() {
+	if _u.mutation.OwnedChatroomsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   user.ChatroomsTable,
-			Columns: []string{user.ChatroomsColumn},
+			Table:   user.OwnedChatroomsTable,
+			Columns: []string{user.OwnedChatroomsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(chatroom.FieldID, field.TypeInt),
@@ -305,12 +305,12 @@ func (_u *UserUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := _u.mutation.RemovedChatroomsIDs(); len(nodes) > 0 && !_u.mutation.ChatroomsCleared() {
+	if nodes := _u.mutation.RemovedOwnedChatroomsIDs(); len(nodes) > 0 && !_u.mutation.OwnedChatroomsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   user.ChatroomsTable,
-			Columns: []string{user.ChatroomsColumn},
+			Table:   user.OwnedChatroomsTable,
+			Columns: []string{user.OwnedChatroomsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(chatroom.FieldID, field.TypeInt),
@@ -321,12 +321,12 @@ func (_u *UserUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := _u.mutation.ChatroomsIDs(); len(nodes) > 0 {
+	if nodes := _u.mutation.OwnedChatroomsIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   user.ChatroomsTable,
-			Columns: []string{user.ChatroomsColumn},
+			Table:   user.OwnedChatroomsTable,
+			Columns: []string{user.OwnedChatroomsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(chatroom.FieldID, field.TypeInt),
@@ -434,19 +434,19 @@ func (_u *UserUpdateOne) AddPlanners(v ...*Planner) *UserUpdateOne {
 	return _u.AddPlannerIDs(ids...)
 }
 
-// AddChatroomIDs adds the "chatrooms" edge to the Chatroom entity by IDs.
-func (_u *UserUpdateOne) AddChatroomIDs(ids ...int) *UserUpdateOne {
-	_u.mutation.AddChatroomIDs(ids...)
+// AddOwnedChatroomIDs adds the "owned_chatrooms" edge to the Chatroom entity by IDs.
+func (_u *UserUpdateOne) AddOwnedChatroomIDs(ids ...int) *UserUpdateOne {
+	_u.mutation.AddOwnedChatroomIDs(ids...)
 	return _u
 }
 
-// AddChatrooms adds the "chatrooms" edges to the Chatroom entity.
-func (_u *UserUpdateOne) AddChatrooms(v ...*Chatroom) *UserUpdateOne {
+// AddOwnedChatrooms adds the "owned_chatrooms" edges to the Chatroom entity.
+func (_u *UserUpdateOne) AddOwnedChatrooms(v ...*Chatroom) *UserUpdateOne {
 	ids := make([]int, len(v))
 	for i := range v {
 		ids[i] = v[i].ID
 	}
-	return _u.AddChatroomIDs(ids...)
+	return _u.AddOwnedChatroomIDs(ids...)
 }
 
 // Mutation returns the UserMutation object of the builder.
@@ -475,25 +475,25 @@ func (_u *UserUpdateOne) RemovePlanners(v ...*Planner) *UserUpdateOne {
 	return _u.RemovePlannerIDs(ids...)
 }
 
-// ClearChatrooms clears all "chatrooms" edges to the Chatroom entity.
-func (_u *UserUpdateOne) ClearChatrooms() *UserUpdateOne {
-	_u.mutation.ClearChatrooms()
+// ClearOwnedChatrooms clears all "owned_chatrooms" edges to the Chatroom entity.
+func (_u *UserUpdateOne) ClearOwnedChatrooms() *UserUpdateOne {
+	_u.mutation.ClearOwnedChatrooms()
 	return _u
 }
 
-// RemoveChatroomIDs removes the "chatrooms" edge to Chatroom entities by IDs.
-func (_u *UserUpdateOne) RemoveChatroomIDs(ids ...int) *UserUpdateOne {
-	_u.mutation.RemoveChatroomIDs(ids...)
+// RemoveOwnedChatroomIDs removes the "owned_chatrooms" edge to Chatroom entities by IDs.
+func (_u *UserUpdateOne) RemoveOwnedChatroomIDs(ids ...int) *UserUpdateOne {
+	_u.mutation.RemoveOwnedChatroomIDs(ids...)
 	return _u
 }
 
-// RemoveChatrooms removes "chatrooms" edges to Chatroom entities.
-func (_u *UserUpdateOne) RemoveChatrooms(v ...*Chatroom) *UserUpdateOne {
+// RemoveOwnedChatrooms removes "owned_chatrooms" edges to Chatroom entities.
+func (_u *UserUpdateOne) RemoveOwnedChatrooms(v ...*Chatroom) *UserUpdateOne {
 	ids := make([]int, len(v))
 	for i := range v {
 		ids[i] = v[i].ID
 	}
-	return _u.RemoveChatroomIDs(ids...)
+	return _u.RemoveOwnedChatroomIDs(ids...)
 }
 
 // Where appends a list predicates to the UserUpdate builder.
@@ -649,12 +649,12 @@ func (_u *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if _u.mutation.ChatroomsCleared() {
+	if _u.mutation.OwnedChatroomsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   user.ChatroomsTable,
-			Columns: []string{user.ChatroomsColumn},
+			Table:   user.OwnedChatroomsTable,
+			Columns: []string{user.OwnedChatroomsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(chatroom.FieldID, field.TypeInt),
@@ -662,12 +662,12 @@ func (_u *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) {
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := _u.mutation.RemovedChatroomsIDs(); len(nodes) > 0 && !_u.mutation.ChatroomsCleared() {
+	if nodes := _u.mutation.RemovedOwnedChatroomsIDs(); len(nodes) > 0 && !_u.mutation.OwnedChatroomsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   user.ChatroomsTable,
-			Columns: []string{user.ChatroomsColumn},
+			Table:   user.OwnedChatroomsTable,
+			Columns: []string{user.OwnedChatroomsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(chatroom.FieldID, field.TypeInt),
@@ -678,12 +678,12 @@ func (_u *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) {
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := _u.mutation.ChatroomsIDs(); len(nodes) > 0 {
+	if nodes := _u.mutation.OwnedChatroomsIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   user.ChatroomsTable,
-			Columns: []string{user.ChatroomsColumn},
+			Table:   user.OwnedChatroomsTable,
+			Columns: []string{user.OwnedChatroomsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(chatroom.FieldID, field.TypeInt),

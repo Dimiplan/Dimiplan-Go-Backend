@@ -14,7 +14,7 @@ var (
 		{Name: "name", Type: field.TypeString},
 		{Name: "created_at", Type: field.TypeTime},
 		{Name: "updated_at", Type: field.TypeTime},
-		{Name: "user_chatrooms", Type: field.TypeString},
+		{Name: "user_owned_chatrooms", Type: field.TypeString},
 	}
 	// ChatroomsTable holds the schema information for the "chatrooms" table.
 	ChatroomsTable = &schema.Table{
@@ -23,16 +23,16 @@ var (
 		PrimaryKey: []*schema.Column{ChatroomsColumns[0]},
 		ForeignKeys: []*schema.ForeignKey{
 			{
-				Symbol:     "chatrooms_users_chatrooms",
+				Symbol:     "chatrooms_users_owned_chatrooms",
 				Columns:    []*schema.Column{ChatroomsColumns[4]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
-				OnDelete:   schema.Cascade,
+				OnDelete:   schema.NoAction,
 			},
 		},
 		Indexes: []*schema.Index{
 			{
-				Name:    "chatroom_user_chatrooms",
-				Unique:  true,
+				Name:    "chatroom_user_owned_chatrooms",
+				Unique:  false,
 				Columns: []*schema.Column{ChatroomsColumns[4]},
 			},
 			{
@@ -179,11 +179,6 @@ var (
 		Columns:    UsersColumns,
 		PrimaryKey: []*schema.Column{UsersColumns[0]},
 		Indexes: []*schema.Index{
-			{
-				Name:    "user_id",
-				Unique:  false,
-				Columns: []*schema.Column{UsersColumns[0]},
-			},
 			{
 				Name:    "user_name",
 				Unique:  false,

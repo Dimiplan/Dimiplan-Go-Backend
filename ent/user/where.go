@@ -458,21 +458,21 @@ func HasPlannersWith(preds ...predicate.Planner) predicate.User {
 	})
 }
 
-// HasChatrooms applies the HasEdge predicate on the "chatrooms" edge.
-func HasChatrooms() predicate.User {
+// HasOwnedChatrooms applies the HasEdge predicate on the "owned_chatrooms" edge.
+func HasOwnedChatrooms() predicate.User {
 	return predicate.User(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, ChatroomsTable, ChatroomsColumn),
+			sqlgraph.Edge(sqlgraph.O2M, false, OwnedChatroomsTable, OwnedChatroomsColumn),
 		)
 		sqlgraph.HasNeighbors(s, step)
 	})
 }
 
-// HasChatroomsWith applies the HasEdge predicate on the "chatrooms" edge with a given conditions (other predicates).
-func HasChatroomsWith(preds ...predicate.Chatroom) predicate.User {
+// HasOwnedChatroomsWith applies the HasEdge predicate on the "owned_chatrooms" edge with a given conditions (other predicates).
+func HasOwnedChatroomsWith(preds ...predicate.Chatroom) predicate.User {
 	return predicate.User(func(s *sql.Selector) {
-		step := newChatroomsStep()
+		step := newOwnedChatroomsStep()
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {
 				p(s)

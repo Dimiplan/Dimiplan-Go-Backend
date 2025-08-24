@@ -82,7 +82,7 @@ func (h *AIHandler) AIChat(rawRequest interface{}, c fiber.Ctx) (interface{}, er
 			response.Title = h.generateFallbackTitle(request.Prompt)
 		}
 
-		room, err = h.db.Chatroom.Create().SetUser(user).SetName(response.Title).Save(c)
+		room, err = h.db.Chatroom.Create().SetOwner(user).SetName(response.Title).Save(c)
 		if err != nil {
 			return nil, err
 		}

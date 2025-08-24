@@ -16,8 +16,8 @@ func NewChatroomHandler(db *ent.Client) *ChatroomHandler {
 }
 
 func (h *ChatroomHandler) ListChatrooms(request interface{}, c fiber.Ctx) (interface{}, error) {
-	user := c.Locals("user").(*ent.User)
-	chatrooms, err := h.db.User.QueryChatrooms(user).All(c)
+	owner := c.Locals("user").(*ent.User)
+	chatrooms, err := h.db.User.QueryOwnedChatrooms(owner).All(c)
 	if err != nil {
 		return nil, err
 	}
@@ -27,7 +27,7 @@ func (h *ChatroomHandler) ListChatrooms(request interface{}, c fiber.Ctx) (inter
 func (h *ChatroomHandler) CreateChatroom(rawRequest interface{}, c fiber.Ctx) (interface{}, error) {
 	user := c.Locals("user").(*ent.User)
 	request := rawRequest.(models.CreateChatroomRequest)
-	chatroom, err := h.db.Chatroom.Create().SetUser(user).SetName(request.Name).Save(c)
+	chatroom, err := h.db.Chatroom.Create().SetOwner(user).SetName(request.Name).Save(c)
 	if err != nil {
 		return nil, err
 	}

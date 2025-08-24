@@ -10,12 +10,12 @@ import (
 
 func QueryChatroomMiddleware(db *ent.Client) fiber.Handler {
 	return func(c fiber.Ctx) error {
-		user := c.Locals("user").(*ent.User)
+		owner := c.Locals("user").(*ent.User)
 		chatroomID, err := strconv.Atoi(c.Params("id"))
 		if err != nil {
 			return fiber.ErrBadRequest
 		}
-		chatroom, err := user.QueryChatrooms().Where(chatroom.ID(chatroomID)).Only(c)
+		chatroom, err := owner.QueryOwnedChatrooms().Where(chatroom.ID(chatroomID)).Only(c)
 		if err != nil {
 			if chatroom == nil {
 				return fiber.ErrBadRequest

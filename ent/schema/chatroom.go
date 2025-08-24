@@ -30,14 +30,18 @@ func (Chatroom) Fields() []ent.Field {
 // Edges of the Chatroom.
 func (Chatroom) Edges() []ent.Edge {
 	return []ent.Edge{
-		edge.From("user", User.Type).Ref("chatrooms").Unique().Required(),
+		edge.From("owner", User.Type).
+			Ref("owned_chatrooms").
+			Unique().
+			Required().
+			Annotations(entsql.OnDelete(entsql.Cascade)),
 		edge.To("messages", Message.Type).Annotations(entsql.OnDelete(entsql.Cascade)),
 	}
 }
 
 func (Chatroom) Indexes() []ent.Index {
 	return []ent.Index{
-		index.Edges("user"),
+		index.Edges("owner"),
 		index.Fields("name"),
 	}
 }

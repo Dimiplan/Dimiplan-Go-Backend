@@ -40,8 +40,8 @@ type User struct {
 type UserEdges struct {
 	// Planners holds the value of the planners edge.
 	Planners []*Planner `json:"planners,omitempty"`
-	// Chatrooms holds the value of the chatrooms edge.
-	Chatrooms []*Chatroom `json:"chatrooms,omitempty"`
+	// OwnedChatrooms holds the value of the owned_chatrooms edge.
+	OwnedChatrooms []*Chatroom `json:"owned_chatrooms,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
 	loadedTypes [2]bool
@@ -56,13 +56,13 @@ func (e UserEdges) PlannersOrErr() ([]*Planner, error) {
 	return nil, &NotLoadedError{edge: "planners"}
 }
 
-// ChatroomsOrErr returns the Chatrooms value or an error if the edge
+// OwnedChatroomsOrErr returns the OwnedChatrooms value or an error if the edge
 // was not loaded in eager-loading.
-func (e UserEdges) ChatroomsOrErr() ([]*Chatroom, error) {
+func (e UserEdges) OwnedChatroomsOrErr() ([]*Chatroom, error) {
 	if e.loadedTypes[1] {
-		return e.Chatrooms, nil
+		return e.OwnedChatrooms, nil
 	}
-	return nil, &NotLoadedError{edge: "chatrooms"}
+	return nil, &NotLoadedError{edge: "owned_chatrooms"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -149,9 +149,9 @@ func (_m *User) QueryPlanners() *PlannerQuery {
 	return NewUserClient(_m.config).QueryPlanners(_m)
 }
 
-// QueryChatrooms queries the "chatrooms" edge of the User entity.
-func (_m *User) QueryChatrooms() *ChatroomQuery {
-	return NewUserClient(_m.config).QueryChatrooms(_m)
+// QueryOwnedChatrooms queries the "owned_chatrooms" edge of the User entity.
+func (_m *User) QueryOwnedChatrooms() *ChatroomQuery {
+	return NewUserClient(_m.config).QueryOwnedChatrooms(_m)
 }
 
 // Update returns a builder for updating this User.

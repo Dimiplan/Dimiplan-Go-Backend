@@ -28,8 +28,8 @@ const (
 	FieldUpdatedAt = "updated_at"
 	// EdgePlanners holds the string denoting the planners edge name in mutations.
 	EdgePlanners = "planners"
-	// EdgeChatrooms holds the string denoting the chatrooms edge name in mutations.
-	EdgeChatrooms = "chatrooms"
+	// EdgeOwnedChatrooms holds the string denoting the owned_chatrooms edge name in mutations.
+	EdgeOwnedChatrooms = "owned_chatrooms"
 	// Table holds the table name of the user in the database.
 	Table = "users"
 	// PlannersTable is the table that holds the planners relation/edge.
@@ -39,13 +39,13 @@ const (
 	PlannersInverseTable = "planners"
 	// PlannersColumn is the table column denoting the planners relation/edge.
 	PlannersColumn = "user_planners"
-	// ChatroomsTable is the table that holds the chatrooms relation/edge.
-	ChatroomsTable = "chatrooms"
-	// ChatroomsInverseTable is the table name for the Chatroom entity.
+	// OwnedChatroomsTable is the table that holds the owned_chatrooms relation/edge.
+	OwnedChatroomsTable = "chatrooms"
+	// OwnedChatroomsInverseTable is the table name for the Chatroom entity.
 	// It exists in this package in order to avoid circular dependency with the "chatroom" package.
-	ChatroomsInverseTable = "chatrooms"
-	// ChatroomsColumn is the table column denoting the chatrooms relation/edge.
-	ChatroomsColumn = "user_chatrooms"
+	OwnedChatroomsInverseTable = "chatrooms"
+	// OwnedChatroomsColumn is the table column denoting the owned_chatrooms relation/edge.
+	OwnedChatroomsColumn = "user_owned_chatrooms"
 )
 
 // Columns holds all SQL columns for user fields.
@@ -138,17 +138,17 @@ func ByPlanners(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 	}
 }
 
-// ByChatroomsCount orders the results by chatrooms count.
-func ByChatroomsCount(opts ...sql.OrderTermOption) OrderOption {
+// ByOwnedChatroomsCount orders the results by owned_chatrooms count.
+func ByOwnedChatroomsCount(opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborsCount(s, newChatroomsStep(), opts...)
+		sqlgraph.OrderByNeighborsCount(s, newOwnedChatroomsStep(), opts...)
 	}
 }
 
-// ByChatrooms orders the results by chatrooms terms.
-func ByChatrooms(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+// ByOwnedChatrooms orders the results by owned_chatrooms terms.
+func ByOwnedChatrooms(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborTerms(s, newChatroomsStep(), append([]sql.OrderTerm{term}, terms...)...)
+		sqlgraph.OrderByNeighborTerms(s, newOwnedChatroomsStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
 }
 func newPlannersStep() *sqlgraph.Step {
@@ -158,10 +158,10 @@ func newPlannersStep() *sqlgraph.Step {
 		sqlgraph.Edge(sqlgraph.O2M, false, PlannersTable, PlannersColumn),
 	)
 }
-func newChatroomsStep() *sqlgraph.Step {
+func newOwnedChatroomsStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
-		sqlgraph.To(ChatroomsInverseTable, FieldID),
-		sqlgraph.Edge(sqlgraph.O2M, false, ChatroomsTable, ChatroomsColumn),
+		sqlgraph.To(OwnedChatroomsInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, OwnedChatroomsTable, OwnedChatroomsColumn),
 	)
 }

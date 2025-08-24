@@ -21,12 +21,12 @@ import (
 // UserQuery is the builder for querying User entities.
 type UserQuery struct {
 	config
-	ctx           *QueryContext
-	order         []user.OrderOption
-	inters        []Interceptor
-	predicates    []predicate.User
-	withPlanners  *PlannerQuery
-	withChatrooms *ChatroomQuery
+	ctx                *QueryContext
+	order              []user.OrderOption
+	inters             []Interceptor
+	predicates         []predicate.User
+	withPlanners       *PlannerQuery
+	withOwnedChatrooms *ChatroomQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -85,8 +85,8 @@ func (_q *UserQuery) QueryPlanners() *PlannerQuery {
 	return query
 }
 
-// QueryChatrooms chains the current query on the "chatrooms" edge.
-func (_q *UserQuery) QueryChatrooms() *ChatroomQuery {
+// QueryOwnedChatrooms chains the current query on the "owned_chatrooms" edge.
+func (_q *UserQuery) QueryOwnedChatrooms() *ChatroomQuery {
 	query := (&ChatroomClient{config: _q.config}).Query()
 	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
 		if err := _q.prepareQuery(ctx); err != nil {
@@ -99,7 +99,7 @@ func (_q *UserQuery) QueryChatrooms() *ChatroomQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(user.Table, user.FieldID, selector),
 			sqlgraph.To(chatroom.Table, chatroom.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, user.ChatroomsTable, user.ChatroomsColumn),
+			sqlgraph.Edge(sqlgraph.O2M, false, user.OwnedChatroomsTable, user.OwnedChatroomsColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
 		return fromU, nil
@@ -294,13 +294,13 @@ func (_q *UserQuery) Clone() *UserQuery {
 		return nil
 	}
 	return &UserQuery{
-		config:        _q.config,
-		ctx:           _q.ctx.Clone(),
-		order:         append([]user.OrderOption{}, _q.order...),
-		inters:        append([]Interceptor{}, _q.inters...),
-		predicates:    append([]predicate.User{}, _q.predicates...),
-		withPlanners:  _q.withPlanners.Clone(),
-		withChatrooms: _q.withChatrooms.Clone(),
+		config:             _q.config,
+		ctx:                _q.ctx.Clone(),
+		order:              append([]user.OrderOption{}, _q.order...),
+		inters:             append([]Interceptor{}, _q.inters...),
+		predicates:         append([]predicate.User{}, _q.predicates...),
+		withPlanners:       _q.withPlanners.Clone(),
+		withOwnedChatrooms: _q.withOwnedChatrooms.Clone(),
 		// clone intermediate query.
 		sql:  _q.sql.Clone(),
 		path: _q.path,
@@ -318,14 +318,14 @@ func (_q *UserQuery) WithPlanners(opts ...func(*PlannerQuery)) *UserQuery {
 	return _q
 }
 
-// WithChatrooms tells the query-builder to eager-load the nodes that are connected to
-// the "chatrooms" edge. The optional arguments are used to configure the query builder of the edge.
-func (_q *UserQuery) WithChatrooms(opts ...func(*ChatroomQuery)) *UserQuery {
+// WithOwnedChatrooms tells the query-builder to eager-load the nodes that are connected to
+// the "owned_chatrooms" edge. The optional arguments are used to configure the query builder of the edge.
+func (_q *UserQuery) WithOwnedChatrooms(opts ...func(*ChatroomQuery)) *UserQuery {
 	query := (&ChatroomClient{config: _q.config}).Query()
 	for _, opt := range opts {
 		opt(query)
 	}
-	_q.withChatrooms = query
+	_q.withOwnedChatrooms = query
 	return _q
 }
 
@@ -409,7 +409,7 @@ func (_q *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 		_spec       = _q.querySpec()
 		loadedTypes = [2]bool{
 			_q.withPlanners != nil,
-			_q.withChatrooms != nil,
+			_q.withOwnedChatrooms != nil,
 		}
 	)
 	_spec.ScanValues = func(columns []string) ([]any, error) {
@@ -437,10 +437,10 @@ func (_q *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 			return nil, err
 		}
 	}
-	if query := _q.withChatrooms; query != nil {
-		if err := _q.loadChatrooms(ctx, query, nodes,
-			func(n *User) { n.Edges.Chatrooms = []*Chatroom{} },
-			func(n *User, e *Chatroom) { n.Edges.Chatrooms = append(n.Edges.Chatrooms, e) }); err != nil {
+	if query := _q.withOwnedChatrooms; query != nil {
+		if err := _q.loadOwnedChatrooms(ctx, query, nodes,
+			func(n *User) { n.Edges.OwnedChatrooms = []*Chatroom{} },
+			func(n *User, e *Chatroom) { n.Edges.OwnedChatrooms = append(n.Edges.OwnedChatrooms, e) }); err != nil {
 			return nil, err
 		}
 	}
@@ -478,7 +478,7 @@ func (_q *UserQuery) loadPlanners(ctx context.Context, query *PlannerQuery, node
 	}
 	return nil
 }
-func (_q *UserQuery) loadChatrooms(ctx context.Context, query *ChatroomQuery, nodes []*User, init func(*User), assign func(*User, *Chatroom)) error {
+func (_q *UserQuery) loadOwnedChatrooms(ctx context.Context, query *ChatroomQuery, nodes []*User, init func(*User), assign func(*User, *Chatroom)) error {
 	fks := make([]driver.Value, 0, len(nodes))
 	nodeids := make(map[string]*User)
 	for i := range nodes {
@@ -490,20 +490,20 @@ func (_q *UserQuery) loadChatrooms(ctx context.Context, query *ChatroomQuery, no
 	}
 	query.withFKs = true
 	query.Where(predicate.Chatroom(func(s *sql.Selector) {
-		s.Where(sql.InValues(s.C(user.ChatroomsColumn), fks...))
+		s.Where(sql.InValues(s.C(user.OwnedChatroomsColumn), fks...))
 	}))
 	neighbors, err := query.All(ctx)
 	if err != nil {
 		return err
 	}
 	for _, n := range neighbors {
-		fk := n.user_chatrooms
+		fk := n.user_owned_chatrooms
 		if fk == nil {
-			return fmt.Errorf(`foreign-key "user_chatrooms" is nil for node %v`, n.ID)
+			return fmt.Errorf(`foreign-key "user_owned_chatrooms" is nil for node %v`, n.ID)
 		}
 		node, ok := nodeids[*fk]
 		if !ok {
-			return fmt.Errorf(`unexpected referenced foreign-key "user_chatrooms" returned %v for node %v`, *fk, n.ID)
+			return fmt.Errorf(`unexpected referenced foreign-key "user_owned_chatrooms" returned %v for node %v`, *fk, n.ID)
 		}
 		assign(node, n)
 	}

@@ -39,10 +39,11 @@ func Setup(app *fiber.App, cfg *config.Config, db *ent.Client) *fiber.App {
 		}, ent.User{}, 204)
 
 	api.Use("/ai/chatroom/:id", middleware.QueryChatroomMiddleware(db))
+	api.Get("/ai", aiHandler.StreamAIChat)
 	apiWrapper.Route("/ai").
 		Post(aiHandler.AIChat, func() interface{} {
 			return new(models.AIChatRequest)
-		}, models.AIChatResponse{}, 200).
+		}, nil, 200).
 		Route("/chatroom").
 		Get(chatroomHandler.ListChatrooms, nil, models.ListChatroomsResponse{}, 200).
 		Post(chatroomHandler.CreateChatroom, func() interface{} {

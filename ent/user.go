@@ -30,6 +30,8 @@ type User struct {
 	CreatedAt time.Time `json:"createdAt"`
 	// UpdatedAt holds the value of the "updatedAt" field.
 	UpdatedAt time.Time `json:"updatedAt"`
+	// ProcessingData holds the value of the "processingData" field.
+	ProcessingData *string `json:"processingData"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the UserQuery when eager-loading is set.
 	Edges        UserEdges `json:"-"`
@@ -70,7 +72,7 @@ func (*User) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case user.FieldID, user.FieldName, user.FieldEmail, user.FieldProfileURL, user.FieldPlan:
+		case user.FieldID, user.FieldName, user.FieldEmail, user.FieldProfileURL, user.FieldPlan, user.FieldProcessingData:
 			values[i] = new(sql.NullString)
 		case user.FieldCreatedAt, user.FieldUpdatedAt:
 			values[i] = new(sql.NullTime)
@@ -130,6 +132,13 @@ func (_m *User) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field updatedAt", values[i])
 			} else if value.Valid {
 				_m.UpdatedAt = value.Time
+			}
+		case user.FieldProcessingData:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field processingData", values[i])
+			} else if value.Valid {
+				_m.ProcessingData = new(string)
+				*_m.ProcessingData = value.String
 			}
 		default:
 			_m.selectValues.Set(columns[i], values[i])
@@ -194,6 +203,11 @@ func (_m *User) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("updatedAt=")
 	builder.WriteString(_m.UpdatedAt.Format(time.ANSIC))
+	builder.WriteString(", ")
+	if v := _m.ProcessingData; v != nil {
+		builder.WriteString("processingData=")
+		builder.WriteString(*v)
+	}
 	builder.WriteByte(')')
 	return builder.String()
 }

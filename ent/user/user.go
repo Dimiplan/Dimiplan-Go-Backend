@@ -26,6 +26,8 @@ const (
 	FieldCreatedAt = "created_at"
 	// FieldUpdatedAt holds the string denoting the updatedat field in the database.
 	FieldUpdatedAt = "updated_at"
+	// FieldProcessingData holds the string denoting the processingdata field in the database.
+	FieldProcessingData = "processing_data"
 	// EdgePlanners holds the string denoting the planners edge name in mutations.
 	EdgePlanners = "planners"
 	// EdgeOwnedChatrooms holds the string denoting the owned_chatrooms edge name in mutations.
@@ -57,6 +59,7 @@ var Columns = []string{
 	FieldPlan,
 	FieldCreatedAt,
 	FieldUpdatedAt,
+	FieldProcessingData,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -122,6 +125,11 @@ func ByCreatedAt(opts ...sql.OrderTermOption) OrderOption {
 // ByUpdatedAt orders the results by the updatedAt field.
 func ByUpdatedAt(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldUpdatedAt, opts...).ToFunc()
+}
+
+// ByProcessingData orders the results by the processingData field.
+func ByProcessingData(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldProcessingData, opts...).ToFunc()
 }
 
 // ByPlannersCount orders the results by planners count.

@@ -5,7 +5,7 @@ go 1.25.0
 require (
 	entgo.io/ent v0.14.5
 	github.com/bytedance/sonic v1.14.0
-	github.com/gofiber/fiber/v3 v3.0.0-beta.5.0.20250819063757-6984b5d478ff
+	github.com/gofiber/fiber/v3 v3.0.0-rc.1
 	github.com/gofiber/storage/postgres/v3 v3.3.0
 	github.com/joho/godotenv v1.5.1
 	github.com/lib/pq v1.10.9

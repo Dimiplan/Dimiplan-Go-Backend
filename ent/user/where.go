@@ -95,6 +95,11 @@ func UpdatedAt(v time.Time) predicate.User {
 	return predicate.User(sql.FieldEQ(FieldUpdatedAt, v))
 }
 
+// ProcessingData applies equality check predicate on the "processingData" field. It's identical to ProcessingDataEQ.
+func ProcessingData(v string) predicate.User {
+	return predicate.User(sql.FieldEQ(FieldProcessingData, v))
+}
+
 // NameEQ applies the EQ predicate on the "name" field.
 func NameEQ(v string) predicate.User {
 	return predicate.User(sql.FieldEQ(FieldName, v))
@@ -433,6 +438,81 @@ func UpdatedAtLT(v time.Time) predicate.User {
 // UpdatedAtLTE applies the LTE predicate on the "updatedAt" field.
 func UpdatedAtLTE(v time.Time) predicate.User {
 	return predicate.User(sql.FieldLTE(FieldUpdatedAt, v))
+}
+
+// ProcessingDataEQ applies the EQ predicate on the "processingData" field.
+func ProcessingDataEQ(v string) predicate.User {
+	return predicate.User(sql.FieldEQ(FieldProcessingData, v))
+}
+
+// ProcessingDataNEQ applies the NEQ predicate on the "processingData" field.
+func ProcessingDataNEQ(v string) predicate.User {
+	return predicate.User(sql.FieldNEQ(FieldProcessingData, v))
+}
+
+// ProcessingDataIn applies the In predicate on the "processingData" field.
+func ProcessingDataIn(vs ...string) predicate.User {
+	return predicate.User(sql.FieldIn(FieldProcessingData, vs...))
+}
+
+// ProcessingDataNotIn applies the NotIn predicate on the "processingData" field.
+func ProcessingDataNotIn(vs ...string) predicate.User {
+	return predicate.User(sql.FieldNotIn(FieldProcessingData, vs...))
+}
+
+// ProcessingDataGT applies the GT predicate on the "processingData" field.
+func ProcessingDataGT(v string) predicate.User {
+	return predicate.User(sql.FieldGT(FieldProcessingData, v))
+}
+
+// ProcessingDataGTE applies the GTE predicate on the "processingData" field.
+func ProcessingDataGTE(v string) predicate.User {
+	return predicate.User(sql.FieldGTE(FieldProcessingData, v))
+}
+
+// ProcessingDataLT applies the LT predicate on the "processingData" field.
+func ProcessingDataLT(v string) predicate.User {
+	return predicate.User(sql.FieldLT(FieldProcessingData, v))
+}
+
+// ProcessingDataLTE applies the LTE predicate on the "processingData" field.
+func ProcessingDataLTE(v string) predicate.User {
+	return predicate.User(sql.FieldLTE(FieldProcessingData, v))
+}
+
+// ProcessingDataContains applies the Contains predicate on the "processingData" field.
+func ProcessingDataContains(v string) predicate.User {
+	return predicate.User(sql.FieldContains(FieldProcessingData, v))
+}
+
+// ProcessingDataHasPrefix applies the HasPrefix predicate on the "processingData" field.
+func ProcessingDataHasPrefix(v string) predicate.User {
+	return predicate.User(sql.FieldHasPrefix(FieldProcessingData, v))
+}
+
+// ProcessingDataHasSuffix applies the HasSuffix predicate on the "processingData" field.
+func ProcessingDataHasSuffix(v string) predicate.User {
+	return predicate.User(sql.FieldHasSuffix(FieldProcessingData, v))
+}
+
+// ProcessingDataIsNil applies the IsNil predicate on the "processingData" field.
+func ProcessingDataIsNil() predicate.User {
+	return predicate.User(sql.FieldIsNull(FieldProcessingData))
+}
+
+// ProcessingDataNotNil applies the NotNil predicate on the "processingData" field.
+func ProcessingDataNotNil() predicate.User {
+	return predicate.User(sql.FieldNotNull(FieldProcessingData))
+}
+
+// ProcessingDataEqualFold applies the EqualFold predicate on the "processingData" field.
+func ProcessingDataEqualFold(v string) predicate.User {
+	return predicate.User(sql.FieldEqualFold(FieldProcessingData, v))
+}
+
+// ProcessingDataContainsFold applies the ContainsFold predicate on the "processingData" field.
+func ProcessingDataContainsFold(v string) predicate.User {
+	return predicate.User(sql.FieldContainsFold(FieldProcessingData, v))
 }
 
 // HasPlanners applies the HasEdge predicate on the "planners" edge.

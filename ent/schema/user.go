@@ -28,6 +28,7 @@ func (User) Fields() []ent.Field {
 		field.Time("updatedAt").
 			Default(time.Now).
 			UpdateDefault(time.Now),
+		field.String("processingData").Optional().Nillable(),
 	}
 }
 

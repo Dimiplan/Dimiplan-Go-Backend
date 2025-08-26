@@ -1,17 +1,15 @@
 package ai
 
 import (
-	"slices"
+	"bufio"
+	"fmt"
+	"log"
 
 	"github.com/gofiber/fiber/v3"
 	"github.com/openai/openai-go/v2"
 )
 
-func (h *AIHelper) GenerateMessage(c fiber.Ctx, model string, prompt string, data openai.ChatCompletionMessageParamUnion) (string, error) {
-	if !slices.Contains(h.cfg.AIModels, model) {
-		return "", fiber.NewError(fiber.StatusBadRequest, "Invalid model")
-	}
-
+func (h *AIHelper) GenerateMessage(w *bufio.Writer, c fiber.Ctx, model string, prompt string, data openai.ChatCompletionMessageParamUnion) string {
 	var messages []openai.ChatCompletionMessageParamUnion
 	if data.OfAssistant == nil {
 		messages = []openai.ChatCompletionMessageParamUnion{
@@ -28,17 +26,32 @@ func (h *AIHelper) GenerateMessage(c fiber.Ctx, model string, prompt string, dat
 		}
 	}
 
-	response, err := h.cfg.AIClient.Chat.Completions.New(c, openai.ChatCompletionNewParams{
+	stream := h.cfg.AIClient.Chat.Completions.NewStreaming(c, openai.ChatCompletionNewParams{
 		Messages: messages,
 		Model:    model,
 	})
-	if err != nil {
-		return "", err
-	}
 
-	if len(response.Choices) == 0 || response.Choices[0].Message.Content == "" {
-		return "", fiber.NewError(fiber.StatusInternalServerError, "AI response is empty")
-	}
+	acc := openai.ChatCompletionAccumulator{}
 
-	return response.Choices[0].Message.Content, nil
+	for stream.Next() {
+		chunk := stream.Current()
+		acc.AddChunk(chunk)
+		if _, ok := acc.JustFinishedContent(); ok {
+			fmt.Fprintln(w)
+			fmt.Fprintln(w, "finish-event: Content stream finished")
+			if err := w.Flush(); err != nil {
+				log.Print("Client disconnected!")
+			}
+			break
+		}
+		if len(chunk.Choices) > 0 && chunk.Choices[0].Delta.Content != "" {
+			fmt.Fprint(w, chunk.Choices[0].Delta.Content)
+			if err := w.Flush(); err != nil {
+				log.Print("Client disconnected!")
+				stream.Close()
+				return ""
+			}
+		}
+	}
+	return acc.Choices[0].Message.Content
 }

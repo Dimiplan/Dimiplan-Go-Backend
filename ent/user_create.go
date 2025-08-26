@@ -82,6 +82,20 @@ func (_c *UserCreate) SetNillableUpdatedAt(v *time.Time) *UserCreate {
 	return _c
 }
 
+// SetProcessingData sets the "processingData" field.
+func (_c *UserCreate) SetProcessingData(v string) *UserCreate {
+	_c.mutation.SetProcessingData(v)
+	return _c
+}
+
+// SetNillableProcessingData sets the "processingData" field if the given value is not nil.
+func (_c *UserCreate) SetNillableProcessingData(v *string) *UserCreate {
+	if v != nil {
+		_c.SetProcessingData(*v)
+	}
+	return _c
+}
+
 // SetID sets the "id" field.
 func (_c *UserCreate) SetID(v string) *UserCreate {
 	_c.mutation.SetID(v)
@@ -260,6 +274,10 @@ func (_c *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 	if value, ok := _c.mutation.UpdatedAt(); ok {
 		_spec.SetField(user.FieldUpdatedAt, field.TypeTime, value)
 		_node.UpdatedAt = value
+	}
+	if value, ok := _c.mutation.ProcessingData(); ok {
+		_spec.SetField(user.FieldProcessingData, field.TypeString, value)
+		_node.ProcessingData = &value
 	}
 	if nodes := _c.mutation.PlannersIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{

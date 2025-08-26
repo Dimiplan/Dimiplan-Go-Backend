@@ -92,6 +92,26 @@ func (_u *UserUpdate) SetUpdatedAt(v time.Time) *UserUpdate {
 	return _u
 }
 
+// SetProcessingData sets the "processingData" field.
+func (_u *UserUpdate) SetProcessingData(v string) *UserUpdate {
+	_u.mutation.SetProcessingData(v)
+	return _u
+}
+
+// SetNillableProcessingData sets the "processingData" field if the given value is not nil.
+func (_u *UserUpdate) SetNillableProcessingData(v *string) *UserUpdate {
+	if v != nil {
+		_u.SetProcessingData(*v)
+	}
+	return _u
+}
+
+// ClearProcessingData clears the value of the "processingData" field.
+func (_u *UserUpdate) ClearProcessingData() *UserUpdate {
+	_u.mutation.ClearProcessingData()
+	return _u
+}
+
 // AddPlannerIDs adds the "planners" edge to the Planner entity by IDs.
 func (_u *UserUpdate) AddPlannerIDs(ids ...int) *UserUpdate {
 	_u.mutation.AddPlannerIDs(ids...)
@@ -246,6 +266,12 @@ func (_u *UserUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	}
 	if value, ok := _u.mutation.UpdatedAt(); ok {
 		_spec.SetField(user.FieldUpdatedAt, field.TypeTime, value)
+	}
+	if value, ok := _u.mutation.ProcessingData(); ok {
+		_spec.SetField(user.FieldProcessingData, field.TypeString, value)
+	}
+	if _u.mutation.ProcessingDataCleared() {
+		_spec.ClearField(user.FieldProcessingData, field.TypeString)
 	}
 	if _u.mutation.PlannersCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -416,6 +442,26 @@ func (_u *UserUpdateOne) SetNillablePlan(v *string) *UserUpdateOne {
 // SetUpdatedAt sets the "updatedAt" field.
 func (_u *UserUpdateOne) SetUpdatedAt(v time.Time) *UserUpdateOne {
 	_u.mutation.SetUpdatedAt(v)
+	return _u
+}
+
+// SetProcessingData sets the "processingData" field.
+func (_u *UserUpdateOne) SetProcessingData(v string) *UserUpdateOne {
+	_u.mutation.SetProcessingData(v)
+	return _u
+}
+
+// SetNillableProcessingData sets the "processingData" field if the given value is not nil.
+func (_u *UserUpdateOne) SetNillableProcessingData(v *string) *UserUpdateOne {
+	if v != nil {
+		_u.SetProcessingData(*v)
+	}
+	return _u
+}
+
+// ClearProcessingData clears the value of the "processingData" field.
+func (_u *UserUpdateOne) ClearProcessingData() *UserUpdateOne {
+	_u.mutation.ClearProcessingData()
 	return _u
 }
 
@@ -603,6 +649,12 @@ func (_u *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) {
 	}
 	if value, ok := _u.mutation.UpdatedAt(); ok {
 		_spec.SetField(user.FieldUpdatedAt, field.TypeTime, value)
+	}
+	if value, ok := _u.mutation.ProcessingData(); ok {
+		_spec.SetField(user.FieldProcessingData, field.TypeString, value)
+	}
+	if _u.mutation.ProcessingDataCleared() {
+		_spec.ClearField(user.FieldProcessingData, field.TypeString)
 	}
 	if _u.mutation.PlannersCleared() {
 		edge := &sqlgraph.EdgeSpec{

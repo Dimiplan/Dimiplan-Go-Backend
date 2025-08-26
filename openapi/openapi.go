@@ -1,7 +1,6 @@
 package openapi
 
 import (
-	"reflect"
 	"regexp"
 
 	"github.com/gofiber/fiber/v3"
@@ -17,34 +16,6 @@ type Wrapper struct {
 type Register struct {
 	wrapper *Wrapper
 	path    string
-}
-
-func HasBody(request interface{}) bool {
-	if request == nil {
-		return false
-	}
-
-	requestType := reflect.TypeOf(request)
-	if requestType == nil {
-		return false
-	}
-
-	if requestType.Kind() == reflect.Pointer {
-		requestType = requestType.Elem()
-	}
-
-	if requestType.Kind() != reflect.Struct {
-		return false
-	}
-
-	for i := 0; i < requestType.NumField(); i++ {
-		field := requestType.Field(i)
-		tag := field.Tag.Get("json")
-		if tag != "" {
-			return true
-		}
-	}
-	return false
 }
 
 func NewWrapper(router fiber.Router) *Wrapper {
@@ -93,11 +64,7 @@ func (r *Register) Get(handler func(request interface{}, c fiber.Ctx) (interface
 		r.wrapper.reflector.AddOperation(op)
 	}
 	r.wrapper.router.Get(r.path, func(c fiber.Ctx) error {
-		var request interface{}
-		if requestFactory != nil {
-			request = requestFactory()
-		}
-		value, err := handler(request, c)
+		value, err := handler(nil, c)
 		if err != nil {
 			return err
 		}
@@ -129,9 +96,6 @@ func (r *Register) Post(handler func(request interface{}, c fiber.Ctx) (interfac
 		var request interface{}
 		if requestFactory != nil {
 			request = requestFactory()
-			if !HasBody(&request) {
-				request = nil
-			}
 			if request != nil {
 				if err := c.Bind().Body(request); err != nil {
 					return fiber.NewError(fiber.StatusBadRequest, err.Error())
@@ -170,9 +134,6 @@ func (r *Register) Patch(handler func(request interface{}, c fiber.Ctx) (interfa
 		var request interface{}
 		if requestFactory != nil {
 			request = requestFactory()
-			if !HasBody(&request) {
-				request = nil
-			}
 			if request != nil {
 				if err := c.Bind().Body(request); err != nil {
 					return fiber.NewError(fiber.StatusBadRequest, err.Error())
@@ -208,19 +169,7 @@ func (r *Register) Delete(handler func(request interface{}, c fiber.Ctx) (interf
 		r.wrapper.reflector.AddOperation(op)
 	}
 	r.wrapper.router.Delete(r.path, func(c fiber.Ctx) error {
-		var request interface{}
-		if requestFactory != nil {
-			request = requestFactory()
-			if !HasBody(&request) {
-				request = nil
-			}
-			if request != nil {
-				if err := c.Bind().Body(request); err != nil {
-					return fiber.NewError(fiber.StatusBadRequest, err.Error())
-				}
-			}
-		}
-		value, err := handler(request, c)
+		value, err := handler(nil, c)
 		if err != nil {
 			return err
 		}

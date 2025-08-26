@@ -49,7 +49,7 @@ func (h *AIHandler) AIChat(rawRequest interface{}, c fiber.Ctx) (interface{}, er
 
 func (h *AIHandler) StreamAIChat(c fiber.Ctx) error {
 	user := c.Locals("user").(*ent.User)
-	if user.ProcessingData != nil {
+	if user.ProcessingData == nil {
 		return fiber.NewError(fiber.StatusNotAcceptable, "no data")
 	}
 	var request models.AIChatRequest

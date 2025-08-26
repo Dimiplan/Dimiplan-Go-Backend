@@ -13,10 +13,10 @@ import (
 	"github.com/gofiber/fiber/v3/middleware/logger"
 	"github.com/gofiber/fiber/v3/middleware/session"
 	"github.com/gofiber/fiber/v3/middleware/static"
-	"github.com/gofiber/storage/redis/v3"
+	"github.com/gofiber/storage/postgres/v3"
 )
 
-func Setup(cfg *config.Config) (*fiber.App, *redis.Storage) {
+func Setup(cfg *config.Config) (*fiber.App, *postgres.Storage) {
 	app := fiber.New(fiber.Config{
 		JSONEncoder: sonic.Marshal,
 		JSONDecoder: sonic.Unmarshal,
@@ -45,7 +45,7 @@ func Setup(cfg *config.Config) (*fiber.App, *redis.Storage) {
 	}))
 	app.Use(compress.New())
 
-	storage := redis.New(*cfg.RedisConfig)
+	storage := postgres.New(*cfg.SessionDBConfig)
 
 	app.Use(session.New(session.Config{
 		Storage:        storage,

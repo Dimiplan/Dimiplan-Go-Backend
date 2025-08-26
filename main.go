@@ -27,7 +27,7 @@ func main() {
 		}
 	}
 
-	app, redis := server.Setup(cfg)
+	app, sessionDB := server.Setup(cfg)
 	routes.Setup(app, cfg, client)
 
 	log.Infof("Server starting on port %s", cfg.Port)
@@ -40,7 +40,7 @@ func main() {
 	defer func() {
 		log.Info("Shutting down server...")
 		client.Close()
-		redis.Close()
+		sessionDB.Close()
 		app.Shutdown()
 	}()
 }

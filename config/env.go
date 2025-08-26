@@ -5,7 +5,7 @@ import (
 	"os"
 	"strconv"
 
-	"github.com/gofiber/storage/redis/v3"
+	"github.com/gofiber/storage/postgres/v3"
 	"github.com/joho/godotenv"
 	"github.com/openai/openai-go/v2"
 	"github.com/openai/openai-go/v2/option"
@@ -14,13 +14,13 @@ import (
 )
 
 type Config struct {
-	Port           string
-	OAuthConfig    *oauth2.Config
-	RedisConfig    *redis.Config
-	DatabaseString string
-	AIClient       openai.Client
-	PreAIModel     string
-	AIModels       []string
+	Port            string
+	OAuthConfig     *oauth2.Config
+	DatabaseString  string
+	SessionDBConfig *postgres.Config
+	AIClient        openai.Client
+	PreAIModel      string
+	AIModels        []string
 }
 
 func Load() *Config {
@@ -37,22 +37,22 @@ func Load() *Config {
 		Endpoint: google.Endpoint,
 	}
 
-	redisConfig := &redis.Config{
-		Host:     getEnv("REDIS_HOST"),
-		Port:     getEnvAsInt("REDIS_PORT"),
-		Password: "",
-	}
-
 	return &Config{
 		Port:        getEnv("PORT"),
 		OAuthConfig: oauthConfig,
-		RedisConfig: redisConfig,
 		DatabaseString: fmt.Sprintf("postgresql://%s@%s:%d/%s?sslmode=disable",
 			getEnv("DB_USER"),
 			getEnv("DB_HOST"),
 			getEnvAsInt("DB_PORT"),
 			getEnv("DB_NAME"),
 		),
+		SessionDBConfig: &postgres.Config{
+			Database: "session",
+			Table:    getEnv("DB_NAME"),
+			Port:     getEnvAsInt("DB_PORT"),
+			Host:     getEnv("DB_HOST"),
+			Username: getEnv("DB_USER"),
+		},
 		AIClient: openai.NewClient(
 			option.WithBaseURL("https://openrouter.ai/api/v1"),
 			option.WithAPIKey(getEnv("OPENROUTER_API_KEY")),

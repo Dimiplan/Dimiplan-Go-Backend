@@ -36,9 +36,11 @@ func (h *AIHandler) AIChat(rawRequest interface{}, c fiber.Ctx) (interface{}, er
 	if !slices.Contains(h.cfg.AIModels, request.Model) {
 		return nil, fiber.NewError(fiber.StatusBadRequest, "Invalid model")
 	}
-	if user.ProcessingData != nil {
-		return nil, fiber.NewError(fiber.StatusConflict, "User is already processing data")
-	}
+	/*
+		if user.ProcessingData != nil {
+			return nil, fiber.NewError(fiber.StatusConflict, "User is already processing data")
+		}
+	*/
 	value, err := sonic.MarshalString(request)
 	if err != nil {
 		return nil, fiber.NewError(fiber.StatusBadRequest)

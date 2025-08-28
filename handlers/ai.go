@@ -83,6 +83,17 @@ func (h *AIHandler) StreamAIChat(c fiber.Ctx) error {
 		}
 	}
 
+	c.Set("Content-Type", "text/event-stream")
+	c.Set("Cache-Control", "no-cache, no-transform")
+	c.Set("Connection", "keep-alive")
+	c.Set("X-Accel-Buffering", "no")
+
+	if origin := string(c.Request().Header.Peek("Origin")); origin != "" {
+		c.Set("Access-Control-Allow-Origin", origin)
+		c.Set("Vary", "Origin")
+		c.Set("Access-Control-Allow-Credentials", "true")
+	}
+
 	return c.SendStreamWriter(func(w *bufio.Writer) {
 		fmt.Fprintf(w, "Room ID: %d\n", room.ID)
 		if err := w.Flush(); err != nil {

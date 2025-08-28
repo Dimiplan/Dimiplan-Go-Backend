@@ -105,6 +105,8 @@ func (h *AIHandler) StreamAIChat(c fiber.Ctx) error {
 			return
 		}
 
+		_, err = user.Update().ClearProcessingData().Save(c)
+
 		_, err = h.db.Message.Create().
 			SetChatroomID(room.ID).
 			SetSender("user").

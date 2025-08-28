@@ -38,6 +38,9 @@ func (h *AIHelper) GenerateMessage(w *bufio.Writer, c fiber.Ctx, model string, p
 		acc.AddChunk(chunk)
 		if _, ok := acc.JustFinishedContent(); ok {
 			fmt.Fprintln(w)
+			if err := w.Flush(); err != nil {
+				log.Print("Client disconnected!")
+			}
 			fmt.Fprintln(w, "finish-event: Content stream finished")
 			if err := w.Flush(); err != nil {
 				log.Print("Client disconnected!")

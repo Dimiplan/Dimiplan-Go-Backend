@@ -118,5 +118,8 @@ func (h *AIHandler) StreamAIChat(c fiber.Ctx) error {
 			Save(c)
 
 		fmt.Fprintln(w, "finish-event: message saved")
+		if err := w.Flush(); err != nil {
+			log.Print("Client disconnected!")
+		}
 	})
 }

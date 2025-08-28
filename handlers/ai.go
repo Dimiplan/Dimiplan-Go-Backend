@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"bufio"
+	"context"
 	"dimiplan-backend/ai"
 	"dimiplan-backend/config"
 	"dimiplan-backend/ent"
@@ -105,19 +106,23 @@ func (h *AIHandler) StreamAIChat(c fiber.Ctx) error {
 			return
 		}
 
-		_, err = user.Update().ClearProcessingData().Save(c)
+		ctx := context.TODO()
+
+		_, err = user.Update().ClearProcessingData().Save(ctx)
 
 		_, err = h.db.Message.Create().
 			SetChatroomID(room.ID).
 			SetSender("user").
 			SetMessage(request.Prompt).
-			Save(c)
+			Save(ctx)
 
 		_, err = h.db.Message.Create().
 			SetChatroomID(room.ID).
 			SetSender("ai").
 			SetMessage(message).
-			Save(c)
+			Save(ctx)
+
+		ctx.Done()
 
 		fmt.Fprintln(w, "finish-event: message saved")
 		if err := w.Flush(); err != nil {

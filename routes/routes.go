@@ -39,7 +39,7 @@ func Setup(app *fiber.App, cfg *config.Config, db *ent.Client) *fiber.App {
 		}, ent.User{}, 204)
 
 	api.Use("/ai/chatroom/:id", middleware.QueryChatroomMiddleware(db))
-	api.Get("/ai", aiHandler.StreamAIChat)
+	api.Get("/ai/stream", aiHandler.StreamAIChat)
 	apiWrapper.Route("/ai").
 		Post(aiHandler.AIChat, func() interface{} {
 			return new(models.AIChatRequest)
